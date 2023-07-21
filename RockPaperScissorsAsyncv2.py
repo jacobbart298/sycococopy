@@ -28,11 +28,8 @@ async def player(number):
     return item
 
 async def main():
-    task1 = asyncio.create_task(player(1))
-    task2 = asyncio.create_task(player(2))
-    task3 = asyncio.create_task(player(3))
-    item1 = await task1
-    item2 = await task2
-    item3 = await task3
+    async with asyncio.TaskGroup() as tg:
+        for number in range(3):
+            tg.create_task(player(number))
 
 asyncio.run(main())
