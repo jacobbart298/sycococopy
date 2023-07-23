@@ -8,11 +8,16 @@ async def alice(limit: int) -> int:
         x = y
         y = next
         await bob(next)
-    return x + y
+
 
 async def bob(x: int) -> bool:
     if x % 3 == 0:
         print(f'{x} is een fibonacci getal deelbaar door 3')
-    return True
+    await eve(x)
+
+async def eve(x:int) -> bool:
+    if x % 4 == 0:
+        print(f'{x} is een fibonacci getal deelbaar door 4')
+    await alice(10000)
 
 asyncio.run(alice(1000000))
