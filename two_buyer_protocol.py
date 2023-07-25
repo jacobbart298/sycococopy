@@ -26,7 +26,7 @@ Local type for Buyer2
 
 Seller?quote(int)
 .Buyer1?contribution(int)
-.if (contribution > quote/2)
+.if (contribution >= quote/2)
  then Seller!accept(bool).end
  else Seller!reject(bool).end
 
