@@ -49,7 +49,7 @@ Buyer2:
 
     quote = await channel_seller_buyer2.get()
     contribution = await channel_buyer1_buyer2.get()
-    await channel_buyer2_seller.put(contribution > quote/2)
+    await channel_buyer2_seller.put(contribution >= quote/2)
         
 Seller:
 
