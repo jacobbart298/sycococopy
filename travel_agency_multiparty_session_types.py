@@ -74,7 +74,7 @@ async def Customer():
     await channel_customer_to_agency.put('details')
     # await confirmation from the hotel
     booking_ok = await channel_hotel_to_costumer.get()
-    print(f'Has the costumer received a confirmation from the hotel? {booking_ok}')
+    print(f'Is the booking ok? {booking_ok}')
 
 async def Agency():
     # await details from the customer
