@@ -80,5 +80,23 @@ class PythonicListener(ParseTreeListener):
         pass
 
 
+    # Enter a parse tree produced by PythonicParser#role.
+    def enterRole(self, ctx:PythonicParser.RoleContext):
+        pass
+
+    # Exit a parse tree produced by PythonicParser#role.
+    def exitRole(self, ctx:PythonicParser.RoleContext):
+        pass
+
+
+    # Enter a parse tree produced by PythonicParser#roles.
+    def enterRoles(self, ctx:PythonicParser.RolesContext):
+        pass
+
+    # Exit a parse tree produced by PythonicParser#roles.
+    def exitRoles(self, ctx:PythonicParser.RolesContext):
+        pass
+
+
 
 del PythonicParser
