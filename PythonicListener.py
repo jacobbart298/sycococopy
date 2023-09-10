@@ -8,6 +8,15 @@ else:
 # This class defines a complete listener for a parse tree produced by PythonicParser.
 class PythonicListener(ParseTreeListener):
 
+    # Enter a parse tree produced by PythonicParser#specification.
+    def enterSpecification(self, ctx:PythonicParser.SpecificationContext):
+        pass
+
+    # Exit a parse tree produced by PythonicParser#specification.
+    def exitSpecification(self, ctx:PythonicParser.SpecificationContext):
+        pass
+
+
     # Enter a parse tree produced by PythonicParser#protocol.
     def enterProtocol(self, ctx:PythonicParser.ProtocolContext):
         pass
@@ -95,6 +104,15 @@ class PythonicListener(ParseTreeListener):
 
     # Exit a parse tree produced by PythonicParser#roles.
     def exitRoles(self, ctx:PythonicParser.RolesContext):
+        pass
+
+
+    # Enter a parse tree produced by PythonicParser#emptyspace.
+    def enterEmptyspace(self, ctx:PythonicParser.EmptyspaceContext):
+        pass
+
+    # Exit a parse tree produced by PythonicParser#emptyspace.
+    def exitEmptyspace(self, ctx:PythonicParser.EmptyspaceContext):
         pass
 
 

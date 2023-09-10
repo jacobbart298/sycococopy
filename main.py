@@ -18,7 +18,7 @@ def main(argv):
     lexer = PythonicLexer(input)
     stream = CommonTokenStream(lexer)
     parser = PythonicParser(stream)
-    tree = parser.protocol()
+    tree = parser.specification()
     print (Trees.toStringTree(tree)) 
     dump(tree)
 
