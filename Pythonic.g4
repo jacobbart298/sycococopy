@@ -28,7 +28,7 @@ def nextToken(self):
  *   Parser rules
  */
 
-specification       : (protocol | roles | emptyspace)+ EOF ;
+specification       : (protocol | roles)+ EOF ;
 protocol            : PROTOCOL WORD CLOSEBRKT block ;
 expression          : (send | sequence | shuffle | choice | close | role)+ ;
 sequence            : SEQUENCE block ;
@@ -39,7 +39,7 @@ close               : CLOSE WORD TO WORD NL;
 block               : INDENT expression+ DEDENT ;
 role                : WORD NL;
 roles               : ROLES block ;
-emptyspace          : NL+ ;
+
 
 
 /*

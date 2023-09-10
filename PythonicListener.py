@@ -107,14 +107,5 @@ class PythonicListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by PythonicParser#emptyspace.
-    def enterEmptyspace(self, ctx:PythonicParser.EmptyspaceContext):
-        pass
-
-    # Exit a parse tree produced by PythonicParser#emptyspace.
-    def exitEmptyspace(self, ctx:PythonicParser.EmptyspaceContext):
-        pass
-
-
 
 del PythonicParser
