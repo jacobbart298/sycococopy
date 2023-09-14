@@ -1,0 +1,83 @@
+shuffle(node, startState, endState):
+	childNodeCount = node.childrenCount()
+	permutations = heapsAlgo([0..childNodeCount - 1]) 	//permutations is a list of lists, e.g. [[0,1,2],[1,2,0]]
+	for permutation in permutations:
+		counter = 0
+		currentState = startState
+		for i in permutation:							//permutation is a list of indices, e.g. [0,2,1]
+			counter++
+			if counter == childNodeCount:
+				nextState = endState
+			else:
+				nextState = State()
+			childNode = node.getChild(i)
+			switch (childNode.operator):
+				case SHUFFLE:
+					shuffle(childNode, currentState, nextState)
+					break
+				case CHOICE:
+					choice(childNode, currentState, nextState)
+					break
+				case SEQUENCE:
+					sequence(childNode, currentState, nextState)
+					break
+				case SEND:
+					send(childNode, currentState, nextState)
+					break
+			currentState = nextState
+	
+heapsAlgo():
+	//https://en.wikipedia.org/wiki/Heap%27s_algorithm
+	//Ik heb deze al eens in Java geïplementeerd.
+
+choice(node, startState, endState):
+	childNodeCount = node.childrenCount()
+	for i in [0..childNodeCount - 1]:
+		childNode = node.getChild(i)
+		switch (childNode.operator):
+			case SHUFFLE:
+				shuffle(childNode, startState, endState)
+				break
+			case CHOICE:
+				choice(childNode, startState, endState)
+				break
+			case SEQUENCE:
+				sequence(childNode, startState, endState)
+				break
+			case SEND:
+				send(childNode, startState, endState)
+				break
+
+sequence(node, startState, endState):
+	childNodeCount = node.childrenCount()
+	counter = 0
+	currentState = startState
+	for i in [0..childNodeCount-1]:
+		counter++
+		if counter == childNodeCount:
+			nextState = endState
+		else:
+			nextState = State()
+		childNode = node.getChild(i)
+		switch (childNode.operator):
+			case SHUFFLE:
+				shuffle(childNode, currentState, nextState)
+				break
+			case CHOICE:
+				choice(childNode, currentState, nextState)
+				break
+			case SEQUENCE:
+				sequence(childNode, currentState, nextState)
+				break
+			case SEND:
+				send(childNode, currentState, nextState)
+				break
+		currentState = nextState
+
+// Have to think about whether or not to implement
+// a send Node explicitly as an external node.
+// For convenience we use getTransition() here.
+// A transition contains a type, sender and receiver.
+send(node, startState, endState):	
+	transition = node.getTransition()											
+	startState.addTransition(transition, endState)
