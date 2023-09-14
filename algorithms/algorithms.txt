@@ -1,6 +1,6 @@
 shuffle(node, startState, endState):
 	childNodeCount = node.childrenCount()
-	permutations = heapsAlgo([0..childNodeCount - 1]) 	//permutations is a list of lists, e.g. [[0,1,2],[1,2,0]]
+	permutations = heapsAlgo([0..childNodeCount - 1]) 	//permutations is a list of lists, e.g. [[0,1,2],[0,2,1],[1,2,0],[1,0,2],[2,0,1],[2,1,0]]
 	for permutation in permutations:
 		counter = 0
 		currentState = startState
