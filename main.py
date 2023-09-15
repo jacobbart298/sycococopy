@@ -20,7 +20,7 @@ def main(argv):
     parser = PythonicParser(stream)
     tree = parser.specification()
     print (Trees.toStringTree(tree)) 
-    dump(tree)
+    dump(tree, ruleNames=parser.ruleNames)
 
 if __name__ == '__main__':
     import sys

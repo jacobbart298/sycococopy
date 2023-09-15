@@ -1,0 +1,4 @@
+protocol(simpleGrammer):
+   sequence:
+      send String from A to B
+      send int from B to A
