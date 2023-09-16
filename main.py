@@ -3,6 +3,7 @@ from antlr4.tree.Trees import Trees
 from antlr4.tree.Tree import TerminalNodeImpl
 from PythonicLexer import PythonicLexer
 from PythonicParser import PythonicParser
+from FSMbuilder import FSMbuilder
 
 def dump(node, depth=0, ruleNames=None):
     depthStr = '. ' * depth
@@ -18,9 +19,11 @@ def main(argv):
     lexer = PythonicLexer(input)
     stream = CommonTokenStream(lexer)
     parser = PythonicParser(stream)
-    tree = parser.specification()
-    print (Trees.toStringTree(tree)) 
+    tree = parser.specification() 
     dump(tree, ruleNames=parser.ruleNames)
+    fsm_builder = FSMbuilder()
+    fsm_builder.visitSpecification(tree)
+    
 
 if __name__ == '__main__':
     import sys
