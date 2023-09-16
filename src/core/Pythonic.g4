@@ -30,7 +30,7 @@ def nextToken(self):
 
 specification       : (protocol | roles)+ EOF ;
 protocol            : PROTOCOL WORD CLOSEBRKT block ;
-expression          : (send | sequence | shuffle | choice | close | role)+ ;
+expression          : (send | sequence | shuffle | choice | close | role) ;
 sequence            : SEQUENCE block ;
 shuffle             : SHUFFLE block ;
 choice              : CHOICE block ;

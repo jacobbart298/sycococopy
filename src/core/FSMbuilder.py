@@ -3,6 +3,8 @@ from antlr4 import *
 from antlr4.tree.Trees import Trees
 from antlr4.tree.Tree import TerminalNodeImpl
 from PythonicVisitor import PythonicVisitor
+from fsm import FSM
+
 if "." in __name__:
     from .PythonicParser import PythonicParser
 else:
@@ -13,6 +15,7 @@ else:
 class FSMbuilder(PythonicVisitor):
 
     def __init__(self):
+        self.fsm = FSM()
         
 
     # Visit a parse tree produced by PythonicParser#specification.
@@ -22,25 +25,41 @@ class FSMbuilder(PythonicVisitor):
 
     # Visit a parse tree produced by PythonicParser#protocol.
     def visitProtocol(self, ctx:PythonicParser.ProtocolContext):
-        return self.visitChildren(ctx)
+        # count = ctx.getChildCount()
+        # print(f"In protocol met {count} kinderen")
+        # block = ctx.getChild(3)
+        # expression = block.getChild(1).getChild(0)
+        # print(f"We hebben dan een {expression.getChild(0).getText()}")
+        # print(f"In expressie met {expression.getChildCount()} kinderen")
+        # for i in range(expression.getChildCount()):
+        #     print(expression.getChild(i).getText())
+       
+        expression = ctx.getChild(3).getChild(1).getChild(0)
+        print(f"In protocol en ik geef {expression.getText()} aan visitExpression")
+        expression.extraAttribuut = "EVEN TESTEN"
+        self.visitExpression(expression)
+        # print(f"ik ga controleren op {expression.getChild}")      
 
 
     # Visit a parse tree produced by PythonicParser#expression.
     def visitExpression(self, ctx:PythonicParser.ExpressionContext):
-        return self.visitChildren(ctx)
-
+        print(ctx.getChild(0).getText())
+        match ctx.getChild(0).getText():
+            case "sequence:":
+                self.visitSequence(ctx)
+            case "choice:":
+                self.visitChoice(ctx)
+            case "shuffle:":
+                self.visitShuffle(ctx)
+            case "send":
+                self.visitSend(ctx)
 
     # Visit a parse tree produced by PythonicParser#sequence.
     def visitSequence(self, ctx:PythonicParser.SequenceContext):
-        print("Visit sequence")
-        block = ctx.getChild(1)
-        childNotes = block.getChildCount()
-        print(f"The sequence has {childNotes} children")
-        for i in range(childNotes):
-            print(f"Number {i} node = " + block.getChild(i).getText())
-        self.dump(block.getChild(1))
-        # kind2 =block.getChild(1)
-        # self.visit(kind2)
+        expression = ctx.getChild(1)
+        for i in range(expression.getChildCount()):
+            print(f"kind nummer {i} is {expression.getChild(i).getText()}")
+            # self.visitExpression(expression)
         # return self.visitChildren(ctx)
 
 
