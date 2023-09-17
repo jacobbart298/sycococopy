@@ -1,24 +1,20 @@
-# Generated from ./Pythonic.g4 by ANTLR 4.13.1
-from antlr4 import *
-from antlr4.tree.Trees import Trees
-from antlr4.tree.Tree import TerminalNodeImpl
 from PythonicVisitor import PythonicVisitor
 from fsm import FSM
 from transition import Transition
 from state import State
+from itertools import permutations
 
 if "." in __name__:
     from .PythonicParser import PythonicParser
 else:
     from PythonicParser import PythonicParser
 
-# This class defines a complete generic visitor for a parse tree produced by PythonicParser.
+# This class builds an FSM using a visitor for a parse tree produced by PythonicParser.
 
 class FSMbuilder(PythonicVisitor):
 
     def __init__(self):
         self.fsm = FSM()
-        
 
     # Visit a parse tree produced by PythonicParser#specification.
     def visitSpecification(self, ctx:PythonicParser.SpecificationContext):
@@ -53,36 +49,60 @@ class FSMbuilder(PythonicVisitor):
     # Visit a parse tree produced by PythonicParser#sequence.
     def visitSequence(self, ctx:PythonicParser.SequenceContext):
         counter = 0
-        childCount = ctx.getChildCount()
         currentState = ctx.startState
-        for i in range(1, childCount - 1):
+        expressionCount = ctx.getChildCount() - 2
+        expressionIndices =  range(1, expressionCount + 1)
+        for index in expressionIndices:
             counter += 1
-            if counter == childCount:
+            if counter == expressionCount:
                 nextState = ctx.endState
             else:
                 nextState = State()
-            child = ctx.getChild(i).getChild(0)
-            child.startState = currentState
-            child.endState = nextState
-            self.visitExpression(child)
+            expression = ctx.getChild(index).getChild(0)
+            expression.startState = currentState
+            expression.endState = nextState
+            self.visitExpression(expression)
             currentState = nextState
 
 
     # Visit a parse tree produced by PythonicParser#shuffle.
     def visitShuffle(self, ctx:PythonicParser.ShuffleContext):
-        return self.visitChildren(ctx)
+        expressionCount = ctx.getChildCount() - 2
+        expressionIndices = range(1, expressionCount + 1)
+        for indicesPermutation in permutations(expressionIndices):
+            counter = 0
+            currentState = ctx.startState
+            for index in indicesPermutation:
+                counter += 1
+                if counter == expressionCount:
+                    nextState = ctx.endState
+                else:
+                    nextState = State()
+                expression = ctx.getChild(index).getChild(0)
+                expression.startState = currentState
+                expression.endState = nextState
+                self.visitExpression(expression)
+                currentState = nextState
 
 
     # Visit a parse tree produced by PythonicParser#choice.
     def visitChoice(self, ctx:PythonicParser.ChoiceContext):
-        return self.visitChildren(ctx)
-
+        expressionCount = ctx.getChildCount() - 2
+        expressionIndices =  range(1, expressionCount + 1)
+        for index in expressionIndices:
+            expression = ctx.getChild(index).getChild(0)
+            expression.startState = ctx.startState
+            expression.endState = ctx.endState
+            self.visitExpression(expression)
+    
 
     # Visit a parse tree produced by PythonicParser#send.
     def visitSend(self, ctx:PythonicParser.SendContext):
-        transition = Transition(ctx.getChild(1).getText(), ctx.getChild(3).getText(), ctx.getChild(5).getText())
+        type = ctx.getChild(1).getText()
+        sender = ctx.getChild(3).getText()
+        receiver = ctx.getChild(5).getText()
+        transition = Transition(type, sender, receiver)
         ctx.startState.addTransitionToState(transition, ctx.endState)
-        return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by PythonicParser#close.
@@ -103,16 +123,5 @@ class FSMbuilder(PythonicVisitor):
     # Visit a parse tree produced by PythonicParser#roles.
     def visitRoles(self, ctx:PythonicParser.RolesContext):
         return self.visitChildren(ctx)
-
-    def dump(self, node, depth=0, ruleNames=None):
-        depthStr = '. ' * depth
-        if isinstance(node, TerminalNodeImpl):
-            print(f'{depthStr}{node.symbol}')
-        else:
-            print(f'{depthStr}{Trees.getNodeText(node, ruleNames)}')
-            for child in node.children:
-                self.dump(child, depth + 1, ruleNames)
-
-
 
 del PythonicParser
