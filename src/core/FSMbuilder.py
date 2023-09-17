@@ -4,6 +4,8 @@ from antlr4.tree.Trees import Trees
 from antlr4.tree.Tree import TerminalNodeImpl
 from PythonicVisitor import PythonicVisitor
 from fsm import FSM
+from transition import Transition
+from state import State
 
 if "." in __name__:
     from .PythonicParser import PythonicParser
@@ -20,47 +22,50 @@ class FSMbuilder(PythonicVisitor):
 
     # Visit a parse tree produced by PythonicParser#specification.
     def visitSpecification(self, ctx:PythonicParser.SpecificationContext):
-        return self.visitChildren(ctx)
+        self.visitChildren(ctx)
+        return self.fsm
 
 
     # Visit a parse tree produced by PythonicParser#protocol.
-    def visitProtocol(self, ctx:PythonicParser.ProtocolContext):
-        # count = ctx.getChildCount()
-        # print(f"In protocol met {count} kinderen")
-        # block = ctx.getChild(3)
-        # expression = block.getChild(1).getChild(0)
-        # print(f"We hebben dan een {expression.getChild(0).getText()}")
-        # print(f"In expressie met {expression.getChildCount()} kinderen")
-        # for i in range(expression.getChildCount()):
-        #     print(expression.getChild(i).getText())
-       
+    def visitProtocol(self, ctx:PythonicParser.ProtocolContext):       
         expression = ctx.getChild(3).getChild(1).getChild(0)
-        print(f"In protocol en ik geef {expression.getText()} aan visitExpression")
-        expression.extraAttribuut = "EVEN TESTEN"
-        self.visitExpression(expression)
-        # print(f"ik ga controleren op {expression.getChild}")      
+        expression.startState = self.fsm.getState()
+        expression.endState = State()
+        self.visitExpression(expression)    
 
 
     # Visit a parse tree produced by PythonicParser#expression.
     def visitExpression(self, ctx:PythonicParser.ExpressionContext):
-        print(ctx.getChild(0).getText())
+        expression = ctx.getChild(1)
+        expression.startState = ctx.startState
+        expression.endState = ctx.endState
         match ctx.getChild(0).getText():
             case "sequence:":
-                self.visitSequence(ctx)
+                self.visitSequence(expression)
             case "choice:":
-                self.visitChoice(ctx)
+                self.visitChoice(expression)
             case "shuffle:":
-                self.visitShuffle(ctx)
+                self.visitShuffle(expression)
             case "send":
                 self.visitSend(ctx)
 
+
     # Visit a parse tree produced by PythonicParser#sequence.
     def visitSequence(self, ctx:PythonicParser.SequenceContext):
-        expression = ctx.getChild(1)
-        for i in range(expression.getChildCount()):
-            print(f"kind nummer {i} is {expression.getChild(i).getText()}")
-            # self.visitExpression(expression)
-        # return self.visitChildren(ctx)
+        counter = 0
+        childCount = ctx.getChildCount()
+        currentState = ctx.startState
+        for i in range(1, childCount - 1):
+            counter += 1
+            if counter == childCount:
+                nextState = ctx.endState
+            else:
+                nextState = State()
+            child = ctx.getChild(i).getChild(0)
+            child.startState = currentState
+            child.endState = nextState
+            self.visitExpression(child)
+            currentState = nextState
 
 
     # Visit a parse tree produced by PythonicParser#shuffle.
@@ -75,9 +80,9 @@ class FSMbuilder(PythonicVisitor):
 
     # Visit a parse tree produced by PythonicParser#send.
     def visitSend(self, ctx:PythonicParser.SendContext):
-        naam = ctx.getText()
-        parent = ctx.parentCtx.parentCtx.parentCtx.getText()
-        print(f"visit Kind {naam} with parent {parent}")
+        transition = Transition(ctx.getChild(1), ctx.getChild(3), ctx.getChild(5))
+        ctx.startState.addTransitionToState(transition, ctx.endState)
+        print(f"I've created the transition {str(transition)}!")
         return self.visitChildren(ctx)
 
 

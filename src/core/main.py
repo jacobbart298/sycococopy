@@ -4,6 +4,7 @@ from antlr4.tree.Tree import TerminalNodeImpl
 from PythonicLexer import PythonicLexer
 from PythonicParser import PythonicParser
 from FSMbuilder import FSMbuilder
+from transition import Transition
 
 def dump(node, depth=0, ruleNames=None):
     depthStr = '. ' * depth
@@ -20,10 +21,14 @@ def main(argv):
     stream = CommonTokenStream(lexer)
     parser = PythonicParser(stream)
     tree = parser.specification() 
-    dump(tree, ruleNames=parser.ruleNames)
+    # dump(tree, ruleNames=parser.ruleNames)
     fsm_builder = FSMbuilder()
-    fsm_builder.visitSpecification(tree)
-    
+    fsm = fsm_builder.visitSpecification(tree)
+    print(fsm)
+    print(str(fsm.state))
+    fsm.makeTransition(Transition("String", "A", "B"))
+    fsm.makeTransition(Transition("int", "B", "A"))
+    fsm.makeTransition(Transition("iets", "Teun", "Jacob"))
 
 if __name__ == '__main__':
     import sys

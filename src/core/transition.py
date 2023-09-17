@@ -13,4 +13,4 @@ class Transition:
         return hash(self.type) + hash(self.sender) + hash(self.receiver)
     
     def __str__(self):
-        return str(self.type) + " from " + str(self.sender) + " to " + str(self.receiver) 
+        return "send " + str(self.type) + " from " + str(self.sender) + " to " + str(self.receiver) 
