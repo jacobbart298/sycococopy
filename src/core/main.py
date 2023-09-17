@@ -24,8 +24,6 @@ def main(argv):
     # dump(tree, ruleNames=parser.ruleNames)
     fsm_builder = FSMbuilder()
     fsm = fsm_builder.visitSpecification(tree)
-    print(fsm)
-    print(str(fsm.state))
     fsm.makeTransition(Transition("String", "A", "B"))
     fsm.makeTransition(Transition("int", "B", "A"))
     fsm.makeTransition(Transition("iets", "Teun", "Jacob"))

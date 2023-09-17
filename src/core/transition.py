@@ -6,7 +6,7 @@ class Transition:
         self.sender = sender
         self.receiver = receiver
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other):
         return self.type == other.type and self.sender == other.sender and self.receiver == other.receiver 
 
     def __hash__(self):

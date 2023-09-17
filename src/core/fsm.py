@@ -10,6 +10,7 @@ class FSM:
         
     def makeTransition(self, transition):
         newState = self.state.getNextState(transition)
+        # print(f"Making a transition {str(transition)} and newState equals: {str(newState)}")
         self.transitionHistory.append(transition)
         if newState is not None:
             self.state = newState
@@ -23,3 +24,11 @@ class FSM:
         
     def getState(self):
         return self.state
+    
+    def __str__(self) -> str:
+        print(self.state)
+        key = list(self.state.transitionsToState.keys())[0]
+        transition = self.state.transitionsToState[key]
+        print(transition)
+        self.makeTransition(transition)
+        print(self.state)

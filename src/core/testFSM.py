@@ -12,7 +12,8 @@ class TestFSM(unittest.TestCase):
         global state2
         state2 = State()
         self.fsm = FSM()
-        state0 = self.fsm.state
+        global state0
+        state0 = self.fsm.getState()
         transition1 = Transition("Boolean", "Jacob", "Teun")
         state0.addTransitionToState(transition1, state1)
         transition2 = Transition("Int", "Teun", "Tobias")
@@ -21,7 +22,8 @@ class TestFSM(unittest.TestCase):
 
     def testCorrectTransition(self):
         # test correct transition
-        global state1
+        global state1, state0
+        self.assertEqual(self.fsm.state, state0)
         transition1 = Transition("Boolean", "Jacob", "Teun")
         self.fsm.makeTransition(transition1)
         self.assertEqual(self.fsm.state, state1)

@@ -8,7 +8,7 @@ class State:
     def addTransitionToState(self, transition, state):
         self.transitionsToState[transition] = state
 
-    def getNextState(self, transition: Transition): 
+    def getNextState(self, transition): 
         for key in self.transitionsToState:
             if key == transition:
                 return self.transitionsToState[key]

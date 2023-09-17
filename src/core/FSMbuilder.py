@@ -80,9 +80,8 @@ class FSMbuilder(PythonicVisitor):
 
     # Visit a parse tree produced by PythonicParser#send.
     def visitSend(self, ctx:PythonicParser.SendContext):
-        transition = Transition(ctx.getChild(1), ctx.getChild(3), ctx.getChild(5))
+        transition = Transition(ctx.getChild(1).getText(), ctx.getChild(3).getText(), ctx.getChild(5).getText())
         ctx.startState.addTransitionToState(transition, ctx.endState)
-        print(f"I've created the transition {str(transition)}!")
         return self.visitChildren(ctx)
 
 
