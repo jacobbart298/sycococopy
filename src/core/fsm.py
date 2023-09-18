@@ -10,10 +10,9 @@ class FSM:
         
     def makeTransition(self, transition):
         newState = self.state.getNextState(transition)
-        # print(f"Making a transition {str(transition)} and newState equals: {str(newState)}")
-        self.transitionHistory.append(transition)
         if newState is not None:
             self.state = newState
+            self.transitionHistory.append(transition)
             print(f"I just made the following transition: {str(transition)}")
         else:
             print(f"ILLEGAL TRANSITION: {transition}")
