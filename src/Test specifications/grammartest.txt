@@ -1,0 +1,7 @@
+sequence:
+send str from A to B
+shuffle:
+send int from C to D
+send str from A to B
+choice:
+send iets from G to H

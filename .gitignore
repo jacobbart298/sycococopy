@@ -1,7 +1,5 @@
-Pythonic.interp
-Pythonic.tokens
-PythonicLexer.interp
+*.interp
+*.tokens
 PythonicLexer.py
-PythonicLexer.tokens
 PythonicListener.py
 PythonicParser.py

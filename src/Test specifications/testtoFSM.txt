@@ -1,0 +1,7 @@
+roles:
+   buyer1
+   buyer2
+
+protocol(testprotocol):
+   send String from buyer1 to buyer2
+   send int from buyer2 to buyer1

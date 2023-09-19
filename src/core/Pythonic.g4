@@ -28,14 +28,18 @@ def nextToken(self):
  *   Parser rules
  */
 
-protocol            : PROTOCOL WORD SLUIT block EOF ;
-expression          : (send | sequence | shuffle | choice | close)+ ;
+specification       : (protocol | roles)+ EOF ;
+protocol            : PROTOCOL WORD CLOSEBRKT block ;
+expression          : (send | sequence | shuffle | choice | close | role) ;
 sequence            : SEQUENCE block ;
 shuffle             : SHUFFLE block ;
 choice              : CHOICE block ;
 send                : SEND WORD FROM WORD TO WORD NL ;
 close               : CLOSE WORD TO WORD NL;
 block               : INDENT expression+ DEDENT ;
+role                : WORD NL;
+roles               : ROLES block ;
+
 
 
 /*
@@ -43,7 +47,8 @@ block               : INDENT expression+ DEDENT ;
  */
 
 PROTOCOL            : 'protocol(' ;
-SLUIT               : '):' ;
+ROLES               : 'roles:' ;
+CLOSEBRKT           : '):' ;
 TO                  : 'to';
 FROM                : 'from';
 SEND                : 'send';
