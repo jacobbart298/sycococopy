@@ -1,3 +1,8 @@
+roles:
+    buyer1
+    buyer2
+    seller
+
 protocol(alloperationsgrammar):
     sequence:
         send str from buyer1 to seller

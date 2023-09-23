@@ -7,10 +7,19 @@ class FSM:
     def __init__(self):
         self.state = State()
         self.transitionHistory = []
+        self.uncheckedReceives = {}
+
+    def checkTransition(self, transition):
+        newState = self.state.getNextState(transition)
+        if newState is not None:
+            return True
+        else:
+            return False
         
     def makeTransition(self, transition):
         newState = self.state.getNextState(transition)
         if newState is not None:
+            self.uncheckedReceives[transition.getReceiver()].append(transition)
             self.state = newState
             self.transitionHistory.append(transition)
             print(f"I just made the following transition: {str(transition)}")
@@ -20,6 +29,10 @@ class FSM:
             for transition in self.transitionHistory:
                 print(f"{count}: {str(transition)}")
                 count += 1
+
+    def initialiseUncheckedReceives(self, roles):
+        for role in roles:
+            self.uncheckedReceives[role] = []
         
     def getState(self):
         return self.state

@@ -1,4 +1,6 @@
 from functools import wraps
+from asyncio import Queue
+from typing import Any, Coroutine
 
 def inject_variables(context):
     """ Decorator factory. """
@@ -34,3 +36,9 @@ if __name__ == '__main__':
         print('b:', b)
 
     test()
+
+class Queue2(Queue):
+
+    def put(self, item: Any) -> Coroutine[Any, Any, None]:
+        tupel = (role, item)
+        return super().put(tupel)

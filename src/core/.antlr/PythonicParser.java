@@ -21,11 +21,11 @@ public class PythonicParser extends Parser {
 	public static final int
 		RULE_specification = 0, RULE_protocol = 1, RULE_expression = 2, RULE_sequence = 3, 
 		RULE_shuffle = 4, RULE_choice = 5, RULE_send = 6, RULE_close = 7, RULE_block = 8, 
-		RULE_role = 9, RULE_roles = 10;
+		RULE_roles = 9, RULE_roleblock = 10, RULE_role = 11;
 	private static String[] makeRuleNames() {
 		return new String[] {
 			"specification", "protocol", "expression", "sequence", "shuffle", "choice", 
-			"send", "close", "block", "role", "roles"
+			"send", "close", "block", "roles", "roleblock", "role"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
@@ -95,19 +95,13 @@ public class PythonicParser extends Parser {
 	}
 
 	public static class SpecificationContext extends ParserRuleContext {
+		public RolesContext roles() {
+			return getRuleContext(RolesContext.class,0);
+		}
+		public ProtocolContext protocol() {
+			return getRuleContext(ProtocolContext.class,0);
+		}
 		public TerminalNode EOF() { return getToken(PythonicParser.EOF, 0); }
-		public List<ProtocolContext> protocol() {
-			return getRuleContexts(ProtocolContext.class);
-		}
-		public ProtocolContext protocol(int i) {
-			return getRuleContext(ProtocolContext.class,i);
-		}
-		public List<RolesContext> roles() {
-			return getRuleContexts(RolesContext.class);
-		}
-		public RolesContext roles(int i) {
-			return getRuleContext(RolesContext.class,i);
-		}
 		public SpecificationContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -117,39 +111,14 @@ public class PythonicParser extends Parser {
 	public final SpecificationContext specification() throws RecognitionException {
 		SpecificationContext _localctx = new SpecificationContext(_ctx, getState());
 		enterRule(_localctx, 0, RULE_specification);
-		int _la;
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(24); 
-			_errHandler.sync(this);
-			_la = _input.LA(1);
-			do {
-				{
-				setState(24);
-				_errHandler.sync(this);
-				switch (_input.LA(1)) {
-				case PROTOCOL:
-					{
-					setState(22);
-					protocol();
-					}
-					break;
-				case ROLES:
-					{
-					setState(23);
-					roles();
-					}
-					break;
-				default:
-					throw new NoViableAltException(this);
-				}
-				}
-				setState(26); 
-				_errHandler.sync(this);
-				_la = _input.LA(1);
-			} while ( _la==PROTOCOL || _la==ROLES );
-			setState(28);
+			setState(24);
+			roles();
+			setState(25);
+			protocol();
+			setState(26);
 			match(EOF);
 			}
 		}
@@ -183,13 +152,13 @@ public class PythonicParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(30);
+			setState(28);
 			match(PROTOCOL);
-			setState(31);
+			setState(29);
 			match(WORD);
-			setState(32);
+			setState(30);
 			match(CLOSEBRKT);
-			setState(33);
+			setState(31);
 			block();
 			}
 		}
@@ -220,9 +189,6 @@ public class PythonicParser extends Parser {
 		public CloseContext close() {
 			return getRuleContext(CloseContext.class,0);
 		}
-		public RoleContext role() {
-			return getRuleContext(RoleContext.class,0);
-		}
 		public ExpressionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -235,43 +201,37 @@ public class PythonicParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(41);
+			setState(38);
 			_errHandler.sync(this);
 			switch (_input.LA(1)) {
 			case SEND:
 				{
-				setState(35);
+				setState(33);
 				send();
 				}
 				break;
 			case SEQUENCE:
 				{
-				setState(36);
+				setState(34);
 				sequence();
 				}
 				break;
 			case SHUFFLE:
 				{
-				setState(37);
+				setState(35);
 				shuffle();
 				}
 				break;
 			case CHOICE:
 				{
-				setState(38);
+				setState(36);
 				choice();
 				}
 				break;
 			case CLOSE:
 				{
-				setState(39);
+				setState(37);
 				close();
-				}
-				break;
-			case WORD:
-				{
-				setState(40);
-				role();
 				}
 				break;
 			default:
@@ -307,9 +267,9 @@ public class PythonicParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(43);
+			setState(40);
 			match(SEQUENCE);
-			setState(44);
+			setState(41);
 			block();
 			}
 		}
@@ -341,9 +301,9 @@ public class PythonicParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(46);
+			setState(43);
 			match(SHUFFLE);
-			setState(47);
+			setState(44);
 			block();
 			}
 		}
@@ -375,9 +335,9 @@ public class PythonicParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(49);
+			setState(46);
 			match(CHOICE);
-			setState(50);
+			setState(47);
 			block();
 			}
 		}
@@ -413,19 +373,19 @@ public class PythonicParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(52);
+			setState(49);
 			match(SEND);
-			setState(53);
+			setState(50);
 			match(WORD);
-			setState(54);
+			setState(51);
 			match(FROM);
-			setState(55);
+			setState(52);
 			match(WORD);
-			setState(56);
+			setState(53);
 			match(TO);
-			setState(57);
+			setState(54);
 			match(WORD);
-			setState(58);
+			setState(55);
 			match(NL);
 			}
 		}
@@ -460,15 +420,15 @@ public class PythonicParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(60);
+			setState(57);
 			match(CLOSE);
-			setState(61);
+			setState(58);
 			match(WORD);
-			setState(62);
+			setState(59);
 			match(TO);
-			setState(63);
+			setState(60);
 			match(WORD);
-			setState(64);
+			setState(61);
 			match(NL);
 			}
 		}
@@ -505,23 +465,110 @@ public class PythonicParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(66);
+			setState(63);
 			match(INDENT);
-			setState(68); 
+			setState(65); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(67);
+				setState(64);
 				expression();
 				}
 				}
-				setState(70); 
+				setState(67); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << SEND) | (1L << SEQUENCE) | (1L << SHUFFLE) | (1L << CHOICE) | (1L << CLOSE) | (1L << WORD))) != 0) );
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << SEND) | (1L << SEQUENCE) | (1L << SHUFFLE) | (1L << CHOICE) | (1L << CLOSE))) != 0) );
+			setState(69);
+			match(DEDENT);
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class RolesContext extends ParserRuleContext {
+		public TerminalNode ROLES() { return getToken(PythonicParser.ROLES, 0); }
+		public RoleblockContext roleblock() {
+			return getRuleContext(RoleblockContext.class,0);
+		}
+		public RolesContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_roles; }
+	}
+
+	public final RolesContext roles() throws RecognitionException {
+		RolesContext _localctx = new RolesContext(_ctx, getState());
+		enterRule(_localctx, 18, RULE_roles);
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(71);
+			match(ROLES);
 			setState(72);
+			roleblock();
+			}
+		}
+		catch (RecognitionException re) {
+			_localctx.exception = re;
+			_errHandler.reportError(this, re);
+			_errHandler.recover(this, re);
+		}
+		finally {
+			exitRule();
+		}
+		return _localctx;
+	}
+
+	public static class RoleblockContext extends ParserRuleContext {
+		public TerminalNode INDENT() { return getToken(PythonicParser.INDENT, 0); }
+		public TerminalNode DEDENT() { return getToken(PythonicParser.DEDENT, 0); }
+		public List<RoleContext> role() {
+			return getRuleContexts(RoleContext.class);
+		}
+		public RoleContext role(int i) {
+			return getRuleContext(RoleContext.class,i);
+		}
+		public RoleblockContext(ParserRuleContext parent, int invokingState) {
+			super(parent, invokingState);
+		}
+		@Override public int getRuleIndex() { return RULE_roleblock; }
+	}
+
+	public final RoleblockContext roleblock() throws RecognitionException {
+		RoleblockContext _localctx = new RoleblockContext(_ctx, getState());
+		enterRule(_localctx, 20, RULE_roleblock);
+		int _la;
+		try {
+			enterOuterAlt(_localctx, 1);
+			{
+			setState(74);
+			match(INDENT);
+			setState(76); 
+			_errHandler.sync(this);
+			_la = _input.LA(1);
+			do {
+				{
+				{
+				setState(75);
+				role();
+				}
+				}
+				setState(78); 
+				_errHandler.sync(this);
+				_la = _input.LA(1);
+			} while ( _la==WORD );
+			setState(80);
 			match(DEDENT);
 			}
 		}
@@ -547,13 +594,13 @@ public class PythonicParser extends Parser {
 
 	public final RoleContext role() throws RecognitionException {
 		RoleContext _localctx = new RoleContext(_ctx, getState());
-		enterRule(_localctx, 18, RULE_role);
+		enterRule(_localctx, 22, RULE_role);
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(74);
+			setState(82);
 			match(WORD);
-			setState(75);
+			setState(83);
 			match(NL);
 			}
 		}
@@ -568,61 +615,27 @@ public class PythonicParser extends Parser {
 		return _localctx;
 	}
 
-	public static class RolesContext extends ParserRuleContext {
-		public TerminalNode ROLES() { return getToken(PythonicParser.ROLES, 0); }
-		public BlockContext block() {
-			return getRuleContext(BlockContext.class,0);
-		}
-		public RolesContext(ParserRuleContext parent, int invokingState) {
-			super(parent, invokingState);
-		}
-		@Override public int getRuleIndex() { return RULE_roles; }
-	}
-
-	public final RolesContext roles() throws RecognitionException {
-		RolesContext _localctx = new RolesContext(_ctx, getState());
-		enterRule(_localctx, 20, RULE_roles);
-		try {
-			enterOuterAlt(_localctx, 1);
-			{
-			setState(77);
-			match(ROLES);
-			setState(78);
-			block();
-			}
-		}
-		catch (RecognitionException re) {
-			_localctx.exception = re;
-			_errHandler.reportError(this, re);
-			_errHandler.recover(this, re);
-		}
-		finally {
-			exitRule();
-		}
-		return _localctx;
-	}
-
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\21S\4\2\t\2\4\3\t"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\21X\4\2\t\2\4\3\t"+
 		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4"+
-		"\f\t\f\3\2\3\2\6\2\33\n\2\r\2\16\2\34\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\4"+
-		"\3\4\3\4\3\4\3\4\3\4\5\4,\n\4\3\5\3\5\3\5\3\6\3\6\3\6\3\7\3\7\3\7\3\b"+
-		"\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\t\3\t\3\t\3\t\3\t\3\t\3\n\3\n\6\nG\n\n"+
-		"\r\n\16\nH\3\n\3\n\3\13\3\13\3\13\3\f\3\f\3\f\3\f\2\2\r\2\4\6\b\n\f\16"+
-		"\20\22\24\26\2\2\2O\2\32\3\2\2\2\4 \3\2\2\2\6+\3\2\2\2\b-\3\2\2\2\n\60"+
-		"\3\2\2\2\f\63\3\2\2\2\16\66\3\2\2\2\20>\3\2\2\2\22D\3\2\2\2\24L\3\2\2"+
-		"\2\26O\3\2\2\2\30\33\5\4\3\2\31\33\5\26\f\2\32\30\3\2\2\2\32\31\3\2\2"+
-		"\2\33\34\3\2\2\2\34\32\3\2\2\2\34\35\3\2\2\2\35\36\3\2\2\2\36\37\7\2\2"+
-		"\3\37\3\3\2\2\2 !\7\3\2\2!\"\7\r\2\2\"#\7\5\2\2#$\5\22\n\2$\5\3\2\2\2"+
-		"%,\5\16\b\2&,\5\b\5\2\',\5\n\6\2(,\5\f\7\2),\5\20\t\2*,\5\24\13\2+%\3"+
-		"\2\2\2+&\3\2\2\2+\'\3\2\2\2+(\3\2\2\2+)\3\2\2\2+*\3\2\2\2,\7\3\2\2\2-"+
-		".\7\t\2\2./\5\22\n\2/\t\3\2\2\2\60\61\7\n\2\2\61\62\5\22\n\2\62\13\3\2"+
-		"\2\2\63\64\7\13\2\2\64\65\5\22\n\2\65\r\3\2\2\2\66\67\7\b\2\2\678\7\r"+
-		"\2\289\7\7\2\29:\7\r\2\2:;\7\6\2\2;<\7\r\2\2<=\7\17\2\2=\17\3\2\2\2>?"+
-		"\7\f\2\2?@\7\r\2\2@A\7\6\2\2AB\7\r\2\2BC\7\17\2\2C\21\3\2\2\2DF\7\20\2"+
-		"\2EG\5\6\4\2FE\3\2\2\2GH\3\2\2\2HF\3\2\2\2HI\3\2\2\2IJ\3\2\2\2JK\7\21"+
-		"\2\2K\23\3\2\2\2LM\7\r\2\2MN\7\17\2\2N\25\3\2\2\2OP\7\4\2\2PQ\5\22\n\2"+
-		"Q\27\3\2\2\2\6\32\34+H";
+		"\f\t\f\4\r\t\r\3\2\3\2\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\4\3\4\3\4\3\4\3\4"+
+		"\5\4)\n\4\3\5\3\5\3\5\3\6\3\6\3\6\3\7\3\7\3\7\3\b\3\b\3\b\3\b\3\b\3\b"+
+		"\3\b\3\b\3\t\3\t\3\t\3\t\3\t\3\t\3\n\3\n\6\nD\n\n\r\n\16\nE\3\n\3\n\3"+
+		"\13\3\13\3\13\3\f\3\f\6\fO\n\f\r\f\16\fP\3\f\3\f\3\r\3\r\3\r\3\r\2\2\16"+
+		"\2\4\6\b\n\f\16\20\22\24\26\30\2\2\2Q\2\32\3\2\2\2\4\36\3\2\2\2\6(\3\2"+
+		"\2\2\b*\3\2\2\2\n-\3\2\2\2\f\60\3\2\2\2\16\63\3\2\2\2\20;\3\2\2\2\22A"+
+		"\3\2\2\2\24I\3\2\2\2\26L\3\2\2\2\30T\3\2\2\2\32\33\5\24\13\2\33\34\5\4"+
+		"\3\2\34\35\7\2\2\3\35\3\3\2\2\2\36\37\7\3\2\2\37 \7\r\2\2 !\7\5\2\2!\""+
+		"\5\22\n\2\"\5\3\2\2\2#)\5\16\b\2$)\5\b\5\2%)\5\n\6\2&)\5\f\7\2\')\5\20"+
+		"\t\2(#\3\2\2\2($\3\2\2\2(%\3\2\2\2(&\3\2\2\2(\'\3\2\2\2)\7\3\2\2\2*+\7"+
+		"\t\2\2+,\5\22\n\2,\t\3\2\2\2-.\7\n\2\2./\5\22\n\2/\13\3\2\2\2\60\61\7"+
+		"\13\2\2\61\62\5\22\n\2\62\r\3\2\2\2\63\64\7\b\2\2\64\65\7\r\2\2\65\66"+
+		"\7\7\2\2\66\67\7\r\2\2\678\7\6\2\289\7\r\2\29:\7\17\2\2:\17\3\2\2\2;<"+
+		"\7\f\2\2<=\7\r\2\2=>\7\6\2\2>?\7\r\2\2?@\7\17\2\2@\21\3\2\2\2AC\7\20\2"+
+		"\2BD\5\6\4\2CB\3\2\2\2DE\3\2\2\2EC\3\2\2\2EF\3\2\2\2FG\3\2\2\2GH\7\21"+
+		"\2\2H\23\3\2\2\2IJ\7\4\2\2JK\5\26\f\2K\25\3\2\2\2LN\7\20\2\2MO\5\30\r"+
+		"\2NM\3\2\2\2OP\3\2\2\2PN\3\2\2\2PQ\3\2\2\2QR\3\2\2\2RS\7\21\2\2S\27\3"+
+		"\2\2\2TU\7\r\2\2UV\7\17\2\2V\31\3\2\2\2\5(EP";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

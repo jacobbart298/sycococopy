@@ -1,3 +1,6 @@
+from antlr4 import *
+from antlr4.tree.Trees import Trees
+from antlr4.tree.Tree import TerminalNodeImpl
 from PythonicVisitor import PythonicVisitor
 from fsm import FSM
 from transition import Transition
@@ -117,11 +120,26 @@ class FSMbuilder(PythonicVisitor):
 
     # Visit a parse tree produced by PythonicParser#role.
     def visitRole(self, ctx:PythonicParser.RoleContext):
-        return self.visitChildren(ctx)
+        return ctx.getChild(0).getChild(0).getText()
 
 
     # Visit a parse tree produced by PythonicParser#roles.
     def visitRoles(self, ctx:PythonicParser.RolesContext):
-        return self.visitChildren(ctx)
+        roleCount = ctx.getChild(1).getChildCount() - 2
+        roleNodes =  range(1, roleCount + 1)
+        roles = []
+        for roleNode in roleNodes:
+            roles.append(self.visitRole(ctx.getChild(1).getChild(roleNode)))
+        self.fsm.initialiseUncheckedReceives(roles)
+
+    def dump(self, node, depth=0, ruleNames=None):
+        depthStr = '. ' * depth
+        if isinstance(node, TerminalNodeImpl):
+            print(f'{depthStr}{node.symbol}')
+        else:
+            print(f'{depthStr}{Trees.getNodeText(node, ruleNames)}')
+            for child in node.children:
+                self.dump(child, depth + 1, ruleNames)
+
 
 del PythonicParser

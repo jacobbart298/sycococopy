@@ -27,6 +27,8 @@ def main(argv):
     fsm_builder = FSMbuilder()
     fsm = fsm_builder.visitSpecification(tree)
 
+
+
     # perform one walkthrough
     state0a = fsm.getState()
     fsm.makeTransition(Transition("str", "buyer1", "seller"))
