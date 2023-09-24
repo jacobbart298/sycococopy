@@ -5,6 +5,7 @@ from antlrFiles.PythonicLexer import PythonicLexer
 from antlrFiles.PythonicParser import PythonicParser
 from src.core.FSMbuilder import FSMbuilder
 from src.core.transition import Transition
+from src.core.monitor import Monitor
 
 #IMPORTANT: test file is now alloperationsgrammar.txt
 
@@ -18,51 +19,56 @@ def dump(node, depth=0, ruleNames=None):
             dump(child, depth + 1, ruleNames)
 
 def main(argv):
-    input = FileStream(argv[1])
-    lexer = PythonicLexer(input)
-    stream = CommonTokenStream(lexer)
-    parser = PythonicParser(stream)
-    tree = parser.specification() 
-    # dump(tree, ruleNames=parser.ruleNames)
-    fsm_builder = FSMbuilder()
-    fsm = fsm_builder.visitSpecification(tree)
+    monitor = Monitor(argv[1])
+    # input = FileStream(argv[1])
+    # lexer = PythonicLexer(input)
+    # stream = CommonTokenStream(lexer)
+    # parser = PythonicParser(stream)
+    # tree = parser.specification() 
+    # # dump(tree, ruleNames=parser.ruleNames)
+    # fsm_builder = FSMbuilder()
+    # fsm = fsm_builder.visitSpecification(tree)
 
 
 
     # perform one walkthrough
-    state0a = fsm.getState()
-    fsm.makeTransition(Transition("str", "buyer1", "seller"))
-    state1a = fsm.getState()
-    fsm.makeTransition(Transition("int", "seller", "buyer2"))
-    state2a = fsm.getState()
-    fsm.makeTransition(Transition("int", "seller", "buyer1"))
-    state3a = fsm.getState()
-    fsm.makeTransition(Transition("bool", "seller", "buyer1"))
-    state4a = fsm.getState()
-    fsm.makeTransition(Transition("str", "buyer1", "seller"))
-    state5a = fsm.getState()
-    fsm.makeTransition(Transition("str", "buyer1", "buyer2"))
-    state6a = fsm.getState()
+    state0a = monitor.fsm.getState()
+    monitor.verifySend(Transition("str", "buyer1", "seller"))
+    monitor.verifyReceive(Transition("str", "buyer1", "seller"))
+    state1a = monitor.fsm.getState()
+    monitor.verifySend(Transition("int", "seller", "buyer2"))
+    state2a = monitor.fsm.getState()
+    monitor.verifySend(Transition("int", "seller", "buyer1"))
+    state3a = monitor.fsm.getState()
+    monitor.verifySend(Transition("bool", "seller", "buyer1"))
+    state4a = monitor.fsm.getState()
+    monitor.verifyReceive(Transition("int", "seller", "buyer1"))
+    monitor.verifyReceive(Transition("bool", "seller", "buyer1"))
+    monitor.verifySend(Transition("str", "buyer1", "seller"))
+    state5a = monitor.fsm.getState()
+    monitor.verifySend(Transition("str", "buyer1", "buyer2"))
+    state6a = monitor.fsm.getState()
 
     # reset FSM
-    fsm.state = state0a
-    fsm.transitionHistory = []
+    monitor.fsm.state = state0a
+
+    monitor.transitionHistory = []
     print("FSM reset")
 
     # perform another walkthrough
-    state0b = fsm.getState()
-    fsm.makeTransition(Transition("str", "buyer1", "seller"))
-    state1b = fsm.getState()
-    fsm.makeTransition(Transition("int", "seller", "buyer1"))
-    state2b = fsm.getState()
-    fsm.makeTransition(Transition("int", "seller", "buyer2"))
-    state3b = fsm.getState()
-    fsm.makeTransition(Transition("str", "buyer1", "buyer2"))
-    state4b = fsm.getState()
-    fsm.makeTransition(Transition("bool", "buyer2", "buyer1"))
-    state5b = fsm.getState()
-    fsm.makeTransition(Transition("str", "buyer1", "buyer2"))
-    state6b = fsm.getState()
+    state0b = monitor.fsm.getState()
+    monitor.verifySend(Transition("str", "buyer1", "seller"))
+    state1b = monitor.fsm.getState()
+    monitor.verifySend(Transition("int", "seller", "buyer1"))
+    state2b = monitor.fsm.getState()
+    monitor.verifySend(Transition("int", "seller", "buyer2"))
+    state3b = monitor.fsm.getState()
+    monitor.verifySend(Transition("str", "buyer1", "buyer2"))
+    state4b = monitor.fsm.getState()
+    monitor.verifySend(Transition("bool", "buyer2", "buyer1"))
+    state5b = monitor.fsm.getState()
+    monitor.verifySend(Transition("str", "buyer1", "buyer2"))
+    state6b = monitor.fsm.getState()
 
     if (state0a == state0b
         and state1a == state1b 

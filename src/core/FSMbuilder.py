@@ -18,11 +18,12 @@ class FSMbuilder(PythonicVisitor):
 
     def __init__(self):
         self.fsm = FSM()
+        self.roles = []
 
     # Visit a parse tree produced by PythonicParser#specification.
     def visitSpecification(self, ctx:PythonicParser.SpecificationContext):
         self.visitChildren(ctx)
-        return self.fsm
+        return self.fsm, self.roles
 
 
     # Visit a parse tree produced by PythonicParser#protocol.
@@ -30,7 +31,7 @@ class FSMbuilder(PythonicVisitor):
         expression = ctx.getChild(3).getChild(1).getChild(0)
         expression.startState = self.fsm.getState()
         expression.endState = State()
-        self.visitExpression(expression)    
+        self.visitExpression(expression) 
 
 
     # Visit a parse tree produced by PythonicParser#expression.
@@ -127,10 +128,9 @@ class FSMbuilder(PythonicVisitor):
     def visitRoles(self, ctx:PythonicParser.RolesContext):
         roleCount = ctx.getChild(1).getChildCount() - 2
         roleNodes =  range(1, roleCount + 1)
-        roles = []
         for roleNode in roleNodes:
-            roles.append(self.visitRole(ctx.getChild(1).getChild(roleNode)))
-        self.fsm.initialiseUncheckedReceives(roles)
+            self.roles.append(self.visitRole(ctx.getChild(1).getChild(roleNode)))
+
 
     def dump(self, node, depth=0, ruleNames=None):
         depthStr = '. ' * depth
