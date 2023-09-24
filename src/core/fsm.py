@@ -9,13 +9,16 @@ class FSM:
         self.transitionHistory = []
         self.uncheckedReceives = {}
 
+    def removeFromUncheckedReceives(self, transition):
+        self.uncheckedReceives[transition.getReceiver()].remove(transition)
+
     def checkTransition(self, transition):
-        newState = self.state.getNextState(transition)
-        if newState is not None:
-            return True
-        else:
-            return False
-        
+        return (self.state.containsTransition(transition) 
+                and self.uncheckedReceives[transition.getSender()].isEmpty())
+    
+    def checkReceive(self, transition):
+        return transition in self.uncheckedReceives[transition.getReceiver()]
+
     def makeTransition(self, transition):
         newState = self.state.getNextState(transition)
         if newState is not None:
