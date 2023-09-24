@@ -3,3 +3,4 @@
 PythonicLexer.py
 PythonicListener.py
 PythonicParser.py
+/venv/*
