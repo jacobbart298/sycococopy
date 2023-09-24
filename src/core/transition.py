@@ -6,6 +6,15 @@ class Transition:
         self.sender = sender
         self.receiver = receiver
 
+    def getSender(self):
+        return self.sender
+    
+    def getReceiver(self):
+        return self.receiver
+    
+    def getType(self):
+        return self.type
+
     def __eq__(self, other):
         return self.type == other.type and self.sender == other.sender and self.receiver == other.receiver 
 

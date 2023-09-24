@@ -1,4 +1,4 @@
-from transition import Transition
+from src.core.transition import Transition
 
 class State:
 
@@ -9,10 +9,13 @@ class State:
         self.transitionsToState[transition] = state
 
     def getNextState(self, transition): 
-        if transition in self.transitionsToState:
+        if self.containsTransition(transition):
             return self.transitionsToState[transition]
         return None
     
+    def containsTransition(self, transition):
+        return transition in self.transitionsToState
+
     def __str__(self) -> str:
         for transition in self.transitionsToState:
             return(f"I'm in a state that needs the transition: {str(transition)}")

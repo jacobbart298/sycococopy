@@ -1,5 +1,4 @@
 import asyncio
-import trio
 from asyncio import Queue
 
 async def greenProducer(queue: Queue):
