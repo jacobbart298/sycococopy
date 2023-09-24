@@ -1,10 +1,10 @@
 from antlr4 import *
 from antlr4.tree.Trees import Trees
 from antlr4.tree.Tree import TerminalNodeImpl
-from PythonicLexer import PythonicLexer
-from PythonicParser import PythonicParser
-from FSMbuilder import FSMbuilder
-from transition import Transition
+from src.antlrFiles.PythonicLexer import PythonicLexer
+from src.antlrFiles.PythonicParser import PythonicParser
+from src.core.FSMbuilder import FSMbuilder
+from src.core.transition import Transition
 
 #IMPORTANT: test file is now alloperationsgrammar.txt
 

@@ -1,5 +1,5 @@
 from asyncio import Queue
-from transition import Transition
+from src.core.transition import Transition
 
 class Channel():
 

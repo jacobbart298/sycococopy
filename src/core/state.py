@@ -1,4 +1,4 @@
-from transition import Transition
+from src.core.transition import Transition
 
 class State:
 

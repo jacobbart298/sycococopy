@@ -1,6 +1,6 @@
 from typing import Any
-from state import State
-from transition import Transition
+from src.core.state import State
+from src.core.transition import Transition
 
 class FSM:
 
