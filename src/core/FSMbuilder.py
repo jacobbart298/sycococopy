@@ -1,16 +1,16 @@
 from antlr4 import *
 from antlr4.tree.Trees import Trees
 from antlr4.tree.Tree import TerminalNodeImpl
-from src.antlrFiles.pythonicvisitor import PythonicVisitor
+from antlrFiles.pythonicvisitor import PythonicVisitor
 from src.core.fsm import FSM
 from src.core.transition import Transition
 from src.core.state import State
 from itertools import permutations
 
 if "." in __name__:
-    from src.antlrFiles.PythonicParser import PythonicParser
+    from antlrFiles.PythonicParser import PythonicParser
 else:
-    from src.antlrFiles.PythonicParser import PythonicParser
+    from antlrFiles.PythonicParser import PythonicParser
 
 # This class builds an FSM using a visitor for a parse tree produced by PythonicParser.
 

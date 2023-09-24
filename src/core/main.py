@@ -1,8 +1,8 @@
 from antlr4 import *
 from antlr4.tree.Trees import Trees
 from antlr4.tree.Tree import TerminalNodeImpl
-from src.antlrFiles.PythonicLexer import PythonicLexer
-from src.antlrFiles.PythonicParser import PythonicParser
+from antlrFiles.PythonicLexer import PythonicLexer
+from antlrFiles.PythonicParser import PythonicParser
 from src.core.FSMbuilder import FSMbuilder
 from src.core.transition import Transition
 
