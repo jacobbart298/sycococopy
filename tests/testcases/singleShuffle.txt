@@ -1,0 +1,8 @@
+roles:
+    A
+    B
+
+protocol(singleShuffle):
+    shuffle:
+        send X from A to B
+        send Y from A to B

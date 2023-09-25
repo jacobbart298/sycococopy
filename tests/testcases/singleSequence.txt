@@ -1,0 +1,8 @@
+roles:
+    A
+    B
+
+protocol(singleSequence):
+    sequence:
+        send X from A to B
+        send Y from B to A

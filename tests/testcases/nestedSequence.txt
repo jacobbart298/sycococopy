@@ -1,0 +1,16 @@
+roles:
+    A
+    B
+
+protocol(nestedSequence):
+    sequence:
+        shuffle:
+            send X from A to B
+            send Y from B to A
+        send U from B to A
+        choice:
+            send V from A to B
+            send W from B to A
+        sequence:
+            send Q from A to B
+            send R from B to A

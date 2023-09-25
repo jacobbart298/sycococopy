@@ -1,0 +1,8 @@
+roles:
+    A
+    B
+
+protocol(singleChoice):
+    choice:
+        send X from A to B
+        send Y from A to B

@@ -1,0 +1,6 @@
+roles:
+    A
+    B
+
+protocol(singleSend):
+    send X from A to B
