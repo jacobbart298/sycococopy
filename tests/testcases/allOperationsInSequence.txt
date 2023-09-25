@@ -2,8 +2,8 @@ roles:
     A
     B
 
-protocol(nestedShuffle):
-    shuffle:
+protocol(allOperationsInSequence):
+    sequence:
         shuffle:
             send X from A to B
             send Y from B to A
