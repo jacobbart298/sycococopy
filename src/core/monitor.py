@@ -34,7 +34,6 @@ class Monitor():
             self.uncheckedReceives[role] = []
 
     def buildFSM(self, filePath):
-        print(f"File path = {filePath}")
         input = FileStream(filePath)
         lexer = PythonicLexer(input)
         stream = CommonTokenStream(lexer)
