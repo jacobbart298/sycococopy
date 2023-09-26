@@ -18,8 +18,9 @@ class State:
 
     def __str__(self) -> str:
         if len(self.transitionsToStates) == 0:
-            return "I'm a state without transitions"
-        strValue = ""
-        for transition in self.transitionsToStates:
-            strValue += "I'm in a state that needs the transition:" + str(transition) + "\n"
-        return strValue
+            return "I'm a state that supports no transitions"
+        else:
+            strValue = "I am a state that supports the following transitions:\n"
+            for transition in self.transitionsToStates:
+                strValue += str(transition) + "\n"
+            return strValue
