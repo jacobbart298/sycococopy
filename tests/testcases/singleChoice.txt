@@ -4,5 +4,5 @@ roles:
 
 protocol(singleChoice):
     choice:
-        send X from A to B
-        send Y from A to B
+        send V from A to B
+        send W from B to A

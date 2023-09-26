@@ -3,4 +3,4 @@ roles:
     B
 
 protocol(singleSend):
-    send X from A to B
+    send U from B to A

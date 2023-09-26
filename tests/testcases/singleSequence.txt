@@ -4,5 +4,5 @@ roles:
 
 protocol(singleSequence):
     sequence:
-        send X from A to B
-        send Y from B to A
+        send Q from A to B
+        send R from B to A
