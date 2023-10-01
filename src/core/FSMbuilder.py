@@ -120,7 +120,7 @@ class FSMbuilder(PythonicVisitor):
 
     # Visit a parse tree produced by PythonicParser#role.
     def visitRole(self, ctx:PythonicParser.RoleContext):
-        return ctx.getText()
+        return ctx.getChild(0).getText()
 
 
     # Visit a parse tree produced by PythonicParser#roles.
