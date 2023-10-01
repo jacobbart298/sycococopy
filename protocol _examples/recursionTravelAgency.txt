@@ -1,0 +1,22 @@
+roles:
+    customer
+    agency
+    service
+    
+protocol(scribbleProtocolLanguage8):
+    loop t1:
+        sequence:
+            send str from C to A
+            send int from A to C
+            send str from A to S
+        choice:
+            repeat t1
+            choice:
+                sequence:
+                    send bool from C to A
+                    send bool from A to S
+                    send str from C to S
+                    send date from S to C
+                sequence:
+                    send bool from C to A
+                    send bool from A to S
