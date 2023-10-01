@@ -6,7 +6,7 @@ from src.core.monitor import Monitor
 buyer1 = "buyer1"
 buyer2 = "buyer2"
 seller = "seller"
-path = "C:\\Users\\User\\OneDrive\\Documenten\\Open Universiteit\\IB9902 Voorbereiden Afstuderen\\gitwerk\\sycococopy\\protocol_voorbeeld_programma.txt"
+path = ".\protocol_voorbeeld_programma.txt"
 monitor = Monitor(path)
 
 buy1tobuy2 = Channel(buyer1, buyer2, monitor, 1)
