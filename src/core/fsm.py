@@ -13,10 +13,6 @@ class FSM:
     def makeTransition(self, transition):
         newState = self.state.getNextState(transition)        
         self.state = newState
-<<<<<<< HEAD
-        # print(f"I just made the following transition: {str(transition)}")
-=======
->>>>>>> main
         
     def getState(self):
         return self.state
