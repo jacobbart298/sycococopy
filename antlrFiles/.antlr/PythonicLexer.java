@@ -1,4 +1,4 @@
-// Generated from c:\Users\User\OneDrive\Documenten\Open Universiteit\IB9902 Voorbereiden Afstuderen\gitwerk\sycococopy\src\antlrFiles\Pythonic.g4 by ANTLR 4.9.2
+// Generated from c:\Users\User\OneDrive\Documenten\Open Universiteit\IB9902 Voorbereiden Afstuderen\sycococopy\antlrFiles\Pythonic.g4 by ANTLR 4.9.2
 
 from antlr_denter.DenterHelper import DenterHelper
 from PythonicParser import PythonicParser
@@ -20,8 +20,8 @@ public class PythonicLexer extends Lexer {
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
-		PROTOCOL=1, ROLES=2, CLOSEBRKT=3, TO=4, FROM=5, SEND=6, SEQUENCE=7, SHUFFLE=8, 
-		CHOICE=9, CLOSE=10, WORD=11, WS=12, NL=13;
+		PROTOCOL=1, ROLES=2, TO=3, FROM=4, SEND=5, SEQUENCE=6, SHUFFLE=7, CHOICE=8, 
+		REPEAT=9, LOOP=10, CLOSE=11, WORD=12, WS=13, NL=14;
 	public static String[] channelNames = {
 		"DEFAULT_TOKEN_CHANNEL", "HIDDEN"
 	};
@@ -32,23 +32,23 @@ public class PythonicLexer extends Lexer {
 
 	private static String[] makeRuleNames() {
 		return new String[] {
-			"PROTOCOL", "ROLES", "CLOSEBRKT", "TO", "FROM", "SEND", "SEQUENCE", "SHUFFLE", 
-			"CHOICE", "CLOSE", "WORD", "WS", "NL"
+			"PROTOCOL", "ROLES", "TO", "FROM", "SEND", "SEQUENCE", "SHUFFLE", "CHOICE", 
+			"REPEAT", "LOOP", "CLOSE", "WORD", "WS", "NL"
 		};
 	}
 	public static final String[] ruleNames = makeRuleNames();
 
 	private static String[] makeLiteralNames() {
 		return new String[] {
-			null, "'protocol('", "'roles:'", "'):'", "'to'", "'from'", "'send'", 
-			"'sequence:'", "'shuffle:'", "'choice:'", "'close'"
+			null, "'protocol:'", "'roles:'", "'to'", "'from'", "'send'", "'sequence:'", 
+			"'shuffle:'", "'choice:'", "'repeat'", "'loop'", "'close'"
 		};
 	}
 	private static final String[] _LITERAL_NAMES = makeLiteralNames();
 	private static String[] makeSymbolicNames() {
 		return new String[] {
-			null, "PROTOCOL", "ROLES", "CLOSEBRKT", "TO", "FROM", "SEND", "SEQUENCE", 
-			"SHUFFLE", "CHOICE", "CLOSE", "WORD", "WS", "NL"
+			null, "PROTOCOL", "ROLES", "TO", "FROM", "SEND", "SEQUENCE", "SHUFFLE", 
+			"CHOICE", "REPEAT", "LOOP", "CLOSE", "WORD", "WS", "NL"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -127,33 +127,35 @@ public class PythonicLexer extends Lexer {
 	public ATN getATN() { return _ATN; }
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\2\17r\b\1\4\2\t\2\4"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\2\20}\b\1\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
-		"\13\4\f\t\f\4\r\t\r\4\16\t\16\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3\2"+
-		"\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\4\3\4\3\4\3\5\3\5\3\5\3\6\3\6\3\6\3\6\3"+
-		"\6\3\7\3\7\3\7\3\7\3\7\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\b\3\t\3\t"+
-		"\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\13\3\13"+
-		"\3\13\3\13\3\13\3\13\3\f\6\fa\n\f\r\f\16\fb\3\r\3\r\3\r\3\r\3\16\5\16"+
-		"j\n\16\3\16\3\16\7\16n\n\16\f\16\16\16q\13\16\2\2\17\3\3\5\4\7\5\t\6\13"+
-		"\7\r\b\17\t\21\n\23\13\25\f\27\r\31\16\33\17\3\2\3\6\2\62;C\\aac|\2t\2"+
-		"\3\3\2\2\2\2\5\3\2\2\2\2\7\3\2\2\2\2\t\3\2\2\2\2\13\3\2\2\2\2\r\3\2\2"+
-		"\2\2\17\3\2\2\2\2\21\3\2\2\2\2\23\3\2\2\2\2\25\3\2\2\2\2\27\3\2\2\2\2"+
-		"\31\3\2\2\2\2\33\3\2\2\2\3\35\3\2\2\2\5\'\3\2\2\2\7.\3\2\2\2\t\61\3\2"+
-		"\2\2\13\64\3\2\2\2\r9\3\2\2\2\17>\3\2\2\2\21H\3\2\2\2\23Q\3\2\2\2\25Y"+
-		"\3\2\2\2\27`\3\2\2\2\31d\3\2\2\2\33i\3\2\2\2\35\36\7r\2\2\36\37\7t\2\2"+
-		"\37 \7q\2\2 !\7v\2\2!\"\7q\2\2\"#\7e\2\2#$\7q\2\2$%\7n\2\2%&\7*\2\2&\4"+
-		"\3\2\2\2\'(\7t\2\2()\7q\2\2)*\7n\2\2*+\7g\2\2+,\7u\2\2,-\7<\2\2-\6\3\2"+
-		"\2\2./\7+\2\2/\60\7<\2\2\60\b\3\2\2\2\61\62\7v\2\2\62\63\7q\2\2\63\n\3"+
-		"\2\2\2\64\65\7h\2\2\65\66\7t\2\2\66\67\7q\2\2\678\7o\2\28\f\3\2\2\29:"+
-		"\7u\2\2:;\7g\2\2;<\7p\2\2<=\7f\2\2=\16\3\2\2\2>?\7u\2\2?@\7g\2\2@A\7s"+
-		"\2\2AB\7w\2\2BC\7g\2\2CD\7p\2\2DE\7e\2\2EF\7g\2\2FG\7<\2\2G\20\3\2\2\2"+
-		"HI\7u\2\2IJ\7j\2\2JK\7w\2\2KL\7h\2\2LM\7h\2\2MN\7n\2\2NO\7g\2\2OP\7<\2"+
-		"\2P\22\3\2\2\2QR\7e\2\2RS\7j\2\2ST\7q\2\2TU\7k\2\2UV\7e\2\2VW\7g\2\2W"+
-		"X\7<\2\2X\24\3\2\2\2YZ\7e\2\2Z[\7n\2\2[\\\7q\2\2\\]\7u\2\2]^\7g\2\2^\26"+
-		"\3\2\2\2_a\t\2\2\2`_\3\2\2\2ab\3\2\2\2b`\3\2\2\2bc\3\2\2\2c\30\3\2\2\2"+
-		"de\7\"\2\2ef\3\2\2\2fg\b\r\2\2g\32\3\2\2\2hj\7\17\2\2ih\3\2\2\2ij\3\2"+
-		"\2\2jk\3\2\2\2ko\7\f\2\2ln\7\"\2\2ml\3\2\2\2nq\3\2\2\2om\3\2\2\2op\3\2"+
-		"\2\2p\34\3\2\2\2qo\3\2\2\2\7\2`bio\3\b\2\2";
+		"\13\4\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\3\2\3\2\3\2\3\2\3\2\3\2\3\2\3"+
+		"\2\3\2\3\2\3\3\3\3\3\3\3\3\3\3\3\3\3\3\3\4\3\4\3\4\3\5\3\5\3\5\3\5\3\5"+
+		"\3\6\3\6\3\6\3\6\3\6\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\7\3\b\3\b\3"+
+		"\b\3\b\3\b\3\b\3\b\3\b\3\b\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\t\3\n\3\n\3\n"+
+		"\3\n\3\n\3\n\3\n\3\13\3\13\3\13\3\13\3\13\3\f\3\f\3\f\3\f\3\f\3\f\3\r"+
+		"\6\rl\n\r\r\r\16\rm\3\16\3\16\3\16\3\16\3\17\5\17u\n\17\3\17\3\17\7\17"+
+		"y\n\17\f\17\16\17|\13\17\2\2\20\3\3\5\4\7\5\t\6\13\7\r\b\17\t\21\n\23"+
+		"\13\25\f\27\r\31\16\33\17\35\20\3\2\3\6\2\62;C\\aac|\2\177\2\3\3\2\2\2"+
+		"\2\5\3\2\2\2\2\7\3\2\2\2\2\t\3\2\2\2\2\13\3\2\2\2\2\r\3\2\2\2\2\17\3\2"+
+		"\2\2\2\21\3\2\2\2\2\23\3\2\2\2\2\25\3\2\2\2\2\27\3\2\2\2\2\31\3\2\2\2"+
+		"\2\33\3\2\2\2\2\35\3\2\2\2\3\37\3\2\2\2\5)\3\2\2\2\7\60\3\2\2\2\t\63\3"+
+		"\2\2\2\138\3\2\2\2\r=\3\2\2\2\17G\3\2\2\2\21P\3\2\2\2\23X\3\2\2\2\25_"+
+		"\3\2\2\2\27d\3\2\2\2\31k\3\2\2\2\33o\3\2\2\2\35t\3\2\2\2\37 \7r\2\2 !"+
+		"\7t\2\2!\"\7q\2\2\"#\7v\2\2#$\7q\2\2$%\7e\2\2%&\7q\2\2&\'\7n\2\2\'(\7"+
+		"<\2\2(\4\3\2\2\2)*\7t\2\2*+\7q\2\2+,\7n\2\2,-\7g\2\2-.\7u\2\2./\7<\2\2"+
+		"/\6\3\2\2\2\60\61\7v\2\2\61\62\7q\2\2\62\b\3\2\2\2\63\64\7h\2\2\64\65"+
+		"\7t\2\2\65\66\7q\2\2\66\67\7o\2\2\67\n\3\2\2\289\7u\2\29:\7g\2\2:;\7p"+
+		"\2\2;<\7f\2\2<\f\3\2\2\2=>\7u\2\2>?\7g\2\2?@\7s\2\2@A\7w\2\2AB\7g\2\2"+
+		"BC\7p\2\2CD\7e\2\2DE\7g\2\2EF\7<\2\2F\16\3\2\2\2GH\7u\2\2HI\7j\2\2IJ\7"+
+		"w\2\2JK\7h\2\2KL\7h\2\2LM\7n\2\2MN\7g\2\2NO\7<\2\2O\20\3\2\2\2PQ\7e\2"+
+		"\2QR\7j\2\2RS\7q\2\2ST\7k\2\2TU\7e\2\2UV\7g\2\2VW\7<\2\2W\22\3\2\2\2X"+
+		"Y\7t\2\2YZ\7g\2\2Z[\7r\2\2[\\\7g\2\2\\]\7c\2\2]^\7v\2\2^\24\3\2\2\2_`"+
+		"\7n\2\2`a\7q\2\2ab\7q\2\2bc\7r\2\2c\26\3\2\2\2de\7e\2\2ef\7n\2\2fg\7q"+
+		"\2\2gh\7u\2\2hi\7g\2\2i\30\3\2\2\2jl\t\2\2\2kj\3\2\2\2lm\3\2\2\2mk\3\2"+
+		"\2\2mn\3\2\2\2n\32\3\2\2\2op\7\"\2\2pq\3\2\2\2qr\b\16\2\2r\34\3\2\2\2"+
+		"su\7\17\2\2ts\3\2\2\2tu\3\2\2\2uv\3\2\2\2vz\7\f\2\2wy\7\"\2\2xw\3\2\2"+
+		"\2y|\3\2\2\2zx\3\2\2\2z{\3\2\2\2{\36\3\2\2\2|z\3\2\2\2\7\2kmtz\3\b\2\2";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

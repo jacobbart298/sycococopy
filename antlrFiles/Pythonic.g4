@@ -29,11 +29,13 @@ def nextToken(self):
  */
 
 specification       : roles protocol EOF;
-protocol            : PROTOCOL WORD CLOSEBRKT block ;
-expression          : (send | sequence | shuffle | choice | close) ;
+protocol            : PROTOCOL block ;
+expression          : (send | sequence | shuffle | choice | close | loop | repeat) ;
 sequence            : SEQUENCE block ;
 shuffle             : SHUFFLE block ;
 choice              : CHOICE block ;
+loop                : LOOP WORD block ;
+repeat              : REPEAT WORD ;
 send                : SEND WORD FROM WORD TO WORD NL ;
 close               : CLOSE WORD TO WORD NL;
 block               : INDENT expression+ DEDENT ;
@@ -47,15 +49,16 @@ role                : WORD NL;
  *   Lexer rules
  */
 
-PROTOCOL            : 'protocol(' ;
+PROTOCOL            : 'protocol:' ;
 ROLES               : 'roles:' ;
-CLOSEBRKT           : '):' ;
 TO                  : 'to';
 FROM                : 'from';
 SEND                : 'send';
 SEQUENCE            : 'sequence:';
 SHUFFLE             : 'shuffle:' ;  
 CHOICE              : 'choice:' ;
+REPEAT              : 'repeat' ;
+LOOP                : 'loop' ;
 CLOSE               : 'close' ;
 WORD                : ([a-z] | [A-Z] | [0-9] | '_' )+ ;
 WS                  : (' ') -> skip;

@@ -3,7 +3,7 @@ roles:
     buyer2
     seller
 
-protocol(twobuyer):
+protocol:
     sequence:
         send str from buyer1 to seller
         shuffle:
