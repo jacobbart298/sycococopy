@@ -1,6 +1,2 @@
-*.interp
-*.tokens
-PythonicLexer.py
-PythonicListener.py
-PythonicParser.py
-/venv/*
+*.pyc
+venv/*

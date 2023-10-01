@@ -1,0 +1,10 @@
+roles:
+    A
+    B
+
+protocol(sequenceInChoice):
+    choice:
+        sequence:
+            send Q from A to B
+            send R from B to A
+        send U from B to A

@@ -54,13 +54,18 @@ class PythonicVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by PythonicParser#role.
-    def visitRole(self, ctx:PythonicParser.RoleContext):
+    # Visit a parse tree produced by PythonicParser#roles.
+    def visitRoles(self, ctx:PythonicParser.RolesContext):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by PythonicParser#roles.
-    def visitRoles(self, ctx:PythonicParser.RolesContext):
+    # Visit a parse tree produced by PythonicParser#roleblock.
+    def visitRoleblock(self, ctx:PythonicParser.RoleblockContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by PythonicParser#role.
+    def visitRole(self, ctx:PythonicParser.RoleContext):
         return self.visitChildren(ctx)
 
 
