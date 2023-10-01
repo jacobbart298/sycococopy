@@ -6,8 +6,8 @@ from src.core.monitor import Monitor
 buyer1 = "buyer1"
 buyer2 = "buyer2"
 seller = "seller"
-path = ".\protocol_voorbeeld_programma.txt"
-monitor = Monitor(path)
+specification_path = ".\protocol_voorbeeld_programma.txt"
+monitor = Monitor(specification_path)
 
 buy1tobuy2 = Channel(buyer1, buyer2, monitor, 1)
 buy2tobuy1 = Channel(buyer2, buyer1, monitor, 1)

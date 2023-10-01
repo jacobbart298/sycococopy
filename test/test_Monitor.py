@@ -7,7 +7,7 @@ class TestMonitor(unittest.TestCase):
 
     
     def setUp(self):
-        test_specification = r"./Test specifications/test_monitor_grammar.txt"
+        test_specification = r".\test\Test specifications\test_monitor_grammar.txt"
         self.test_monitor = Monitor(test_specification)
 
 
@@ -53,7 +53,6 @@ class TestMonitor(unittest.TestCase):
         faketransition = Transition("str", "seller", "buyer1")
         with self.assertRaises(IllegalTransitionException) as error:
             self.test_monitor.verifyReceive(faketransition)
-
 
     def testSendImpossibleWithUnreceivedMessage(self):    
         transition1 = Transition("str", "buyer1", "seller")

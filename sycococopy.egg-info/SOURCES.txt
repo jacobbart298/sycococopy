@@ -19,9 +19,8 @@ sycococopy.egg-info/PKG-INFO
 sycococopy.egg-info/SOURCES.txt
 sycococopy.egg-info/dependency_links.txt
 sycococopy.egg-info/top_level.txt
-tests/__init__.py
-tests/testFSM.py
-tests/testFSMbuilder.py
-tests/testMonitor.py
-tests/testState.py
-tests/testenDict.py
+test/__init__.py
+test/test_FSM.py
+test/test_FSMbuilder.py
+test/test_Monitor.py
+test/test_State.py
