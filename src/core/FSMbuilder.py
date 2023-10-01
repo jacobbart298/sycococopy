@@ -68,7 +68,6 @@ class FSMbuilder(PythonicVisitor):
             self.visitExpression(expression)
             currentState = nextState
 
-
     # Visit a parse tree produced by PythonicParser#shuffle.
     def visitShuffle(self, ctx:PythonicParser.ShuffleContext):
         expressionCount = ctx.getChildCount() - 2
@@ -121,7 +120,7 @@ class FSMbuilder(PythonicVisitor):
 
     # Visit a parse tree produced by PythonicParser#role.
     def visitRole(self, ctx:PythonicParser.RoleContext):
-        return ctx.getChild(0).getChild(0).getText()
+        return ctx.getChild(0).getText()
 
 
     # Visit a parse tree produced by PythonicParser#roles.
@@ -129,7 +128,8 @@ class FSMbuilder(PythonicVisitor):
         roleCount = ctx.getChild(1).getChildCount() - 2
         roleNodes =  range(1, roleCount + 1)
         for roleNode in roleNodes:
-            self.roles.append(self.visitRole(ctx.getChild(1).getChild(roleNode)))
+            role = self.visitRole(ctx.getChild(1).getChild(roleNode))
+            self.roles.append(role)
 
 
     def dump(self, node, depth=0, ruleNames=None):

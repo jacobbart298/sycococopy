@@ -1,5 +1,0 @@
-shuffle:
-   send string from A to B
-sequence:
-   send int from A to B
-   send nogiets from C to X
