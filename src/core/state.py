@@ -6,12 +6,12 @@ class State:
         self.transitionsToStates = {}
 
     def addTransitionToState(self, transition, state):
-        self.transitionsToStates[transition] = state
+        self.transitionsToStates[transition].append(state)
 
-    def getNextState(self, transition): 
+    def getNextStates(self, transition): 
         if self.containsTransition(transition):
             return self.transitionsToStates[transition]
-        return None
+        return []
     
     def containsTransition(self, transition):
         return transition in self.transitionsToStates
