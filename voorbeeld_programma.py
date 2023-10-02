@@ -30,6 +30,7 @@ async def buyer2():
     buyer1Contributes = await buy1tobuy2.receive()
     if cost-buyer1Contributes >= 20:
         await buy2tobuy1.send(True)
+        await buy1tobuy2.receive()
         await buy2tosell.send(cost)
     else:
         await buy2tobuy1.send(False)
