@@ -99,6 +99,16 @@ class FSMbuilder(PythonicVisitor):
             self.visitExpression(expression)
     
 
+     # Visit a parse tree produced by PythonicParser#loop.
+    def visitLoop(self, ctx:PythonicParser.LoopContext):
+        return self.visitChildren(ctx)
+
+
+    # Visit a parse tree produced by PythonicParser#repeat.
+    def visitRepeat(self, ctx:PythonicParser.RepeatContext):
+        return self.visitChildren(ctx)
+
+
     # Visit a parse tree produced by PythonicParser#send.
     def visitSend(self, ctx:PythonicParser.SendContext):
         type = ctx.getChild(1).getText()
@@ -130,16 +140,6 @@ class FSMbuilder(PythonicVisitor):
         for roleNode in roleNodes:
             role = self.visitRole(ctx.getChild(1).getChild(roleNode))
             self.roles.append(role)
-    
-
-    # Visit a parse tree produced by PythonicParser#loop.
-    def visitLoop(self, ctx:PythonicParser.LoopContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by PythonicParser#repeat.
-    def visitRepeat(self, ctx:PythonicParser.RepeatContext):
-        return self.visitChildren(ctx)
 
 
     def dump(self, node, depth=0, ruleNames=None):

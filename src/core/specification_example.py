@@ -10,7 +10,7 @@ protocol(name):
     #define the protocol
 
 #send
-send type from p to q 
+send type(condition) from p to q 
 
 #receive // LATEN WE NOG EVEN WEG, want receive zou overal tussen moeten komen 
 receive type from p to q
