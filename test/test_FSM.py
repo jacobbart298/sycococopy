@@ -11,7 +11,7 @@ class TestFSM(unittest.TestCase):
         state1 = State()
         state2 = State()
         self.fsm = FSM()
-        state0 = self.fsm.getState()
+        state0 = self.fsm.getStates()[0]
         transition1 = Transition("Boolean", "Jacob", "Teun")
         state0.addTransitionToState(transition1, state1)
         transition2 = Transition("Int", "Teun", "Tobias")
@@ -20,13 +20,13 @@ class TestFSM(unittest.TestCase):
 
     def testMakeCorrectTransition(self):
         # test correct transition
-        self.assertEqual(state0, self.fsm.getState(), "initial state of FSM is incorrect")
+        self.assertEqual(state0, self.fsm.getStates()[0], "initial state of FSM is incorrect")
         self.fsm.makeTransition(transition1)
-        self.assertEqual(state1, self.fsm.getState(), "state after transition is incorrect")
+        self.assertEqual(state1, self.fsm.getStates()[0], "state after transition is incorrect")
         # test if a newly made transition is also accepted (instead of using the global object)
         newTransition2 = Transition("Int", "Teun", "Tobias")
         self.fsm.makeTransition(newTransition2)
-        self.assertEqual(state2, self.fsm.getState(), "state after manually made transition is incorrect")
+        self.assertEqual(state2, self.fsm.getStates()[0], "state after manually made transition is incorrect")
 
 
     def testMakeIncorrectTransition(self):

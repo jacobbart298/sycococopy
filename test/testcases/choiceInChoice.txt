@@ -2,7 +2,7 @@ roles:
     A
     B
 
-protocol(choiceInChoice):
+protocol:
     choice:
         choice:
             send V from A to B

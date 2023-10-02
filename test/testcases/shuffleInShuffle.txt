@@ -2,7 +2,7 @@ roles:
     A
     B
 
-protocol(shuffleInShuffle):
+protocol:
     shuffle:
         shuffle:
             send X from A to B

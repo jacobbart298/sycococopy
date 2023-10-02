@@ -1,0 +1,21 @@
+roles:
+    customer
+    agency
+    service
+
+protocol:
+    rec LOOP:
+        sequence:
+            send str from customer to agency
+            send int from agency to customer
+            send str from agency to service
+            choice:
+                continue LOOP
+                sequence:
+                    send bool from customer to agency
+                    send bool from agency to service
+                    send str from customer to service
+                    send str from service to customer
+                sequence:
+                    send bool from customer to agency
+                    send bool from agency to service

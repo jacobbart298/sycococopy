@@ -13,14 +13,19 @@ class Monitor():
         self.uncheckedReceives = {}
         self.fsm, roles = self.buildFSM(filePath)
         self.initialiseUncheckedReceives(roles)
+        self.halted = False
         
     def verifySend(self, transition: Transition):
+        # Exceptions are not immediately raised from event loop. Halted checks if exception was raised already
+        if self.halted:
+            return
         self.transitionHistory.append(transition)
         transitionAllowed = self.fsm.checkTransition(transition) and self.uncheckedReceives[transition.getSender()] == []
         if transitionAllowed:
             self.fsm.makeTransition(transition)
             self.uncheckedReceives[transition.getReceiver()].append(transition)
         else:
+            self.halted = True
             raise IllegalTransitionException(self.transitionHistory)
     
     def verifyReceive(self, transition: Transition):

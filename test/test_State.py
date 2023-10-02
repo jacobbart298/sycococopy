@@ -19,9 +19,9 @@ class TestState(unittest.TestCase):
     
     def testGetNextState(self):
         # check if an illegal transition returns None
-        self.assertIsNone(state1.getNextState(faketransition), "An impossible transition did not return None")
+        self.assertEqual([], state1.getNextStates(faketransition), "An impossible transition did not return an empty list")
         # check if possible transition returns the next state
-        self.assertEqual(state2, state1.getNextState(transition), "A transition from state1 did not return state2")
+        self.assertEqual(state2, state1.getNextStates(transition)[0], "A transition from state1 did not return state2")
 
     
     def testContainsTransition(self):

@@ -5,14 +5,19 @@ from src.core.transition import Transition
 class FSM:
 
     def __init__(self):
-        self.state = State()
+        self.states = [State()]
 
     def checkTransition(self, transition):
-        return self.state.containsTransition(transition)
+        for state in self.states:
+            if state.containsTransition(transition):
+                return True
+        return False
 
     def makeTransition(self, transition):
-        newState = self.state.getNextState(transition)        
-        self.state = newState
+        newStates = []
+        for state in self.states:
+            newStates.extend(state.getNextStates(transition))
+        self.states = newStates
         
-    def getState(self):
-        return self.state
+    def getStates(self):
+        return self.states
