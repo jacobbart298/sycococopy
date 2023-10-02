@@ -3,7 +3,7 @@ roles:
     agency
     service
 
-protocol(travelAgency):
+protocol:
     rec LOOP:
         sequence:
             send str from customer to agency

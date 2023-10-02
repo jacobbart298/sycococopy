@@ -29,7 +29,7 @@ class FSMbuilder(PythonicVisitor):
     # Visit a parse tree produced by PythonicParser#protocol.
     def visitProtocol(self, ctx:PythonicParser.ProtocolContext):
         expression = ctx.getChild(1).getChild(1).getChild(0)
-        expression.startState = self.fsm.getState()
+        expression.startState = self.fsm.getStates()[0]
         expression.endState = State()
         self.visitExpression(expression) 
 

@@ -21,17 +21,19 @@ async def buyer1():
     quote = await selltobuy1.receive()
     await buy1tobuy2.send(quote//2)
     buys_book = await buy2tobuy1.receive()
+    if buys_book:
+        await buy1tobuy2.send(quote//2)
     print(f"Buyer1 finished, buys_book = {buys_book}")
 
 async def buyer2():
     cost = await selltobuy2.receive()
     buyer1Contributes = await buy1tobuy2.receive()
-    if cost-buyer1Contributes <= 20:
+    if cost-buyer1Contributes >= 20:
         await buy2tobuy1.send(True)
         await buy2tosell.send(cost)
     else:
-        await buy2tosell.send(False)
         await buy2tobuy1.send(False)
+        await buy2tosell.send(False)
     print("Buyer 2 finished")
 
 async def seller():

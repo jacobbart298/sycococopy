@@ -2,7 +2,7 @@ roles:
     A
     B
 
-protocol(choiceInShuffle):
+protocol:
     shuffle:
         choice:
             send V from A to B

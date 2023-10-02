@@ -2,7 +2,7 @@ roles:
     A
     B
 
-protocol(sequenceInChoice):
+protocol:
     choice:
         sequence:
             send Q from A to B

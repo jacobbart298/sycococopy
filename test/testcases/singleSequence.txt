@@ -2,7 +2,7 @@ roles:
     A
     B
 
-protocol(singleSequence):
+protocol:
     sequence:
         send Q from A to B
         send R from B to A

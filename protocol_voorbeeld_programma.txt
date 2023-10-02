@@ -15,6 +15,6 @@ protocol:
                 send bool from buyer2 to buyer1
                 send int from buyer1 to buyer2
                 send int from buyer2 to seller
-            shuffle:
-                send bool from buyer2 to seller
+            sequence:
                 send bool from buyer2 to buyer1
+                send bool from buyer2 to seller

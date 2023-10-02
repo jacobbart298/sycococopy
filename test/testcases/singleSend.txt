@@ -2,5 +2,5 @@ roles:
     A
     B
 
-protocol(singleSend):
+protocol:
     send U from B to A
