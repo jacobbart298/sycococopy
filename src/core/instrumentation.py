@@ -1,5 +1,4 @@
 from asyncio import Queue
-import asyncio
 from src.core.transition import Transition
 from src.core.monitor import Monitor
 
@@ -16,7 +15,6 @@ class Channel():
         self.monitor.verifySend(transition)
         #throws an exception from monitor if wrong
         await self.queue.put(item)
-        await asyncio.sleep(0)
     
     async def receive(self):
         item = await self.queue.get()
