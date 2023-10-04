@@ -98,26 +98,19 @@ class FSMbuilder(PythonicVisitor):
 
     # Visit a parse tree produced by PythonicParser#choice.
     def visitChoice(self, ctx:PythonicParser.ChoiceContext):
-        print("in visit choice met als DUMP:")
-        # self.dump(ctx)
         expressionCount = ctx.getChildCount() - 2
         expressionIndices =  range(1, expressionCount + 1)
-        i = 1
         for index in expressionIndices:
-            print(f"De {i}de keer")
             expression = ctx.getChild(index).getChild(0)
-            print(f"bezoek ik {expression.getText()}")
             expression.startState = ctx.startState
             expression.endState = ctx.endState
             self.visitExpression(expression)
-            i += 1
     
 
      # Visit a parse tree produced by PythonicParser#loop.
     def visitLoop(self, ctx:PythonicParser.LoopContext):
         tag_with_semi_colon = ctx.getChild(1).getText()
         tag = tag_with_semi_colon[0:len(tag_with_semi_colon) - 1]
-        print(f"tag is {tag}")
         self.loop_dictionary[tag] = ctx.startState
         expression = ctx.getChild(2).getChild(1).getChild(0)
         expression.startState = ctx.startState
@@ -127,7 +120,6 @@ class FSMbuilder(PythonicVisitor):
 
     # Visit a parse tree produced by PythonicParser#repeat.
     def visitRepeat(self, ctx:PythonicParser.RepeatContext):
-        self.dump(ctx)
         tag = ctx.getChild(1).getText()
         startState = self.loop_dictionary[tag]
         self.previousState.addTransitionToState(self.previousTransition, startState)          
