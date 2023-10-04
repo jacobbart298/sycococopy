@@ -426,7 +426,6 @@ class TestFSMBuilder(unittest.TestCase):
         # in q3 there is no transition
         self.assertEqual(0, len(q3.transitionsToStates))
 
-    # to do
     def test_shuffleInSequence(self):
         # see shuffleInSequence.png in tests/testcases/fsms for fsm
         fsm = self.buildFSM("shuffleInSequence.txt")
@@ -869,27 +868,27 @@ class TestFSMBuilder(unittest.TestCase):
         # transition bool_A_S leads to two states
         self.assertEqual(2, len(fsm.getStates()))
         if fsm.getStates()[0].containsTransition(str_C_S):
-            q7 = fsm.getStates()[0]
-            q5 = fsm.getStates()[1]
+            q6 = fsm.getStates()[0]
+            q9 = fsm.getStates()[1]
         elif fsm.getStates()[1].containsTransition(str_C_S):
-            q7 = fsm.getStates()[1]
-            q5 = fsm.getStates()[0]
+            q6 = fsm.getStates()[1]
+            q9 = fsm.getStates()[0]
         else:
             self.fail("Builder fails to handle non-determinism")
-        # in q5 there is no transition
-        self.assertEqual(0, len(q5.transitionsToStates))
-        # in q7 there is one transition: str_C_S
-        self.assertEqual(1, len(q7.transitionsToStates))
-        self.assertIn(str_C_S, q7.transitionsToStates)
+        # in q9 there is no transition
+        self.assertEqual(0, len(q9.transitionsToStates))
+        # in q6 there is one transition: str_C_S
+        self.assertEqual(1, len(q6.transitionsToStates))
+        self.assertIn(str_C_S, q6.transitionsToStates)
 
         # make transition str_C_S
         fsm.makeTransition(str_C_S)
         # transition str_C_S leads to one state
         self.assertEqual(1, len(fsm.getStates()))
-        q9 = fsm.getStates()[0]
-        # in q9 there is one transition: str_S_C
-        self.assertEqual(1, len(q9.transitionsToStates))
-        self.assertIn(str_S_C, q9.transitionsToStates)
+        q8 = fsm.getStates()[0]
+        # in q8 there is one transition: str_S_C
+        self.assertEqual(1, len(q8.transitionsToStates))
+        self.assertIn(str_S_C, q8.transitionsToStates)
 
         # reset fsm
         fsm.states = [q0]
@@ -906,29 +905,31 @@ class TestFSMBuilder(unittest.TestCase):
         fsm.makeTransition(str_C_S)
         # transition str_C_S leads to a single state
         self.assertEqual(1, len(fsm.getStates()))
-        q8 = fsm.getStates()[0]
-        # in q8 there is one transition: bool_A_S
-        self.assertEqual(1, len(q8.transitionsToStates))
-        self.assertIn(bool_A_S, q8.transitionsToStates)
+        q7 = fsm.getStates()[0]
+        # in q7 there is one transition: bool_A_S
+        self.assertEqual(1, len(q7.transitionsToStates))
+        self.assertIn(bool_A_S, q7.transitionsToStates)
 
         # make transition bool_A_S
         fsm.makeTransition(bool_A_S)
         # transition bool_A_S leads to a single state
         self.assertEqual(1, len(fsm.getStates()))
-        q9_ = fsm.getStates()[0]
-        # in q9_ there is one transition: str_S_C
-        self.assertEqual(1, len(q9_.transitionsToStates))
-        self.assertIn(str_S_C, q9_.transitionsToStates)
-        # q9 and q9_ are the same state
-        self.assertEqual(q9, q9_)
+        q8_ = fsm.getStates()[0]
+        # in q8_ there is one transition: str_S_C
+        self.assertEqual(1, len(q8_.transitionsToStates))
+        self.assertIn(str_S_C, q8_.transitionsToStates)
+        # q8 and q8_ are the same state
+        self.assertEqual(q8, q8_)
 
         # make transition str_S_C
         fsm.makeTransition(str_S_C)
         # transition str_S_C leads to one state
         self.assertEqual(1, len(fsm.getStates()))
-        q10 = fsm.getStates()[0]
-        # in q10 there is no transition
-        self.assertEqual(0, len(q10.transitionsToStates))
+        q9_ = fsm.getStates()[0]
+        # in q9_ there is no transition
+        self.assertEqual(0, len(q9_.transitionsToStates))
+        # q9 and q9_ are the same state
+        self.assertEqual(q9, q9_)
 
     def buildFSM(self, fileName):
         current_directory = os.path.dirname(os.path.abspath(__file__))
