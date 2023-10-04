@@ -615,81 +615,92 @@ class TestFSMBuilder(unittest.TestCase):
 
     def test_twoBuyer(self):
         # see twoBuyer.png in tests/testcases/fsms for fsm
+        str_b1_s = Transition("str", "buyer1", "seller")
+        int_s_b1 = Transition("int", "seller", "buyer1")
+        int_s_b2 = Transition("int", "seller", "buyer2")
+        int_b1_b2 = Transition("int", "buyer1", "buyer2")
+        bool_b2_b1 = Transition("bool", "buyer2", "buyer1")
+        bool_b2_s = Transition("bool", "buyer2", "seller")
+        int_b2_s = Transition("int", "buyer2", "seller")
         fsm = self.buildFSM("twoBuyer.txt")
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
-        title_b1_s = Transition("str", "buyer1", "seller")
-        quote_s_b1 = Transition("int", "seller", "buyer1")
-        quote_s_b2 = Transition("int", "seller", "buyer2")
-        contrib_b1_b2 = Transition("int", "buyer1", "buyer2")
-        accept_b2_b1 = Transition("bool", "buyer2", "buyer1")
-        reject_b2_s = Transition("bool", "buyer2", "seller")
-        reject_b2_b1 = Transition("bool", "buyer2", "buyer1")
-        quote_b2_s = Transition("int", "buyer2", "seller")
-        # in q0 there is one transition: title_b1_s
+        # in q0 there is one transition: str_b1_s
         self.assertEqual(1, len(q0.transitionsToStates))
-        self.assertIn(title_b1_s, q0.transitionsToStates)
+        self.assertIn(str_b1_s, q0.transitionsToStates)
 
-        # make transition title_b1_s
-        fsm.makeTransition(title_b1_s)
+        # make transition str_b1_s
+        fsm.makeTransition(str_b1_s)
+        # transition str_b1_s leads to one state
+        self.assertEqual(1, len(fsm.getStates()))
         q1 = fsm.getStates()[0]
-        # in q1 there are two transitions: quote_s_b1 and quote_s_b2
+        # in q1 there are two transitions: int_s_b1 and int_s_b2
         self.assertEqual(2, len(q1.transitionsToStates))
-        self.assertIn(quote_s_b1, q1.transitionsToStates)
-        self.assertIn(quote_s_b2, q1.transitionsToStates)
+        self.assertIn(int_s_b1, q1.transitionsToStates)
+        self.assertIn(int_s_b2, q1.transitionsToStates)
 
-        # perform shuffle: first quote_s_b1 then quote_s_b2
-        # make transition quote_s_b1
-        fsm.makeTransition(quote_s_b1)
+        # perform shuffle: first int_s_b1 then int_s_b2
+        # make transition int_s_b1
+        fsm.makeTransition(int_s_b1)
+        # transition int_s_b1 leads to one state
+        self.assertEqual(1, len(fsm.getStates()))
         q2 = fsm.getStates()[0]
-        # in q2 there is one transition: quote_s_b2
+        # in q2 there is one transition: int_s_b2
         self.assertEqual(1, len(q2.transitionsToStates))
-        self.assertIn(quote_s_b2, q2.transitionsToStates)
-        # make transition quote_s_b2
-        fsm.makeTransition(quote_s_b2)
+        self.assertIn(int_s_b2, q2.transitionsToStates)
+        # make transition int_s_b2
+        fsm.makeTransition(int_s_b2)
+        # transition int_s_b2 leads to one state
+        self.assertEqual(1, len(fsm.getStates()))
         q4_b1_b2 = fsm.getStates()[0]
-        # in q4_b1_b2 there is one transition: quote_s_b2
+        # in q4_b1_b2 there is one transition: int_b1_b2
         self.assertEqual(1, len(q4_b1_b2.transitionsToStates))
-        self.assertIn(contrib_b1_b2, q4_b1_b2.transitionsToStates)
+        self.assertIn(int_b1_b2, q4_b1_b2.transitionsToStates)
 
         # revert fsm to state q1
         fsm.states = [q1]
 
-        # perform shuffle: first quote_s_b1 then quote_s_b2
-        # make transition quote_s_b2
-        fsm.makeTransition(quote_s_b2)
+        # perform shuffle: first int_s_b2 then int_s_b1
+        # make transition int_s_b2
+        fsm.makeTransition(int_s_b2)
+        # transition int_s_b2 leads to one state
+        self.assertEqual(1, len(fsm.getStates()))
         q3 = fsm.getStates()[0]
-        # in q3 there is one transition: quote_s_b1
+        # in q3 there is one transition: int_s_b1
         self.assertEqual(1, len(q3.transitionsToStates))
-        self.assertIn(quote_s_b1, q3.transitionsToStates)
-        # make transition quote_s_b1
-        fsm.makeTransition(quote_s_b1)
+        self.assertIn(int_s_b1, q3.transitionsToStates)
+        # make transition int_s_b1
+        fsm.makeTransition(int_s_b1)
+        # transition int_s_b1 leads to one state
+        self.assertEqual(1, len(fsm.getStates()))
         q4_b2_b1 = fsm.getStates()[0]
 
         # q4_b1_b2 and q4_b2_b1 are the same state
         self.assertEqual(q4_b1_b2, q4_b2_b1)
 
-        # make transition contrib_b1_b2
-        fsm.makeTransition(contrib_b1_b2)
+        # make transition int_b1_b2
+        fsm.makeTransition(int_b1_b2)
+        # transition int_b1_b2 leads to one state
+        self.assertEqual(1, len(fsm.getStates()))
         q5 = fsm.getStates()[0]
-        # in q5 there are three transition: reject_b2_s, reject_b2_b1, accept_b2_b1
-        statesCount = 0
-        for stateLists in q5.transitionsToStates.values():
-            statesCount += len(stateLists)
-        self.assertEqual(3, statesCount)
-        self.assertIn(reject_b2_s, q5.transitionsToStates)
-        self.assertIn(reject_b2_b1, q5.transitionsToStates)
-        self.assertIn(accept_b2_b1, q5.transitionsToStates)
+        # in q5 there are two transitions: bool_b2_b1 and bool_b2_s
+        self.assertEqual(2, len(q5.transitionsToStates))
+        self.assertIn(bool_b2_s, q5.transitionsToStates)
+        self.assertIn(bool_b2_b1, q5.transitionsToStates)
 
-        # perform shuffle: first reject_b2_s then reject_b2_b1
-        # make transition reject_b2_s
-        fsm.makeTransition(reject_b2_s)
+        # perform shuffle: first bool_b2_s then bool_b2_b1
+        # make transition bool_b2_s
+        fsm.makeTransition(bool_b2_s)
+        # transition bool_b2_s leads to one state
+        self.assertEqual(1, len(fsm.getStates()))
         q6 = fsm.getStates()[0]
-        # in q6 there is one transition: quote_s_b1
+        # in q6 there is one transition: bool_b2_b1
         self.assertEqual(1, len(q6.transitionsToStates))
-        self.assertIn(reject_b2_b1, q6.transitionsToStates)
-        # make transition reject_b2_b1
-        fsm.makeTransition(reject_b2_b1)
+        self.assertIn(bool_b2_b1, q6.transitionsToStates)
+        # make transition bool_b2_b1
+        fsm.makeTransition(bool_b2_b1)
+        # transition bool_b2_b1 leads to one state
+        self.assertEqual(1, len(fsm.getStates()))
         q10_s_b1 = fsm.getStates()[0]
         # in q10_s_b1 there is no transition
         self.assertEqual(0, len(q10_s_b1.transitionsToStates))
@@ -697,15 +708,29 @@ class TestFSMBuilder(unittest.TestCase):
         # revert fsm to state q5
         fsm.states = [q5]
 
-        # perform shuffle: first reject_b2_b1 then reject_b2_s
-        # make transition reject_b2_b1
-        fsm.makeTransition(reject_b2_b1)
-        q9 = fsm.getStates()[1]
-        # in q9 there is one transition: reject_b2_s
+        # perform shuffle: first bool_b2_b1 then bool_b2_s
+        # make transition bool_b2_b1
+        fsm.makeTransition(bool_b2_b1)
+        # transition bool_b2_b1 leads to two states
+        self.assertEqual(2, len(fsm.getStates()))
+        if fsm.getStates()[0].containsTransition(bool_b2_s):
+            q9 = fsm.getStates()[0]
+            q7 = fsm.getStates()[1]
+        elif fsm.getStates()[1].containsTransition(bool_b2_s):
+            q9 = fsm.getStates()[1]
+            q7 = fsm.getStates()[0]
+        else:
+            self.fail("Builder fails to handle non-determinism")
+        # in q9 there is one transition: bool_b2_s
         self.assertEqual(1, len(q9.transitionsToStates))
-        self.assertIn(reject_b2_s, q9.transitionsToStates)
-        # make transition reject_b2_s
-        fsm.makeTransition(reject_b2_s)
+        self.assertIn(bool_b2_s, q9.transitionsToStates)
+        # in q7 there is one transition: int_b1_b2
+        self.assertEqual(1, len(q7.transitionsToStates))
+        self.assertIn(int_b1_b2, q7.transitionsToStates)
+        # make transition bool_b2_s
+        fsm.makeTransition(bool_b2_s)
+        # transition bool_b2_s leads to one state
+        self.assertEqual(1, len(fsm.getStates()))        
         q10_b1_s = fsm.getStates()[0]
         # in q10_b1_s there is no transition
         self.assertEqual(0, len(q10_b1_s.transitionsToStates))
@@ -713,22 +738,21 @@ class TestFSMBuilder(unittest.TestCase):
         # revert fsm to state q5
         fsm.states = [q5]
 
-        # make transition accept_b2_b1
-        fsm.makeTransition(reject_b2_b1)
-        q7 = fsm.getStates()[0]
-        # in q7 there is one transition: contrib_b1_b2
-        self.assertEqual(1, len(q7.transitionsToStates))
-        #self.assertIn(contrib_b1_b2, q7.transitionsToStates)
-        
-        # make transition contrib_b1_b2
-        fsm.makeTransition(contrib_b1_b2)
+        # make transition bool_b2_b1
+        fsm.makeTransition(bool_b2_b1)
+        # make transition int_b1_b2
+        fsm.makeTransition(int_b1_b2)
+        # transition int_b1_b2 leads to one state
+        self.assertEqual(1, len(fsm.getStates()))
         q8 = fsm.getStates()[0]
-        # in q8 there is one transition: quote_b2_s
+        # in q8 there is one transition: int_b2_s
         self.assertEqual(1, len(q8.transitionsToStates))
-        self.assertIn(quote_b2_s, q8.transitionsToStates)
+        self.assertIn(int_b2_s, q8.transitionsToStates)
 
-        # make transition quote_b2_s
-        fsm.makeTransition(quote_b2_s)
+        # make transition int_b2_s
+        fsm.makeTransition(int_b2_s)
+        # transition int_b1_b2 leads to one state
+        self.assertEqual(1, len(fsm.getStates()))
         q10_sequence = fsm.getStates()[0]
         # in q10_sequence there is no transition
         self.assertEqual(0, len(q10_sequence.transitionsToStates))
