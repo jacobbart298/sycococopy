@@ -19,6 +19,10 @@ class FSMbuilder(PythonicVisitor):
     def __init__(self):
         self.fsm = FSM()
         self.roles = []
+        self.loop_dictionary = {}
+        self.previousState: State
+        self.previousTransition: Transition
+
 
     # Visit a parse tree produced by PythonicParser#specification.
     def visitSpecification(self, ctx:PythonicParser.SpecificationContext):
@@ -48,6 +52,10 @@ class FSMbuilder(PythonicVisitor):
                 self.visitShuffle(expression)
             case "send":
                 self.visitSend(ctx)
+            case "loop":
+                self.visitLoop(ctx)
+            case "repeat":
+                self.visitRepeat(ctx)
 
 
     # Visit a parse tree produced by PythonicParser#sequence.
@@ -101,12 +109,20 @@ class FSMbuilder(PythonicVisitor):
 
      # Visit a parse tree produced by PythonicParser#loop.
     def visitLoop(self, ctx:PythonicParser.LoopContext):
-        return self.visitChildren(ctx)
+        tag_with_semi_colon = ctx.getChild(1).getText()
+        tag = tag_with_semi_colon[0:len(tag_with_semi_colon) - 1]
+        self.loop_dictionary[tag] = ctx.startState
+        expression = ctx.getChild(2).getChild(1).getChild(0)
+        expression.startState = ctx.startState
+        expression.endState = ctx.endState
+        self.visitExpression(expression)
 
 
     # Visit a parse tree produced by PythonicParser#repeat.
     def visitRepeat(self, ctx:PythonicParser.RepeatContext):
-        return self.visitChildren(ctx)
+        tag = ctx.getChild(1).getText()
+        startState = self.loop_dictionary[tag]
+        self.previousState.addTransitionToState(self.previousTransition, startState)          
 
 
     # Visit a parse tree produced by PythonicParser#send.
@@ -116,6 +132,8 @@ class FSMbuilder(PythonicVisitor):
         receiver = ctx.getChild(5).getText()
         transition = Transition(type, sender, receiver)
         ctx.startState.addTransitionToState(transition, ctx.endState)
+        self.previousTransition = transition
+        self.previousState = ctx.startState
 
 
     # Visit a parse tree produced by PythonicParser#close.

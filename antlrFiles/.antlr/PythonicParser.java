@@ -1,4 +1,4 @@
-// Generated from c:\Users\User\OneDrive\Documenten\Open Universiteit\IB9902 Voorbereiden Afstuderen\sycococopy\antlrFiles\Pythonic.g4 by ANTLR 4.9.2
+// Generated from c:/Users/User/OneDrive/Documenten/Open Universiteit/IB9902 Voorbereiden Afstuderen/sycococopy/antlrFiles/Pythonic.g4 by ANTLR 4.13.1
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -8,16 +8,17 @@ import java.util.List;
 import java.util.Iterator;
 import java.util.ArrayList;
 
-@SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast"})
+@SuppressWarnings({"all", "warnings", "unchecked", "unused", "cast", "CheckReturnValue"})
 public class PythonicParser extends Parser {
-	static { RuntimeMetaData.checkVersion("4.9.2", RuntimeMetaData.VERSION); }
+	static { RuntimeMetaData.checkVersion("4.13.1", RuntimeMetaData.VERSION); }
 
 	protected static final DFA[] _decisionToDFA;
 	protected static final PredictionContextCache _sharedContextCache =
 		new PredictionContextCache();
 	public static final int
 		PROTOCOL=1, ROLES=2, TO=3, FROM=4, SEND=5, SEQUENCE=6, SHUFFLE=7, CHOICE=8, 
-		REPEAT=9, LOOP=10, CLOSE=11, WORD=12, WS=13, NL=14, INDENT=15, DEDENT=16;
+		REPEAT=9, LOOP=10, CLOSE=11, LOOPLABEL=12, WORD=13, WS=14, NL=15, INDENT=16, 
+		DEDENT=17;
 	public static final int
 		RULE_specification = 0, RULE_protocol = 1, RULE_expression = 2, RULE_sequence = 3, 
 		RULE_shuffle = 4, RULE_choice = 5, RULE_loop = 6, RULE_repeat = 7, RULE_send = 8, 
@@ -41,7 +42,8 @@ public class PythonicParser extends Parser {
 	private static String[] makeSymbolicNames() {
 		return new String[] {
 			null, "PROTOCOL", "ROLES", "TO", "FROM", "SEND", "SEQUENCE", "SHUFFLE", 
-			"CHOICE", "REPEAT", "LOOP", "CLOSE", "WORD", "WS", "NL", "INDENT", "DEDENT"
+			"CHOICE", "REPEAT", "LOOP", "CLOSE", "LOOPLABEL", "WORD", "WS", "NL", 
+			"INDENT", "DEDENT"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -95,6 +97,7 @@ public class PythonicParser extends Parser {
 		_interp = new ParserATNSimulator(this,_ATN,_decisionToDFA,_sharedContextCache);
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class SpecificationContext extends ParserRuleContext {
 		public RolesContext roles() {
 			return getRuleContext(RolesContext.class,0);
@@ -134,6 +137,7 @@ public class PythonicParser extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class ProtocolContext extends ParserRuleContext {
 		public TerminalNode PROTOCOL() { return getToken(PythonicParser.PROTOCOL, 0); }
 		public BlockContext block() {
@@ -168,6 +172,7 @@ public class PythonicParser extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class ExpressionContext extends ParserRuleContext {
 		public SendContext send() {
 			return getRuleContext(SendContext.class,0);
@@ -263,6 +268,7 @@ public class PythonicParser extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class SequenceContext extends ParserRuleContext {
 		public TerminalNode SEQUENCE() { return getToken(PythonicParser.SEQUENCE, 0); }
 		public BlockContext block() {
@@ -297,6 +303,7 @@ public class PythonicParser extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class ShuffleContext extends ParserRuleContext {
 		public TerminalNode SHUFFLE() { return getToken(PythonicParser.SHUFFLE, 0); }
 		public BlockContext block() {
@@ -331,6 +338,7 @@ public class PythonicParser extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class ChoiceContext extends ParserRuleContext {
 		public TerminalNode CHOICE() { return getToken(PythonicParser.CHOICE, 0); }
 		public BlockContext block() {
@@ -365,9 +373,10 @@ public class PythonicParser extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class LoopContext extends ParserRuleContext {
 		public TerminalNode LOOP() { return getToken(PythonicParser.LOOP, 0); }
-		public TerminalNode WORD() { return getToken(PythonicParser.WORD, 0); }
+		public TerminalNode LOOPLABEL() { return getToken(PythonicParser.LOOPLABEL, 0); }
 		public BlockContext block() {
 			return getRuleContext(BlockContext.class,0);
 		}
@@ -386,7 +395,7 @@ public class PythonicParser extends Parser {
 			setState(53);
 			match(LOOP);
 			setState(54);
-			match(WORD);
+			match(LOOPLABEL);
 			setState(55);
 			block();
 			}
@@ -402,9 +411,11 @@ public class PythonicParser extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class RepeatContext extends ParserRuleContext {
 		public TerminalNode REPEAT() { return getToken(PythonicParser.REPEAT, 0); }
 		public TerminalNode WORD() { return getToken(PythonicParser.WORD, 0); }
+		public TerminalNode NL() { return getToken(PythonicParser.NL, 0); }
 		public RepeatContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -421,6 +432,8 @@ public class PythonicParser extends Parser {
 			match(REPEAT);
 			setState(58);
 			match(WORD);
+			setState(59);
+			match(NL);
 			}
 		}
 		catch (RecognitionException re) {
@@ -434,6 +447,7 @@ public class PythonicParser extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class SendContext extends ParserRuleContext {
 		public TerminalNode SEND() { return getToken(PythonicParser.SEND, 0); }
 		public List<TerminalNode> WORD() { return getTokens(PythonicParser.WORD); }
@@ -455,19 +469,19 @@ public class PythonicParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(60);
-			match(SEND);
 			setState(61);
-			match(WORD);
+			match(SEND);
 			setState(62);
-			match(FROM);
+			match(WORD);
 			setState(63);
-			match(WORD);
+			match(FROM);
 			setState(64);
-			match(TO);
-			setState(65);
 			match(WORD);
+			setState(65);
+			match(TO);
 			setState(66);
+			match(WORD);
+			setState(67);
 			match(NL);
 			}
 		}
@@ -482,6 +496,7 @@ public class PythonicParser extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class CloseContext extends ParserRuleContext {
 		public TerminalNode CLOSE() { return getToken(PythonicParser.CLOSE, 0); }
 		public List<TerminalNode> WORD() { return getTokens(PythonicParser.WORD); }
@@ -502,15 +517,15 @@ public class PythonicParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(68);
-			match(CLOSE);
 			setState(69);
-			match(WORD);
+			match(CLOSE);
 			setState(70);
-			match(TO);
-			setState(71);
 			match(WORD);
+			setState(71);
+			match(TO);
 			setState(72);
+			match(WORD);
+			setState(73);
 			match(NL);
 			}
 		}
@@ -525,6 +540,7 @@ public class PythonicParser extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class BlockContext extends ParserRuleContext {
 		public TerminalNode INDENT() { return getToken(PythonicParser.INDENT, 0); }
 		public TerminalNode DEDENT() { return getToken(PythonicParser.DEDENT, 0); }
@@ -547,23 +563,23 @@ public class PythonicParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(74);
+			setState(75);
 			match(INDENT);
-			setState(76); 
+			setState(77); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(75);
+				setState(76);
 				expression();
 				}
 				}
-				setState(78); 
+				setState(79); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
-			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << SEND) | (1L << SEQUENCE) | (1L << SHUFFLE) | (1L << CHOICE) | (1L << REPEAT) | (1L << LOOP) | (1L << CLOSE))) != 0) );
-			setState(80);
+			} while ( (((_la) & ~0x3f) == 0 && ((1L << _la) & 4064L) != 0) );
+			setState(81);
 			match(DEDENT);
 			}
 		}
@@ -578,6 +594,7 @@ public class PythonicParser extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class RolesContext extends ParserRuleContext {
 		public TerminalNode ROLES() { return getToken(PythonicParser.ROLES, 0); }
 		public RoleblockContext roleblock() {
@@ -595,9 +612,9 @@ public class PythonicParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(82);
-			match(ROLES);
 			setState(83);
+			match(ROLES);
+			setState(84);
 			roleblock();
 			}
 		}
@@ -612,6 +629,7 @@ public class PythonicParser extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class RoleblockContext extends ParserRuleContext {
 		public TerminalNode INDENT() { return getToken(PythonicParser.INDENT, 0); }
 		public TerminalNode DEDENT() { return getToken(PythonicParser.DEDENT, 0); }
@@ -634,23 +652,23 @@ public class PythonicParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(85);
+			setState(86);
 			match(INDENT);
-			setState(87); 
+			setState(88); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(86);
+				setState(87);
 				role();
 				}
 				}
-				setState(89); 
+				setState(90); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( _la==WORD );
-			setState(91);
+			setState(92);
 			match(DEDENT);
 			}
 		}
@@ -665,6 +683,7 @@ public class PythonicParser extends Parser {
 		return _localctx;
 	}
 
+	@SuppressWarnings("CheckReturnValue")
 	public static class RoleContext extends ParserRuleContext {
 		public TerminalNode WORD() { return getToken(PythonicParser.WORD, 0); }
 		public TerminalNode NL() { return getToken(PythonicParser.NL, 0); }
@@ -680,9 +699,9 @@ public class PythonicParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(93);
-			match(WORD);
 			setState(94);
+			match(WORD);
+			setState(95);
 			match(NL);
 			}
 		}
@@ -698,29 +717,56 @@ public class PythonicParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\22c\4\2\t\2\4\3\t"+
-		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t\13\4"+
-		"\f\t\f\4\r\t\r\4\16\t\16\4\17\t\17\3\2\3\2\3\2\3\2\3\3\3\3\3\3\3\4\3\4"+
-		"\3\4\3\4\3\4\3\4\3\4\5\4-\n\4\3\5\3\5\3\5\3\6\3\6\3\6\3\7\3\7\3\7\3\b"+
-		"\3\b\3\b\3\b\3\t\3\t\3\t\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\n\3\13\3\13\3\13"+
-		"\3\13\3\13\3\13\3\f\3\f\6\fO\n\f\r\f\16\fP\3\f\3\f\3\r\3\r\3\r\3\16\3"+
-		"\16\6\16Z\n\16\r\16\16\16[\3\16\3\16\3\17\3\17\3\17\3\17\2\2\20\2\4\6"+
-		"\b\n\f\16\20\22\24\26\30\32\34\2\2\2\\\2\36\3\2\2\2\4\"\3\2\2\2\6,\3\2"+
-		"\2\2\b.\3\2\2\2\n\61\3\2\2\2\f\64\3\2\2\2\16\67\3\2\2\2\20;\3\2\2\2\22"+
-		">\3\2\2\2\24F\3\2\2\2\26L\3\2\2\2\30T\3\2\2\2\32W\3\2\2\2\34_\3\2\2\2"+
-		"\36\37\5\30\r\2\37 \5\4\3\2 !\7\2\2\3!\3\3\2\2\2\"#\7\3\2\2#$\5\26\f\2"+
-		"$\5\3\2\2\2%-\5\22\n\2&-\5\b\5\2\'-\5\n\6\2(-\5\f\7\2)-\5\24\13\2*-\5"+
-		"\16\b\2+-\5\20\t\2,%\3\2\2\2,&\3\2\2\2,\'\3\2\2\2,(\3\2\2\2,)\3\2\2\2"+
-		",*\3\2\2\2,+\3\2\2\2-\7\3\2\2\2./\7\b\2\2/\60\5\26\f\2\60\t\3\2\2\2\61"+
-		"\62\7\t\2\2\62\63\5\26\f\2\63\13\3\2\2\2\64\65\7\n\2\2\65\66\5\26\f\2"+
-		"\66\r\3\2\2\2\678\7\f\2\289\7\16\2\29:\5\26\f\2:\17\3\2\2\2;<\7\13\2\2"+
-		"<=\7\16\2\2=\21\3\2\2\2>?\7\7\2\2?@\7\16\2\2@A\7\6\2\2AB\7\16\2\2BC\7"+
-		"\5\2\2CD\7\16\2\2DE\7\20\2\2E\23\3\2\2\2FG\7\r\2\2GH\7\16\2\2HI\7\5\2"+
-		"\2IJ\7\16\2\2JK\7\20\2\2K\25\3\2\2\2LN\7\21\2\2MO\5\6\4\2NM\3\2\2\2OP"+
-		"\3\2\2\2PN\3\2\2\2PQ\3\2\2\2QR\3\2\2\2RS\7\22\2\2S\27\3\2\2\2TU\7\4\2"+
-		"\2UV\5\32\16\2V\31\3\2\2\2WY\7\21\2\2XZ\5\34\17\2YX\3\2\2\2Z[\3\2\2\2"+
-		"[Y\3\2\2\2[\\\3\2\2\2\\]\3\2\2\2]^\7\22\2\2^\33\3\2\2\2_`\7\16\2\2`a\7"+
-		"\20\2\2a\35\3\2\2\2\5,P[";
+		"\u0004\u0001\u0011b\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
+		"\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004\u0002"+
+		"\u0005\u0007\u0005\u0002\u0006\u0007\u0006\u0002\u0007\u0007\u0007\u0002"+
+		"\b\u0007\b\u0002\t\u0007\t\u0002\n\u0007\n\u0002\u000b\u0007\u000b\u0002"+
+		"\f\u0007\f\u0002\r\u0007\r\u0001\u0000\u0001\u0000\u0001\u0000\u0001\u0000"+
+		"\u0001\u0001\u0001\u0001\u0001\u0001\u0001\u0002\u0001\u0002\u0001\u0002"+
+		"\u0001\u0002\u0001\u0002\u0001\u0002\u0001\u0002\u0003\u0002+\b\u0002"+
+		"\u0001\u0003\u0001\u0003\u0001\u0003\u0001\u0004\u0001\u0004\u0001\u0004"+
+		"\u0001\u0005\u0001\u0005\u0001\u0005\u0001\u0006\u0001\u0006\u0001\u0006"+
+		"\u0001\u0006\u0001\u0007\u0001\u0007\u0001\u0007\u0001\u0007\u0001\b\u0001"+
+		"\b\u0001\b\u0001\b\u0001\b\u0001\b\u0001\b\u0001\b\u0001\t\u0001\t\u0001"+
+		"\t\u0001\t\u0001\t\u0001\t\u0001\n\u0001\n\u0004\nN\b\n\u000b\n\f\nO\u0001"+
+		"\n\u0001\n\u0001\u000b\u0001\u000b\u0001\u000b\u0001\f\u0001\f\u0004\f"+
+		"Y\b\f\u000b\f\f\fZ\u0001\f\u0001\f\u0001\r\u0001\r\u0001\r\u0001\r\u0000"+
+		"\u0000\u000e\u0000\u0002\u0004\u0006\b\n\f\u000e\u0010\u0012\u0014\u0016"+
+		"\u0018\u001a\u0000\u0000[\u0000\u001c\u0001\u0000\u0000\u0000\u0002 \u0001"+
+		"\u0000\u0000\u0000\u0004*\u0001\u0000\u0000\u0000\u0006,\u0001\u0000\u0000"+
+		"\u0000\b/\u0001\u0000\u0000\u0000\n2\u0001\u0000\u0000\u0000\f5\u0001"+
+		"\u0000\u0000\u0000\u000e9\u0001\u0000\u0000\u0000\u0010=\u0001\u0000\u0000"+
+		"\u0000\u0012E\u0001\u0000\u0000\u0000\u0014K\u0001\u0000\u0000\u0000\u0016"+
+		"S\u0001\u0000\u0000\u0000\u0018V\u0001\u0000\u0000\u0000\u001a^\u0001"+
+		"\u0000\u0000\u0000\u001c\u001d\u0003\u0016\u000b\u0000\u001d\u001e\u0003"+
+		"\u0002\u0001\u0000\u001e\u001f\u0005\u0000\u0000\u0001\u001f\u0001\u0001"+
+		"\u0000\u0000\u0000 !\u0005\u0001\u0000\u0000!\"\u0003\u0014\n\u0000\""+
+		"\u0003\u0001\u0000\u0000\u0000#+\u0003\u0010\b\u0000$+\u0003\u0006\u0003"+
+		"\u0000%+\u0003\b\u0004\u0000&+\u0003\n\u0005\u0000\'+\u0003\u0012\t\u0000"+
+		"(+\u0003\f\u0006\u0000)+\u0003\u000e\u0007\u0000*#\u0001\u0000\u0000\u0000"+
+		"*$\u0001\u0000\u0000\u0000*%\u0001\u0000\u0000\u0000*&\u0001\u0000\u0000"+
+		"\u0000*\'\u0001\u0000\u0000\u0000*(\u0001\u0000\u0000\u0000*)\u0001\u0000"+
+		"\u0000\u0000+\u0005\u0001\u0000\u0000\u0000,-\u0005\u0006\u0000\u0000"+
+		"-.\u0003\u0014\n\u0000.\u0007\u0001\u0000\u0000\u0000/0\u0005\u0007\u0000"+
+		"\u000001\u0003\u0014\n\u00001\t\u0001\u0000\u0000\u000023\u0005\b\u0000"+
+		"\u000034\u0003\u0014\n\u00004\u000b\u0001\u0000\u0000\u000056\u0005\n"+
+		"\u0000\u000067\u0005\f\u0000\u000078\u0003\u0014\n\u00008\r\u0001\u0000"+
+		"\u0000\u00009:\u0005\t\u0000\u0000:;\u0005\r\u0000\u0000;<\u0005\u000f"+
+		"\u0000\u0000<\u000f\u0001\u0000\u0000\u0000=>\u0005\u0005\u0000\u0000"+
+		">?\u0005\r\u0000\u0000?@\u0005\u0004\u0000\u0000@A\u0005\r\u0000\u0000"+
+		"AB\u0005\u0003\u0000\u0000BC\u0005\r\u0000\u0000CD\u0005\u000f\u0000\u0000"+
+		"D\u0011\u0001\u0000\u0000\u0000EF\u0005\u000b\u0000\u0000FG\u0005\r\u0000"+
+		"\u0000GH\u0005\u0003\u0000\u0000HI\u0005\r\u0000\u0000IJ\u0005\u000f\u0000"+
+		"\u0000J\u0013\u0001\u0000\u0000\u0000KM\u0005\u0010\u0000\u0000LN\u0003"+
+		"\u0004\u0002\u0000ML\u0001\u0000\u0000\u0000NO\u0001\u0000\u0000\u0000"+
+		"OM\u0001\u0000\u0000\u0000OP\u0001\u0000\u0000\u0000PQ\u0001\u0000\u0000"+
+		"\u0000QR\u0005\u0011\u0000\u0000R\u0015\u0001\u0000\u0000\u0000ST\u0005"+
+		"\u0002\u0000\u0000TU\u0003\u0018\f\u0000U\u0017\u0001\u0000\u0000\u0000"+
+		"VX\u0005\u0010\u0000\u0000WY\u0003\u001a\r\u0000XW\u0001\u0000\u0000\u0000"+
+		"YZ\u0001\u0000\u0000\u0000ZX\u0001\u0000\u0000\u0000Z[\u0001\u0000\u0000"+
+		"\u0000[\\\u0001\u0000\u0000\u0000\\]\u0005\u0011\u0000\u0000]\u0019\u0001"+
+		"\u0000\u0000\u0000^_\u0005\r\u0000\u0000_`\u0005\u000f\u0000\u0000`\u001b"+
+		"\u0001\u0000\u0000\u0000\u0003*OZ";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

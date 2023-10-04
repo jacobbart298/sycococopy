@@ -34,8 +34,8 @@ expression          : (send | sequence | shuffle | choice | close | loop | repea
 sequence            : SEQUENCE block ;
 shuffle             : SHUFFLE block ;
 choice              : CHOICE block ;
-loop                : LOOP WORD block ;
-repeat              : REPEAT WORD ;
+loop                : LOOP LOOPLABEL block ;
+repeat              : REPEAT WORD NL ;
 send                : SEND WORD FROM WORD TO WORD NL ;
 close               : CLOSE WORD TO WORD NL;
 block               : INDENT expression+ DEDENT ;
@@ -60,6 +60,7 @@ CHOICE              : 'choice:' ;
 REPEAT              : 'repeat' ;
 LOOP                : 'loop' ;
 CLOSE               : 'close' ;
+LOOPLABEL           :  WORD ':';
 WORD                : ([a-z] | [A-Z] | [0-9] | '_' )+ ;
 WS                  : (' ') -> skip;
 NL                  : ('\r'? '\n' ' '*); 
