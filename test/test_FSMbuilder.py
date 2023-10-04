@@ -889,7 +889,7 @@ class TestFSMBuilder(unittest.TestCase):
         q9 = fsm.getStates()[0]
         # in q9 there is one transition: str_S_C
         self.assertEqual(1, len(q9.transitionsToStates))
-        self.assertIn(str_S_C, q7.transitionsToStates)
+        self.assertIn(str_S_C, q9.transitionsToStates)
 
         # reset fsm
         fsm.states = [q0]
