@@ -28,6 +28,7 @@ class TestFSMBuilder(unittest.TestCase):
     def test_singleSend(self):
         # see singleSend.png in tests/testcases/fsms for fsm
         fsm = self.buildFSM("singleSend.txt")
+        self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
         send = Transition("U", "B", "A")
         # in q0 there is one transition: send
@@ -43,6 +44,7 @@ class TestFSMBuilder(unittest.TestCase):
     def test_singleChoice(self):
         # see singleChoice.png in tests/testcases/fsms for fsm
         fsm = self.buildFSM("singleChoice.txt")
+        self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
         choice_a = Transition("V", "A", "B")
         choice_b = Transition("W", "B", "A")
@@ -72,6 +74,7 @@ class TestFSMBuilder(unittest.TestCase):
     def test_singleSequence(self):
         # see singleSequence.png in tests/testcases/fsms for fsm
         fsm = self.buildFSM("singleSequence.txt")
+        self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
         sequence_a = Transition("Q", "A", "B")
         sequence_b = Transition("R", "B", "A")
@@ -95,6 +98,7 @@ class TestFSMBuilder(unittest.TestCase):
     def test_singleShuffle(self):
         # see singleShuffle.png in tests/testcases/fsms for fsm
         fsm = self.buildFSM("singleShuffle.txt")
+        self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
         shuffle_a = Transition("X", "A", "B")
         shuffle_b = Transition("Y", "B", "A")
@@ -138,6 +142,7 @@ class TestFSMBuilder(unittest.TestCase):
     def test_choiceInShuffle(self):
         # see choiceInShuffle.png in tests/testcases/fsms for fsm
         fsm = self.buildFSM("choiceInShuffle.txt")
+        self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
         send = Transition("U", "B", "A")
         choice_a = Transition("V", "A", "B")
@@ -203,6 +208,7 @@ class TestFSMBuilder(unittest.TestCase):
     def test_sequenceInShuffle(self):
         # see sequenceInShuffle.png in tests/testcases/fsms for fsm
         fsm = self.buildFSM("sequenceInShuffle.txt")
+        self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
         send = Transition("U", "B", "A")
         sequence_a = Transition("Q", "A", "B")
@@ -258,6 +264,7 @@ class TestFSMBuilder(unittest.TestCase):
     def test_shuffleInShuffle(self):
         # see shuffleInShuffle.png in tests/testcases/fsms for fsm
         fsm = self.buildFSM("shuffleInShuffle.txt")
+        self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
         shuffle_a = Transition("X", "A", "B")
         shuffle_b = Transition("Y", "B", "A")
@@ -351,6 +358,7 @@ class TestFSMBuilder(unittest.TestCase):
     def test_choiceInSequence(self):
         # see choiceInSequence.png in tests/testcases/fsms for fsm
         fsm = self.buildFSM("choiceInSequence.txt")
+        self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
         choice_a = Transition("V", "A", "B")
         choice_b = Transition("W", "B", "A")
@@ -389,6 +397,7 @@ class TestFSMBuilder(unittest.TestCase):
     def test_sequenceInSequence(self):
         # see sequenceInSequence.png in tests/testcases/fsms for fsm
         fsm = self.buildFSM("sequenceInSequence.txt")
+        self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
         sequence_a = Transition("Q", "A", "B")
         sequence_b = Transition("R", "B", "A")
@@ -421,6 +430,7 @@ class TestFSMBuilder(unittest.TestCase):
     def test_shuffleInSequence(self):
         # see shuffleInSequence.png in tests/testcases/fsms for fsm
         fsm = self.buildFSM("shuffleInSequence.txt")
+        self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
         shuffle_a = Transition("X", "A", "B")
         shuffle_b = Transition("Y", "B", "A")
@@ -470,6 +480,7 @@ class TestFSMBuilder(unittest.TestCase):
     def test_choiceInChoice(self):
         # see choiceInChoice.png in tests/testcases/fsms for fsm
         fsm = self.buildFSM("choiceInChoice.txt")
+        self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
         choice_a = Transition("V", "A", "B")
         choice_b = Transition("W", "B", "A")
@@ -511,6 +522,7 @@ class TestFSMBuilder(unittest.TestCase):
     def test_sequenceInChoice(self):
         # see sequenceInChoice.png in tests/testcases/fsms for fsm
         fsm = self.buildFSM("sequenceInChoice.txt")
+        self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
         sequence_a = Transition("Q", "A", "B")
         sequence_b = Transition("R", "B", "A")
@@ -548,6 +560,7 @@ class TestFSMBuilder(unittest.TestCase):
     def test_shuffleInChoice(self):
         # see shuffleInChoice.png in tests/testcases/fsms for fsm
         fsm = self.buildFSM("shuffleInChoice.txt")
+        self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
         shuffle_a = Transition("X", "A", "B")
         shuffle_b = Transition("Y", "B", "A")
@@ -600,9 +613,10 @@ class TestFSMBuilder(unittest.TestCase):
         self.assertEqual(q3_shuffle_a_b, q3_shuffle_b_a)
         self.assertEqual(q3_shuffle_b_a, q3_send)
 
-    def test_twobuyer(self):
-        # see twobuyer.png in tests/testcases/fsms for fsm
-        fsm = self.buildFSM("twobuyer.txt")
+    def test_twoBuyer(self):
+        # see twoBuyer.png in tests/testcases/fsms for fsm
+        fsm = self.buildFSM("twoBuyer.txt")
+        self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
         title_b1_s = Transition("str", "buyer1", "seller")
         quote_s_b1 = Transition("int", "seller", "buyer1")
@@ -687,7 +701,6 @@ class TestFSMBuilder(unittest.TestCase):
         # make transition reject_b2_b1
         fsm.makeTransition(reject_b2_b1)
         q9 = fsm.getStates()[1]
-        print(q9)
         # in q9 there is one transition: reject_b2_s
         self.assertEqual(1, len(q9.transitionsToStates))
         self.assertIn(reject_b2_s, q9.transitionsToStates)
@@ -723,7 +736,176 @@ class TestFSMBuilder(unittest.TestCase):
         # q10_s_b1, q10_b1_s and q10_sequence are the same state
         self.assertEqual(q10_s_b1, q10_b1_s)
         self.assertEqual(q10_b1_s, q10_sequence)
-    
+
+    def test_travelAgency(self):
+        # see travelAgency.png in tests/testcases/fsms for fsm
+        str_C_A = Transition("str", "customer", "agency")
+        int_A_C = Transition("int", "agency", "customer")
+        str_A_S = Transition("str", "agency", "service")
+        bool_C_A = Transition("bool", "customer", "agency")
+        bool_A_S = Transition("bool", "agency", "service")
+        str_C_S = Transition("str", "customer", "service")
+        str_S_C = Transition("str", "service", "customer")
+        fsm = self.buildFSM("travelAgency.txt")
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
+        # in q0 there is one transition: str_C_A
+        self.assertEqual(1, len(q0.transitionsToStates))
+        self.assertIn(str_C_A, q0.transitionsToStates)
+
+        # make transition str_C_A
+        fsm.makeTransition(str_C_A)
+        # transition str_C_A leads to a single state
+        self.assertEqual(1, len(fsm.getStates()))
+        q1 = fsm.getStates()[0]
+        # in q1 there is one transition: int_A_C
+        self.assertEqual(1, len(q1.transitionsToStates))
+        self.assertIn(int_A_C, q1.transitionsToStates)
+
+        # make transition int_A_C
+        fsm.makeTransition(int_A_C)
+        # transition int_A_C leads to a single state
+        self.assertEqual(1, len(fsm.getStates()))
+        q2 = fsm.getStates()[0]
+        # in q2 there is one transition: str_A_S
+        self.assertEqual(1, len(q2.transitionsToStates))
+        self.assertIn(str_A_S, q2.transitionsToStates)
+
+        # make transition str_A_S
+        fsm.makeTransition(str_A_S)
+        # transition str_A_S leads to two states
+        self.assertEqual(2, len(fsm.getStates()))
+        if fsm.getStates()[0].containsTransition(str_C_A):
+            q0_ = fsm.getStates()[0]
+            q3 = fsm.getStates()[1]
+        elif fsm.getStates()[1].containsTransition(str_C_A):
+            q0_ = fsm.getStates()[1]
+            q3 = fsm.getStates()[0]
+        else:
+            self.fail("Builder fails to handle recursion")
+        # q0 and q0_ are the same state
+        self.assertEqual(q0, q0_)
+        # in q3 there is one transition: bool_C_A
+        self.assertEqual(1, len(q3.transitionsToStates))
+        self.assertIn(bool_C_A, q3.transitionsToStates)
+
+        # loop once
+
+        # make transition str_C_A
+        fsm.makeTransition(str_C_A)
+        # transition str_C_A leads to state q1
+        self.assertEqual(1, len(fsm.getStates()))
+        self.assertEqual(fsm.getStates()[0], q1)
+        # make transition int_A_C
+        fsm.makeTransition(int_A_C)
+        # transition int_A_C leads to q2
+        self.assertEqual(1, len(fsm.getStates()))
+        self.assertEqual(fsm.getStates()[0], q2)
+        # make transition str_A_S
+        fsm.makeTransition(str_A_S)
+        # transition str_A_S leads to two states
+        self.assertEqual(2, len(fsm.getStates()))
+        if fsm.getStates()[0].containsTransition(str_C_A):
+            q0__ = fsm.getStates()[0]
+            q3_ = fsm.getStates()[1]
+        elif fsm.getStates()[1].containsTransition(str_C_A):
+            q0__ = fsm.getStates()[1]
+            q3_ = fsm.getStates()[0]
+        else:
+            self.fail("Loop fails to return to correct state")
+        # q0_ and q0__ are the same state
+        self.assertEqual(q0_, q0__)
+        # q3 and q3_ are the same state
+        self.assertEqual(q3, q3_)
+
+        # break out of the loop
+
+        # make transition bool_C_A
+        fsm.makeTransition(bool_C_A)
+        # transition bool_C_A leads to two states
+        self.assertEqual(2, len(fsm.getStates()))
+        if fsm.getStates()[0].containsTransition(str_C_S):
+            q6 = fsm.getStates()[0]
+            q4 = fsm.getStates()[1]
+        elif fsm.getStates()[1].containsTransition(str_C_S):
+            q6 = fsm.getStates()[1]
+            q4 = fsm.getStates()[0]
+        else:
+            self.fail("Builder fails to handle non-determinism")
+        # in q4 there is one transition: bool_A_S
+        self.assertEqual(1, len(q4.transitionsToStates))
+        self.assertIn(bool_A_S, q4.transitionsToStates)
+        # in q6 there are two transitions: bool_A_S and str_C_S
+        self.assertEqual(2, len(q6.transitionsToStates))
+        self.assertIn(bool_A_S, q6.transitionsToStates)
+        self.assertIn(str_C_S, q6.transitionsToStates)
+
+        # make transition bool_A_S
+        fsm.makeTransition(bool_A_S)
+        # transition bool_A_S leads to two states
+        self.assertEqual(2, len(fsm.getStates()))
+        if fsm.getStates()[0].containsTransition(str_C_S):
+            q7 = fsm.getStates()[0]
+            q5 = fsm.getStates()[1]
+        elif fsm.getStates()[1].containsTransition(str_C_S):
+            q7 = fsm.getStates()[1]
+            q5 = fsm.getStates()[0]
+        else:
+            self.fail("Builder fails to handle non-determinism")
+        # in q5 there is no transition
+        self.assertEqual(0, len(q5.transitionsToStates))
+        # in q7 there is one transition: str_C_S
+        self.assertEqual(1, len(q7.transitionsToStates))
+        self.assertIn(str_C_S, q7.transitionsToStates)
+
+        # make transition str_C_S
+        fsm.makeTransition(str_C_S)
+        # transition str_C_S leads to one state
+        self.assertEqual(1, len(fsm.getStates()))
+        q9 = fsm.getStates()[0]
+        # in q9 there is one transition: str_S_C
+        self.assertEqual(1, len(q9.transitionsToStates))
+        self.assertIn(str_S_C, q7.transitionsToStates)
+
+        # reset fsm
+        fsm.states = [q0]
+        # make transition str_C_A
+        fsm.makeTransition(str_C_A)
+        # make transition int_A_C
+        fsm.makeTransition(int_A_C)
+        # make transition str_A_S
+        fsm.makeTransition(str_A_S)
+        # make transition bool_C_A
+        fsm.makeTransition(bool_C_A)
+
+        # make transition str_C_S
+        fsm.makeTransition(str_C_S)
+        # transition str_C_S leads to a single state
+        self.assertEqual(1, len(fsm.getStates()))
+        q8 = fsm.getStates()[0]
+        # in q8 there is one transition: bool_A_S
+        self.assertEqual(1, len(q8.transitionsToStates))
+        self.assertIn(bool_A_S, q8.transitionsToStates)
+
+        # make transition bool_A_S
+        fsm.makeTransition(bool_A_S)
+        # transition bool_A_S leads to a single state
+        self.assertEqual(1, len(fsm.getStates()))
+        q9_ = fsm.getStates()[0]
+        # in q9_ there is one transition: str_S_C
+        self.assertEqual(1, len(q9_.transitionsToStates))
+        self.assertIn(str_S_C, q9_.transitionsToStates)
+        # q9 and q9_ are the same state
+        self.assertEqual(q9, q9_)
+
+        # make transition str_S_C
+        fsm.makeTransition(str_S_C)
+        # transition str_S_C leads to one state
+        self.assertEqual(1, len(fsm.getStates()))
+        q10 = fsm.getStates()[0]
+        # in q10 there is no transition
+        self.assertEqual(0, len(q10.transitionsToStates))
+
     def buildFSM(self, fileName):
         current_directory = os.path.dirname(os.path.abspath(__file__))
         specification_path = os.path.join(current_directory, "testcases", fileName)
