@@ -21,6 +21,8 @@ def dump(node, depth=0, ruleNames=None):
 def main(argv):
     monitor = Monitor(argv[1])
 
+    
+
 
 if __name__ == '__main__':
     import sys
