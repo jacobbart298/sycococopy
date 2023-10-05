@@ -30,6 +30,10 @@ class TestState(unittest.TestCase):
         # check if unavailable transition returns False, both in State with and without possible transitions
         self.assertFalse(state1.containsTransition(faketransition), "A non-existent transition was reported as available")
         self.assertFalse(state2.containsTransition(transition), "An empty transition dictionary returned true on containsTransition")
+        # check transition is reported as possible if in a list of two possible transitions
+        state1.addTransitionToState(faketransition, state2)
+        self.assertTrue(state1.containsTransition(transition), "A possible transition was not reported in containsTransition")
+        self.assertTrue(state1.containsTransition(faketransition), "A possible transition was not reported in containsTransition")
 
     
     def testAddTransitionToState(self):
@@ -37,6 +41,18 @@ class TestState(unittest.TestCase):
         # add transition and check if transition is correctly added
         state2.addTransitionToState(transition, state2)
         self.assertTrue(state2.containsTransition(transition), "Transition wasn't added in addTransitionToState function")
+        # add same transition to another state and check correctly added
+        self.assertEqual(1, len(state2.getNextStates(transition)), "Incorrect state count returned for deterministic transition")
+        state2.addTransitionToState(transition, state1)
+        self.assertEqual(2, len(state2.getNextStates(transition)), "Incorrect state count returned for non-deterministic transition")
+
+
+    def testGetNextStateS(self):
+        # add non deterministc transition to state1 and check if two states are returned to transition
+        state3 = State()
+        state1.addTransitionToState(transition, state3)
+        self.assertEqual(2, len(state1.getNextStates(transition)), "Incorrect state count returned for non-deterministic transition")
+
 
 if __name__ == '__main__':
     unittest.main()
