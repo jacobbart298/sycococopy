@@ -612,6 +612,62 @@ class TestFSMBuilder(unittest.TestCase):
         self.assertEqual(q3_shuffle_a_b, q3_shuffle_b_a)
         self.assertEqual(q3_shuffle_b_a, q3_send)
 
+    def test_single_loop_deterministic(self):
+        # see single_loop_deterministic.png in tests/testcases/fsms for fsm
+        t1_A_B = Transition("t1", "A", "B")
+        t2_B_A = Transition("t2", "B", "A")
+        t3_B_A = Transition("t3", "B", "A")
+        fsm = self.buildFSM("single_loop_deterministic.txt")
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
+        # in q0 there is one transition
+        self.assertEqual(1, len(q0.transitionsToStates))
+        self.assertIn(t1_A_B, q0.transitionsToStates)
+
+        # make transition t1_A_B
+        fsm.makeTransition(t1_A_B)
+        # transition t1_A_B leads to one state
+        self.assertEqual(1, len(fsm.getStates()))
+        q1 = fsm.getStates()[0]
+        # in q1 there are two transitions: t2_B_A, t3_B_A
+        self.assertEqual(2, len(q1.transitionsToStates))
+        self.assertIn(t2_B_A, q1.transitionsToStates)
+        self.assertIn(t3_B_A, q1.transitionsToStates)
+        
+        # enter loop first time     
+    
+        # make transition t2_B_A
+        fsm.makeTransition(t2_B_A)
+        # transition t2_B_A leads to one state
+        self.assertEqual(1, len(fsm.getStates()))
+        q0_ = fsm.getStates()[0]
+        # state q0 and q0_ are the same state
+        self.assertEqual(q0, q0_)
+        # make transition t1_A_B
+        fsm.makeTransition(t1_A_B)
+
+        # enter loop second time
+
+        # make transition t2_B_A
+        fsm.makeTransition(t2_B_A)
+        # transition t2_B_A leads to one state
+        self.assertEqual(1, len(fsm.getStates()))
+        q0__ = fsm.getStates()[0]
+        # state q0 and q0__ are the same state
+        self.assertEqual(q0, q0__)
+        # make transition t1_A_B
+        fsm.makeTransition(t1_A_B)
+
+        # exit loop
+
+        # make transition t3_B_A
+        fsm.makeTransition(t3_B_A)
+        # transition t3_B_A leads to one state
+        self.assertEqual(1, len(fsm.getStates()))
+        q2 = fsm.getStates()[0]
+        # in q2 there is no transition
+        self.assertEqual(0, len(q2.transitionsToStates))
+
     def test_twoBuyer(self):
         # see twoBuyer.png in tests/testcases/fsms for fsm
         str_b1_s = Transition("str", "buyer1", "seller")
