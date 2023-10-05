@@ -10,11 +10,11 @@ service = "service"
 specification_path = r".\travelAgency.txt"
 monitor = Monitor(specification_path)
 
-customer_to_agency = Channel(customer, agency, monitor, 1)
-agency_to_customer = Channel(agency, customer, monitor, 1)
-agency_to_service = Channel(agency, service, monitor, 1)
-customer_to_service = Channel(customer, service, monitor, 1)
-service_to_customer = Channel(service, customer, monitor, 1)
+customer_to_agency = Channel(customer, agency, monitor, 5)
+agency_to_customer = Channel(agency, customer, monitor, 5)
+agency_to_service = Channel(agency, service, monitor, 5)
+customer_to_service = Channel(customer, service, monitor, 5)
+service_to_customer = Channel(service, customer, monitor, 5)
 
 destinations = ["Aruba", "Bonaire", "Germany", "Belgium", "Norway"]
 prices = {"Aruba": 3000, "Bonaire":3200, "Germany":800, "Belgium":500, "Norway":1500}
