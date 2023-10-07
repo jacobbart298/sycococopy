@@ -1,6 +1,7 @@
 from antlr4 import *
 from antlrFiles.PythonicLexer import PythonicLexer
 from antlrFiles.PythonicParser import PythonicParser
+from antlrFiles.PythonicErrorListener import PythonicErrorListener
 from src.core.FSMbuilder import FSMbuilder
 from src.core.transition import Transition
 from src.core.exceptions.illegaltransitionexception import IllegalTransitionException
@@ -43,6 +44,10 @@ class Monitor():
         lexer = PythonicLexer(input)
         stream = CommonTokenStream(lexer)
         parser = PythonicParser(stream)
+        # Remove the default error listener, so we don't output to terminal automatically
+        parser.removeErrorListeners()
+        # Add our own ErrorListener
+        parser.addErrorListener(PythonicErrorListener())
         tree = parser.specification() 
         fsm_builder = FSMbuilder()
         return fsm_builder.visitSpecification(tree)
