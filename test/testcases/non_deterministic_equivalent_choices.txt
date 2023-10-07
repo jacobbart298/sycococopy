@@ -1,0 +1,13 @@
+roles:
+    A
+    B
+    C
+
+protocol:
+    choice:
+        sequence:
+            send t1 from A to B
+            send t2 from A to C
+        sequence:
+            send t1 from A to B
+            send t2 from A to C
