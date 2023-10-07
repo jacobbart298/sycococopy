@@ -1,20 +1,3 @@
-"""  
-Testopzet voor het testen van FSMBuilder. TestFSMBuilder moet testen of
-het opbouwen van de FSM goed verloopt; oftewel, dat de juiste transities 
-en states worden aangemaakt en correct met elkaar worden verbonden. 
-Merk op dat in deze klasse het bouwen van de FSM wordt getest, niet de
-juist werking van de FSM. Voor dat laatste dient testFSM. 
-
-Conform het algoritme geldt dat de eerste operation binnen een compound
-operation begint vanuit de start state van de compound operation en de 
-laatste operation binnen de compound operation eindigt in de end state
-van de compound operation, ongeacht of de eerste, laatste en tussenliggende
-operations atomic of zelf ook compound operations zijn. Verder geldt dat 
-wanneer een compound operation haar deeloperations a en b uitvoert in de 
-volgorde a en dan b, de end state van a de start state van b vormt.
-
-"""
-
 import unittest
 import os
 from antlr4 import CommonTokenStream, FileStream
@@ -22,7 +5,6 @@ from antlrFiles.PythonicLexer import PythonicLexer
 from antlrFiles.PythonicParser import PythonicParser
 from src.core.FSMbuilder import FSMbuilder
 from src.core.transition import Transition
-
 class TestFSMBuilder(unittest.TestCase):
 
     def test_singleSend(self):
@@ -1408,6 +1390,258 @@ class TestFSMBuilder(unittest.TestCase):
         q5 = fsm.getStates()[0]
         # in q5 there is no transition
         self.assertEqual(0, len(q5.transitionsToStates))       
+
+    def one_loop_multiple_repeats(self):
+        # see one_loop_multiple_repeats.png in tests/testcases/fsms for fsm
+        t0_A_B = Transition("t0", "A", "B")
+        t1_A_B = Transition("t1", "A", "B")
+        t2_B_C = Transition("t2", "B", "C")
+        t3_B_A = Transition("t3", "B", "A")
+        t3_C_A = Transition("t3", "C", "A")
+        t4_C_D = Transition("t5", "C", "D")
+        fsm = self.buildFSM("one_loop_multiple_repeats.txt")
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
+        # in q0 there is one transition: t0_A_B
+        self.assertEqual(1, len(q0.transitionsToStates))
+        self.assertIn(t0_A_B, q0.transitionsToStates)
+        
+        # transition t0_A_B leads to q1
+        fsm.makeTransition(t0_A_B)
+        self.assertEqual(1, len(fsm.getStates()))
+        q1 = fsm.getStates()[0]
+        # in q1 there is one transition: t1_A_B
+        self.assertEqual(1, len(q1.transitionsToStates))
+        self.assertIn(t1_A_B, q1.transitionsToStates)
+
+        # transition t1_A_B leads to q2
+        fsm.makeTransition(t1_A_B)
+        self.assertEqual(1, len(fsm.getStates()))
+        q2 = fsm.getStates()[0]
+        # in q2 there are two transitions: t2_B_C and t3_B_A
+        self.assertEqual(2, len(q2.transitionsToStates))
+        self.assertIn(t2_B_C, q2.transitionsToStates)
+        self.assertIn(t2_B_C, q2.transitionsToStates)
+
+        # transition t3_B_A leads to q1
+        fsm.makeTransition(t3_B_A)
+        self.assertEqual(1, len(fsm.getStates()))
+        self.assertEqual(q1, fsm.getStates()[0])
+
+        # transition t1_A_B leads to q2
+        fsm.makeTransition(t1_A_B)
+        self.assertEqual(1, len(fsm.getStates()))
+        self.assertEqual(q2, fsm.getStates()[0])
+
+        # transition t1_A_B leads to q3
+        fsm.makeTransition(t2_B_C)
+        self.assertEqual(1, len(fsm.getStates()))
+        q3 = fsm.getStates()[0]
+        # in q3 there are two transitions: t3_C_A and t4_C_D
+        self.assertEqual(2, len(q3.transitionsToStates))
+        self.assertIn(t3_C_A, q3.transitionsToStates)
+        self.assertIn(t4_C_D, q3.transitionsToStates)
+
+        # transition t3_C_A leads to q1
+        fsm.makeTransition(t3_C_A)
+        self.assertEqual(1, len(fsm.getStates()))
+        self.assertEqual(q1, fsm.getStates()[0])
+        
+        # transition t1_A_B leads to q2
+        fsm.makeTransition(t1_A_B)
+        self.assertEqual(1, len(fsm.getStates()))
+        self.assertEqual(q2, fsm.getStates()[0])
+       
+        # transition t1_A_B leads to q3
+        fsm.makeTransition(t2_B_C)
+        self.assertEqual(1, len(fsm.getStates()))
+        self.assertEqual(q3, fsm.getStates()[0])
+
+        # transition t4_C_D leads to q4
+        fsm.makeTransition(t4_C_D)
+        self.assertEqual(1, len(fsm.getStates()))
+        q4 = fsm.getStates()[0]
+        # in q4 there are no transitions
+        self.assertEqual(0, len(q4.transitionsToStates))
+
+    def test_choice_loop_sequence(self):
+        # see choice_loop_sequence.png in tests/testcases/fsms for fsm
+        t1_A_B = Transition("t1", "A", "B")
+        t1_A_C = Transition("t1", "A", "C")
+        t2_A_C = Transition("t2", "A", "C")
+        t4_C_B = Transition("t4", "C", "B")
+        t3_B_D = Transition("t3", "B", "D")
+        t4_C_D = Transition("t4", "C", "D")
+        fsm = self.buildFSM("choice_loop_sequence.txt")
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
+        # in q0 there is one transition: t1_A_B
+        self.assertEqual(1, len(q0.transitionsToStates))
+        self.assertIn(t1_A_B, q0.transitionsToStates)
+
+        # transition t1_A_B leads to q1 and q2
+        fsm.makeTransition(t1_A_B)
+        self.assertEqual(2, len(fsm.getStates()))
+        if fsm.getStates()[0].containsTransition(t1_A_C):
+            q1 = fsm.getStates()[0]
+            q2 = fsm.getStates()[1]
+        elif fsm.getStates()[1].containsTransition(t1_A_C):
+            q1 = fsm.getStates()[1]
+            q2 = fsm.getStates()[0]
+        else:
+            self.fail("Non-determinism failure")
+        # in q1 there is one transition: t1_A_C
+        self.assertEqual(1, len(q1.transitionsToStates))
+        self.assertIn(t1_A_C, q1.transitionsToStates)
+        # in q2 there is one transition: t2_A_C
+        self.assertEqual(1, len(q2.transitionsToStates))
+        self.assertIn(t2_A_C, q2.transitionsToStates)
+
+        # transition t1_A_C leads to q3
+        fsm.makeTransition(t1_A_C)
+        self.assertEqual(1, len(fsm.getStates()))
+        q3 = fsm.getStates()[0]
+        # in q3 there are two transitions: t4_C_B and t3_B_D
+        self.assertEqual(2, len(q3.transitionsToStates))
+        self.assertIn(t4_C_B, q3.transitionsToStates)
+        self.assertIn(t3_B_D, q3.transitionsToStates)
+
+        # transition t4_C_B leads to q0
+        fsm.makeTransition(t4_C_B)
+        self.assertEqual(1, len(fsm.getStates()))
+        self.assertEqual(q0, fsm.getStates()[0])
+
+        # transition t1_A_B leads to q1 and q2
+        fsm.makeTransition(t1_A_B)
+        self.assertEqual(2, len(fsm.getStates()))
+        if fsm.getStates()[0].containsTransition(t1_A_C):
+            self.assertEqual(q1, fsm.getStates()[0])
+            self.assertEqual(q2, fsm.getStates()[1])
+        elif fsm.getStates()[1].containsTransition(t1_A_C):
+            self.assertEqual(q1, fsm.getStates()[1])
+            self.assertEqual(q2, fsm.getStates()[0])
+        else:
+            self.fail("Non-determinism failure")
+
+        # transition t2_A_C leads to q3
+        fsm.makeTransition(t2_A_C)
+        self.assertEqual(1, len(fsm.getStates()))
+        self.assertEqual(q3, fsm.getStates()[0])
+
+        # transition t3_B_D leads to q4
+        fsm.makeTransition(t3_B_D)
+        self.assertEqual(1, len(fsm.getStates()))
+        q4 = fsm.getStates()[0]
+        # in q4 there is one transition: t4_C_D
+        self.assertEqual(1, len(q4.transitionsToStates))
+        self.assertIn(t4_C_D, q4.transitionsToStates)
+        
+        # transition t4_C_D leads to q5
+        fsm.makeTransition(t4_C_D)
+        self.assertEqual(1, len(fsm.getStates()))
+        q5 = fsm.getStates()[0]
+        # in q5 there is no transition
+        self.assertEqual(0, len(q5.transitionsToStates))
+
+    def test_shuffle_loop_sequence(self):
+        # see shuffle_loop_sequence.png in tests/testcases/fsms for fsm
+        t1_A_B = Transition("t1", "A", "B")
+        t2_B_A = Transition("t2", "B", "A")
+        t3_B_D = Transition("t3", "B", "D")
+        t4_C_D = Transition("t4", "C", "D")
+        fsm = self.buildFSM("shuffle_loop_sequence.txt")
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
+        # in q0 there are two transitions: t3_B_D and t4_C_D
+        self.assertEqual(2, len(q0.transitionsToStates))
+        self.assertIn(t3_B_D, q0.transitionsToStates)
+        self.assertIn(t4_C_D, q0.transitionsToStates)
+
+        # transition t3_B_D leads to q1
+        fsm.makeTransition(t3_B_D)
+        self.assertEqual(1, len(fsm.getStates()))
+        q1 = fsm.getStates()[0]
+        # in q1 there is one transition: t4_C_D
+        self.assertEqual(1, len(q1.transitionsToStates))
+        self.assertIn(t4_C_D, q1.transitionsToStates)
+
+        # transition t4_C_D leads to q3
+        fsm.makeTransition(t4_C_D)
+        self.assertEqual(1, len(fsm.getStates()))
+        q3 = fsm.getStates()[0]
+        # in q3 there is one transition: t1_A_B
+        self.assertEqual(1, len(q3.transitionsToStates))
+
+        # transition t1_A_B leads to q0 and q4
+        fsm.makeTransition(t1_A_B)
+        self.assertEqual(2, len(fsm.getStates()))
+        if fsm.getStates()[0].containsTransition(t2_B_A):
+            q4 = fsm.getStates()[0]
+            self.assertEqual(q0, fsm.getStates()[1])
+        elif fsm.getStates()[1].containsTransition(t2_B_A):
+            q4 = fsm.getStates()[1]
+            self.assertEqual(q0, fsm.getStates()[0])
+        else:
+            self.fail("Non-determinism failure")
+        # in q4 there is one transition: t2_B_A
+        self.assertEqual(1, len(q4.transitionsToStates))
+        self.assertIn(t2_B_A, q4.transitionsToStates)
+
+        # transition t4_C_D leads to q2
+        fsm.makeTransition(t4_C_D)
+        self.assertEqual(1, len(fsm.getStates()))
+        q2 = fsm.getStates()[0]
+        # in q2 there is one transition: t3_B_D
+        self.assertEqual(1, len(q2.transitionsToStates))
+        self.assertIn(t3_B_D, q2.transitionsToStates)
+
+        # transition t3_B_D leads to q3
+        fsm.makeTransition(t3_B_D)
+        self.assertEqual(1, len(fsm.getStates()))
+        self.assertEqual(q3, fsm.getStates()[0])
+        
+        # transition t1_A_B leads to q0 and q4
+        fsm.makeTransition(t1_A_B)
+        self.assertEqual(2, len(fsm.getStates()))
+        if fsm.getStates()[0].containsTransition(t2_B_A):
+            self.assertEqual(q4, fsm.getStates()[0])
+            self.assertEqual(q0, fsm.getStates()[1])
+        elif fsm.getStates()[1].containsTransition(t2_B_A):
+            self.assertEqual(q4, fsm.getStates()[1])
+            self.assertEqual(q0, fsm.getStates()[0])
+        else:
+            self.fail("Non-determinism failure")
+
+        # transition t2_B_A leads to q5
+        fsm.makeTransition(t2_B_A)
+        self.assertEqual(1, len(fsm.getStates()))
+        q5 = fsm.getStates()[0]
+        # in q5 there is no transition
+        self.assertEqual(0, len(q5.transitionsToStates))
+
+    def test_loop_choice(self):
+        # see loop_choice.png in tests/testcases/fsms for fsm
+        t1_A_B = Transition("t1", "A", "B")
+        t2_A_B = Transition("t2", "A", "B")
+        fsm = self.buildFSM("loop_choice.txt")
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
+        # in q0 there are two transitions: t1_A_B and t2_A_B
+        self.assertEqual(2, len(q0.transitionsToStates))
+        self.assertIn(t1_A_B, q0.transitionsToStates)
+        self.assertIn(t2_A_B, q0.transitionsToStates)
+
+        # transition t1_A_B leads to q0
+        fsm.makeTransition(t1_A_B)
+        self.assertEqual(1, len(fsm.getStates()))
+        self.assertEqual(q0, fsm.getStates()[0])
+
+        # transition t2_A_B leads to q1
+        fsm.makeTransition(t2_A_B)
+        self.assertEqual(1, len(fsm.getStates()))
+        q1 = fsm.getStates()[0]
+        # in q2 there is no transition
+        self.assertEqual(0, len(q1.transitionsToStates))
 
     def test_twoBuyer(self):
         # see twoBuyer.png in tests/testcases/fsms for fsm
