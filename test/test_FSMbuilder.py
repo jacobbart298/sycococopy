@@ -1640,7 +1640,7 @@ class TestFSMBuilder(unittest.TestCase):
         fsm.makeTransition(t2_A_B)
         self.assertEqual(1, len(fsm.getStates()))
         q1 = fsm.getStates()[0]
-        # in q2 there is no transition
+        # in q1 there is no transition
         self.assertEqual(0, len(q1.transitionsToStates))
 
     def test_twoBuyer(self):
