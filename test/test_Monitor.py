@@ -26,9 +26,7 @@ class TestMonitor(unittest.TestCase):
         faketransition = Transition("Integer", "Teun", "Jacob")
         with self.assertRaises(IllegalTransitionException) as error:
             self.test_monitor.verifySend(faketransition)
-        
         message = str(error.exception)
-        print(message)
         self.assertIn("TRANSITION FAILURE:", message, "Exception did not contain TRANSITION FAILURE header")
         self.assertIn(str(faketransition), message, "Offending transition not printed in exception message")
     
@@ -54,6 +52,7 @@ class TestMonitor(unittest.TestCase):
         with self.assertRaises(IllegalTransitionException) as error:
             self.test_monitor.verifyReceive(faketransition)
 
+    
     def testSendImpossibleWithUnreceivedMessage(self):    
         transition1 = Transition("str", "buyer1", "seller")
         transition2 = Transition("str", "seller", "buyer1")
