@@ -1,9 +1,6 @@
 class RoleMismatchException(Exception):
 
     def __init__(self, used_roles, defined_roles):
-        used_roles = used_roles
-        defined_roles = defined_roles
-
         self.surplus_defined_roles = defined_roles.difference(used_roles)
         self.surplus_used_roles = used_roles.difference(defined_roles)
         

@@ -51,8 +51,8 @@ class Monitor():
         stream = CommonTokenStream(lexer)
         parser = PythonicParser(stream)
         # Remove the default error listener, so we don't output to terminal automatically
-        parser.removeErrorListeners()
+        # parser.removeErrorListeners()
         # Add our own ErrorListener
-        parser.addErrorListener(PythonicErrorListener())
+        # parser.addErrorListener(PythonicErrorListener())
         return parser.specification() 
     

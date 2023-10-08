@@ -19,6 +19,7 @@ class FSMbuilder(PythonicVisitor):
 
     def __init__(self):
         self.fsm = FSM()
+        self.loop_dictionary = {}
         self.roles_in_fsm = set()
 
 

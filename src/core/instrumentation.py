@@ -4,7 +4,7 @@ from src.core.monitor import Monitor
 
 class Channel():
 
-    def __init__(self, sender, receiver, monitor: Monitor, maxsize):
+    def __init__(self, sender, receiver, monitor: Monitor, maxsize=0):
         self.queue = Queue(maxsize)
         self.sender = sender
         self.receiver = receiver
