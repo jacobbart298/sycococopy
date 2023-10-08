@@ -122,13 +122,6 @@ class TestFSM(unittest.TestCase):
         self.assertIn(q1, fsm.getStates())
         self.assertIn(q2, fsm.getStates())
         fsm.makeTransition(transition2)
-        # ----- start bug illustration -----
-        # fsm should contain only one instance of q3 but contains two!
-        self.assertEqual(2, len(fsm.getStates()))
-        q3_a = fsm.getStates()[0]
-        q3_b = fsm.getStates()[1]
-        self.assertEqual(q3_a, q3_b)
-        # ----- end bug illustration -----
         # fsm should contain one state: q3
         self.assertEqual(1, len(fsm.getStates()))
         self.assertIn(q3, fsm.getStates())
