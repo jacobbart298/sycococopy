@@ -1,18 +1,25 @@
 from antlr4 import *
 from antlrFiles.PythonicLexer import PythonicLexer
 from antlrFiles.PythonicParser import PythonicParser
+from antlrFiles.PythonicErrorListener import PythonicErrorListener
 from src.core.FSMbuilder import FSMbuilder
 from src.core.transition import Transition
 from src.core.exceptions.illegaltransitionexception import IllegalTransitionException
+from src.core.exceptions.rolemismatchexception import RoleMismatchException
 from src.core.transition import Transition
+from src.core.roleBuilder import Rolebuilder
 
 class Monitor():
 
     def __init__(self, filePath):
         self.transitionHistory = []
         self.uncheckedReceives = {}
-        self.fsm, roles = self.buildFSM(filePath)
-        self.initialiseUncheckedReceives(roles)
+        tree = self.buildParseTree(filePath)
+        self.fsm, used_roles = FSMbuilder().visitSpecification(tree)
+        defined_roles = Rolebuilder().visitSpecification(tree)         
+        if not used_roles == defined_roles:
+            raise RoleMismatchException(used_roles, defined_roles)
+        self.initialiseUncheckedReceives(defined_roles)
         self.halted = False
         
     def verifySend(self, transition: Transition):
@@ -38,12 +45,14 @@ class Monitor():
         for role in roles:
             self.uncheckedReceives[role] = []
 
-    def buildFSM(self, filePath):
+    def buildParseTree(self, filePath):
         input = FileStream(filePath)
         lexer = PythonicLexer(input)
         stream = CommonTokenStream(lexer)
         parser = PythonicParser(stream)
-        tree = parser.specification() 
-        fsm_builder = FSMbuilder()
-        return fsm_builder.visitSpecification(tree)
+        # Remove the default error listener, so we don't output to terminal automatically
+        # parser.removeErrorListeners()
+        # Add our own ErrorListener
+        # parser.addErrorListener(PythonicErrorListener())
+        return parser.specification() 
     

@@ -11,8 +11,8 @@ from antlrFiles.pythonicSyntaxErrorException import PythonicSyntaxErrorException
 class PythonicErrorListener(ErrorListener) :
     def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
         stack = recognizer.getRuleInvocationStack()
-        stack.reverse()
         raise PythonicSyntaxErrorException(stack)
+        # stack.reverse()
         # print("WHOOPS!")
         # print("rule stack: ", str(stack))
         # print("line", line, ":", column, "at", offendingSymbol, ":", msg)

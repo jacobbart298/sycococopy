@@ -16,16 +16,18 @@ else:
 
 class FSMbuilder(PythonicVisitor):
 
+
     def __init__(self):
         self.fsm = FSM()
-        self.roles = []
         self.loop_dictionary = {}
+        self.roles_in_fsm = set()
 
 
     # Visit a parse tree produced by PythonicParser#specification.
     def visitSpecification(self, ctx:PythonicParser.SpecificationContext):
-        self.visitChildren(ctx)
-        return self.fsm, self.roles
+        # self.dump(ctx)
+        self.visitProtocol(ctx.getChild(1))
+        return self.fsm, self.roles_in_fsm
 
 
     # Visit a parse tree produced by PythonicParser#protocol.
@@ -140,6 +142,8 @@ class FSMbuilder(PythonicVisitor):
         receiver = ctx.getChild(5).getText()
         transition = Transition(type, sender, receiver)
         ctx.startState.addTransitionToState(transition, ctx.endState)
+        self.roles_in_fsm.add(sender)
+        self.roles_in_fsm.add(receiver)
 
 
     # Visit a parse tree produced by PythonicParser#close.
@@ -152,20 +156,6 @@ class FSMbuilder(PythonicVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by PythonicParser#role.
-    def visitRole(self, ctx:PythonicParser.RoleContext):
-        return ctx.getChild(0).getText()
-
-
-    # Visit a parse tree produced by PythonicParser#roles.
-    def visitRoles(self, ctx:PythonicParser.RolesContext):
-        roleCount = ctx.getChild(1).getChildCount() - 2
-        roleNodes =  range(1, roleCount + 1)
-        for roleNode in roleNodes:
-            role = self.visitRole(ctx.getChild(1).getChild(roleNode))
-            self.roles.append(role)
-
-
     def dump(self, node, depth=0, ruleNames=None):
         depthStr = '. ' * depth
         if isinstance(node, TerminalNodeImpl):
@@ -174,6 +164,5 @@ class FSMbuilder(PythonicVisitor):
             print(f'{depthStr}{Trees.getNodeText(node, ruleNames)}')
             for child in node.children:
                 self.dump(child, depth + 1, ruleNames)
-
-
+    
 del PythonicParser

@@ -1,5 +1,4 @@
 import asyncio
-import src.core.instrumentation as inst
 from src.core.instrumentation import Channel
 from src.core.monitor import Monitor
 
@@ -9,12 +8,12 @@ seller = "seller"
 specification_path = ".\protocol_voorbeeld_programma.txt"
 monitor = Monitor(specification_path)
 
-buy1tobuy2 = Channel(buyer1, buyer2, monitor, 1)
-buy2tobuy1 = Channel(buyer2, buyer1, monitor, 1)
-buy1tosell = Channel(buyer1, seller, monitor, 1)
-buy2tosell = Channel(buyer2, seller, monitor, 1)
-selltobuy1 = Channel(seller, buyer1, monitor, 1)
-selltobuy2 = Channel(seller, buyer2, monitor, 1)
+buy1tobuy2 = Channel(buyer1, buyer2, monitor)
+buy2tobuy1 = Channel(buyer2, buyer1, monitor)
+buy1tosell = Channel(buyer1, seller, monitor)
+buy2tosell = Channel(buyer2, seller, monitor)
+selltobuy1 = Channel(seller, buyer1, monitor)
+selltobuy2 = Channel(seller, buyer2, monitor)
  
 async def buyer1():
     await buy1tosell.send("A Rumor of War")
@@ -26,6 +25,8 @@ async def buyer1():
     print(f"Buyer1 finished, buys_book = {buys_book}")
 
 async def buyer2():
+    # name = __qualname__
+    # print(f"my name is {name}")
     cost = await selltobuy2.receive()
     buyer1Contributes = await buy1tobuy2.receive()
     if cost-buyer1Contributes >= 20:
