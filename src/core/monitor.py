@@ -5,6 +5,7 @@ from antlrFiles.PythonicErrorListener import PythonicErrorListener
 from src.core.FSMbuilder import FSMbuilder
 from src.core.transition import Transition
 from src.core.exceptions.illegaltransitionexception import IllegalTransitionException
+from src.core.exceptions.rolemismatchexception import RoleMismatchException
 from src.core.transition import Transition
 from src.core.roleBuilder import Rolebuilder
 
@@ -14,11 +15,11 @@ class Monitor():
         self.transitionHistory = []
         self.uncheckedReceives = {}
         tree = self.buildParseTree(filePath)
-        self.fsm, roles_in_fsm = FSMbuilder().visitSpecification(tree)
-        roles = Rolebuilder().visitSpecification(tree)         
-        if not roles_in_fsm == roles:
-            raise Exception("Incorrect use of roles")
-        self.initialiseUncheckedReceives(roles)
+        self.fsm, used_roles = FSMbuilder().visitSpecification(tree)
+        defined_roles = Rolebuilder().visitSpecification(tree)         
+        if not used_roles == defined_roles:
+            raise RoleMismatchException(used_roles, defined_roles)
+        self.initialiseUncheckedReceives(defined_roles)
         self.halted = False
         
     def verifySend(self, transition: Transition):
