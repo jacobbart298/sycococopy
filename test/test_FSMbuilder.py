@@ -1946,6 +1946,24 @@ class TestFSMBuilder(unittest.TestCase):
         self.assertEqual(q9, fsm.getStates()[0])
         # in q9 there is no transition
         self.assertEqual(0, len(q9.transitionsToStates))
+    
+    def test_non_deterministic_equivalent_choices(self):
+        # see non_deterministic_equivalent_choices.png in tests/testcases/fsms for fsm
+        t1_A_B = Transition("t1", "A", "B")
+        t2_A_C = Transition("t2", "A", "C")   
+        fsm = self.buildFSM("non_deterministic_equivalent_choices.txt")
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
+        # in q0 there is one transition: t1_A_B
+        self.assertEqual(1, len(q0.transitionsToStates))
+        self.assertIn(t1_A_B, q0.transitionsToStates)
+
+        # fsm contains two states after t1_A_B
+        fsm.makeTransition(t1_A_B)        
+        self.assertEqual(2, len(fsm.getStates()))
+        # fsm contains one state after t2_A_C
+        fsm.makeTransition(t2_A_C)
+        self.assertEqual(1, len(fsm.getStates()))
 
     def buildFSM(self, fileName):
         current_directory = os.path.dirname(os.path.abspath(__file__))

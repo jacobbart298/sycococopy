@@ -5,7 +5,7 @@ from src.core.transition import Transition
 class FSM:
 
     def __init__(self):
-        self.states = [State()]
+        self.states = {State()}
 
     def checkTransition(self, transition):
         for state in self.states:
@@ -14,10 +14,10 @@ class FSM:
         return False
 
     def makeTransition(self, transition):
-        newStates = []
+        newStates = set()
         for state in self.states:
-            newStates.extend(state.getNextStates(transition))
+            newStates.update(state.getNextStates(transition))
         self.states = newStates
         
     def getStates(self):
-        return self.states
+        return list(self.states)
