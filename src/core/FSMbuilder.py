@@ -20,8 +20,6 @@ class FSMbuilder(PythonicVisitor):
         self.fsm = FSM()
         self.roles = []
         self.loop_dictionary = {}
-        self.previousState: State
-        self.previousTransition: Transition
 
 
     # Visit a parse tree produced by PythonicParser#specification.
@@ -60,14 +58,26 @@ class FSMbuilder(PythonicVisitor):
 
     # Visit a parse tree produced by PythonicParser#sequence.
     def visitSequence(self, ctx:PythonicParser.SequenceContext):
-        counter = 0
-        currentState = ctx.startState
+        repeat = False
+        loopState = State()
         expressionCount = ctx.getChildCount() - 2
-        expressionIndices =  range(1, expressionCount + 1)
+        # check whether last child is a repeat expression
+        lastChild = ctx.getChild(expressionCount).getChild(0)
+        if lastChild.getChild(0).getText() == "repeat":
+            repeat = True
+            loopTag = lastChild.getChild(1).getText() 
+            loopState = self.loop_dictionary[loopTag]
+            expressionCount -= 1     
+        expressionIndices = range(1, expressionCount + 1)
+        currentState = ctx.startState    
+        counter = 0
         for index in expressionIndices:
             counter += 1
             if counter == expressionCount:
-                nextState = ctx.endState
+                if repeat:
+                    nextState = loopState
+                else:
+                    nextState = ctx.endState
             else:
                 nextState = State()
             expression = ctx.getChild(index).getChild(0)
@@ -120,9 +130,7 @@ class FSMbuilder(PythonicVisitor):
 
     # Visit a parse tree produced by PythonicParser#repeat.
     def visitRepeat(self, ctx:PythonicParser.RepeatContext):
-        tag = ctx.getChild(1).getText()
-        startState = self.loop_dictionary[tag]
-        self.previousState.addTransitionToState(self.previousTransition, startState)          
+        return self.visitChildren(ctx)
 
 
     # Visit a parse tree produced by PythonicParser#send.
@@ -132,8 +140,6 @@ class FSMbuilder(PythonicVisitor):
         receiver = ctx.getChild(5).getText()
         transition = Transition(type, sender, receiver)
         ctx.startState.addTransitionToState(transition, ctx.endState)
-        self.previousTransition = transition
-        self.previousState = ctx.startState
 
 
     # Visit a parse tree produced by PythonicParser#close.

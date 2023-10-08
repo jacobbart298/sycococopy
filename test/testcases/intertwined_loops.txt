@@ -1,0 +1,25 @@
+roles:
+    A
+    B
+    C
+
+protocol:
+    sequence:
+        send t0 from A to B
+        loop first:
+            sequence:
+                send t1 from A to B
+                loop second:
+                    sequence:
+                        send t2 from A to B
+                        choice:
+                            sequence:
+                                send t3 from B to A
+                                repeat first
+                            sequence:
+                                send t4 from B to C
+                                choice:
+                                    sequence:
+                                        send t5 from C to A
+                                        repeat second
+                                    send t6 from C to D

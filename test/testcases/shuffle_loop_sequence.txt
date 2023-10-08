@@ -1,0 +1,19 @@
+roles:
+    A
+    B
+    C
+    D
+
+protocol:
+    loop l:
+        sequence:
+            shuffle:
+                send t3 from B to D
+                send t4 from C to D
+            choice:
+                sequence:
+                    send t1 from A to B
+                    repeat l
+                sequence:
+                    send t1 from A to B
+                    send t2 from B to A
