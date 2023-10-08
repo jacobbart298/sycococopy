@@ -632,13 +632,13 @@ public class PythonicParser extends Parser {
 	@SuppressWarnings("CheckReturnValue")
 	public static class RoleblockContext extends ParserRuleContext {
 		public TerminalNode INDENT() { return getToken(PythonicParser.INDENT, 0); }
-		public TerminalNode DEDENT() { return getToken(PythonicParser.DEDENT, 0); }
 		public List<RoleContext> role() {
 			return getRuleContexts(RoleContext.class);
 		}
 		public RoleContext role(int i) {
 			return getRuleContext(RoleContext.class,i);
 		}
+		public TerminalNode DEDENT() { return getToken(PythonicParser.DEDENT, 0); }
 		public RoleblockContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -654,21 +654,23 @@ public class PythonicParser extends Parser {
 			{
 			setState(86);
 			match(INDENT);
-			setState(88); 
+			setState(87);
+			role();
+			setState(89); 
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			do {
 				{
 				{
-				setState(87);
+				setState(88);
 				role();
 				}
 				}
-				setState(90); 
+				setState(91); 
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			} while ( _la==WORD );
-			setState(92);
+			setState(93);
 			match(DEDENT);
 			}
 		}
@@ -699,9 +701,9 @@ public class PythonicParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(94);
-			match(WORD);
 			setState(95);
+			match(WORD);
+			setState(96);
 			match(NL);
 			}
 		}
@@ -717,7 +719,7 @@ public class PythonicParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\u0004\u0001\u0011b\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
+		"\u0004\u0001\u0011c\u0002\u0000\u0007\u0000\u0002\u0001\u0007\u0001\u0002"+
 		"\u0002\u0007\u0002\u0002\u0003\u0007\u0003\u0002\u0004\u0007\u0004\u0002"+
 		"\u0005\u0007\u0005\u0002\u0006\u0007\u0006\u0002\u0007\u0007\u0007\u0002"+
 		"\b\u0007\b\u0002\t\u0007\t\u0002\n\u0007\n\u0002\u000b\u0007\u000b\u0002"+
@@ -729,19 +731,19 @@ public class PythonicParser extends Parser {
 		"\u0001\u0006\u0001\u0007\u0001\u0007\u0001\u0007\u0001\u0007\u0001\b\u0001"+
 		"\b\u0001\b\u0001\b\u0001\b\u0001\b\u0001\b\u0001\b\u0001\t\u0001\t\u0001"+
 		"\t\u0001\t\u0001\t\u0001\t\u0001\n\u0001\n\u0004\nN\b\n\u000b\n\f\nO\u0001"+
-		"\n\u0001\n\u0001\u000b\u0001\u000b\u0001\u000b\u0001\f\u0001\f\u0004\f"+
-		"Y\b\f\u000b\f\f\fZ\u0001\f\u0001\f\u0001\r\u0001\r\u0001\r\u0001\r\u0000"+
-		"\u0000\u000e\u0000\u0002\u0004\u0006\b\n\f\u000e\u0010\u0012\u0014\u0016"+
-		"\u0018\u001a\u0000\u0000[\u0000\u001c\u0001\u0000\u0000\u0000\u0002 \u0001"+
-		"\u0000\u0000\u0000\u0004*\u0001\u0000\u0000\u0000\u0006,\u0001\u0000\u0000"+
-		"\u0000\b/\u0001\u0000\u0000\u0000\n2\u0001\u0000\u0000\u0000\f5\u0001"+
-		"\u0000\u0000\u0000\u000e9\u0001\u0000\u0000\u0000\u0010=\u0001\u0000\u0000"+
-		"\u0000\u0012E\u0001\u0000\u0000\u0000\u0014K\u0001\u0000\u0000\u0000\u0016"+
-		"S\u0001\u0000\u0000\u0000\u0018V\u0001\u0000\u0000\u0000\u001a^\u0001"+
-		"\u0000\u0000\u0000\u001c\u001d\u0003\u0016\u000b\u0000\u001d\u001e\u0003"+
-		"\u0002\u0001\u0000\u001e\u001f\u0005\u0000\u0000\u0001\u001f\u0001\u0001"+
-		"\u0000\u0000\u0000 !\u0005\u0001\u0000\u0000!\"\u0003\u0014\n\u0000\""+
-		"\u0003\u0001\u0000\u0000\u0000#+\u0003\u0010\b\u0000$+\u0003\u0006\u0003"+
+		"\n\u0001\n\u0001\u000b\u0001\u000b\u0001\u000b\u0001\f\u0001\f\u0001\f"+
+		"\u0004\fZ\b\f\u000b\f\f\f[\u0001\f\u0001\f\u0001\r\u0001\r\u0001\r\u0001"+
+		"\r\u0000\u0000\u000e\u0000\u0002\u0004\u0006\b\n\f\u000e\u0010\u0012\u0014"+
+		"\u0016\u0018\u001a\u0000\u0000\\\u0000\u001c\u0001\u0000\u0000\u0000\u0002"+
+		" \u0001\u0000\u0000\u0000\u0004*\u0001\u0000\u0000\u0000\u0006,\u0001"+
+		"\u0000\u0000\u0000\b/\u0001\u0000\u0000\u0000\n2\u0001\u0000\u0000\u0000"+
+		"\f5\u0001\u0000\u0000\u0000\u000e9\u0001\u0000\u0000\u0000\u0010=\u0001"+
+		"\u0000\u0000\u0000\u0012E\u0001\u0000\u0000\u0000\u0014K\u0001\u0000\u0000"+
+		"\u0000\u0016S\u0001\u0000\u0000\u0000\u0018V\u0001\u0000\u0000\u0000\u001a"+
+		"_\u0001\u0000\u0000\u0000\u001c\u001d\u0003\u0016\u000b\u0000\u001d\u001e"+
+		"\u0003\u0002\u0001\u0000\u001e\u001f\u0005\u0000\u0000\u0001\u001f\u0001"+
+		"\u0001\u0000\u0000\u0000 !\u0005\u0001\u0000\u0000!\"\u0003\u0014\n\u0000"+
+		"\"\u0003\u0001\u0000\u0000\u0000#+\u0003\u0010\b\u0000$+\u0003\u0006\u0003"+
 		"\u0000%+\u0003\b\u0004\u0000&+\u0003\n\u0005\u0000\'+\u0003\u0012\t\u0000"+
 		"(+\u0003\f\u0006\u0000)+\u0003\u000e\u0007\u0000*#\u0001\u0000\u0000\u0000"+
 		"*$\u0001\u0000\u0000\u0000*%\u0001\u0000\u0000\u0000*&\u0001\u0000\u0000"+
@@ -762,11 +764,11 @@ public class PythonicParser extends Parser {
 		"OM\u0001\u0000\u0000\u0000OP\u0001\u0000\u0000\u0000PQ\u0001\u0000\u0000"+
 		"\u0000QR\u0005\u0011\u0000\u0000R\u0015\u0001\u0000\u0000\u0000ST\u0005"+
 		"\u0002\u0000\u0000TU\u0003\u0018\f\u0000U\u0017\u0001\u0000\u0000\u0000"+
-		"VX\u0005\u0010\u0000\u0000WY\u0003\u001a\r\u0000XW\u0001\u0000\u0000\u0000"+
-		"YZ\u0001\u0000\u0000\u0000ZX\u0001\u0000\u0000\u0000Z[\u0001\u0000\u0000"+
-		"\u0000[\\\u0001\u0000\u0000\u0000\\]\u0005\u0011\u0000\u0000]\u0019\u0001"+
-		"\u0000\u0000\u0000^_\u0005\r\u0000\u0000_`\u0005\u000f\u0000\u0000`\u001b"+
-		"\u0001\u0000\u0000\u0000\u0003*OZ";
+		"VW\u0005\u0010\u0000\u0000WY\u0003\u001a\r\u0000XZ\u0003\u001a\r\u0000"+
+		"YX\u0001\u0000\u0000\u0000Z[\u0001\u0000\u0000\u0000[Y\u0001\u0000\u0000"+
+		"\u0000[\\\u0001\u0000\u0000\u0000\\]\u0001\u0000\u0000\u0000]^\u0005\u0011"+
+		"\u0000\u0000^\u0019\u0001\u0000\u0000\u0000_`\u0005\r\u0000\u0000`a\u0005"+
+		"\u000f\u0000\u0000a\u001b\u0001\u0000\u0000\u0000\u0003*O[";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {

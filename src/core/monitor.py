@@ -6,13 +6,18 @@ from src.core.FSMbuilder import FSMbuilder
 from src.core.transition import Transition
 from src.core.exceptions.illegaltransitionexception import IllegalTransitionException
 from src.core.transition import Transition
+from src.core.roleBuilder import Rolebuilder
 
 class Monitor():
 
     def __init__(self, filePath):
         self.transitionHistory = []
         self.uncheckedReceives = {}
-        self.fsm, roles = self.buildFSM(filePath)
+        tree = self.buildParseTree(filePath)
+        self.fsm, roles_in_fsm = FSMbuilder().visitSpecification(tree)
+        roles = Rolebuilder().visitSpecification(tree)         
+        if not roles_in_fsm == roles:
+            raise Exception("Incorrect use of roles")
         self.initialiseUncheckedReceives(roles)
         self.halted = False
         
@@ -39,7 +44,7 @@ class Monitor():
         for role in roles:
             self.uncheckedReceives[role] = []
 
-    def buildFSM(self, filePath):
+    def buildParseTree(self, filePath):
         input = FileStream(filePath)
         lexer = PythonicLexer(input)
         stream = CommonTokenStream(lexer)
@@ -48,7 +53,5 @@ class Monitor():
         parser.removeErrorListeners()
         # Add our own ErrorListener
         parser.addErrorListener(PythonicErrorListener())
-        tree = parser.specification() 
-        fsm_builder = FSMbuilder()
-        return fsm_builder.visitSpecification(tree)
+        return parser.specification() 
     

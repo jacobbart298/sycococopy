@@ -40,7 +40,7 @@ send                : SEND WORD FROM WORD TO WORD NL ;
 close               : CLOSE WORD TO WORD NL;
 block               : INDENT expression+ DEDENT ;
 roles               : ROLES roleblock ;
-roleblock           : INDENT role+ DEDENT;
+roleblock           : INDENT role role+ DEDENT;
 role                : WORD NL;
 
 
