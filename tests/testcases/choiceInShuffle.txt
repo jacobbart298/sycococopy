@@ -1,0 +1,10 @@
+roles:
+    A
+    B
+
+protocol(choiceInShuffle):
+    shuffle:
+        choice:
+            send V from A to B
+            send W from B to A
+        send U from B to A

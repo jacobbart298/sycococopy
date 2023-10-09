@@ -1,7 +1,5 @@
-import asyncio
 import random
-import src.core.instrumentation as inst
-from src.core.instrumentation import Channel
+import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor
 
 customer = "customer"
@@ -10,11 +8,17 @@ service = "service"
 specification_path = r".\travelAgency.txt"
 monitor = Monitor(specification_path)
 
-customer_to_agency = Channel(customer, agency, monitor, 5)
-agency_to_customer = Channel(agency, customer, monitor, 5)
-agency_to_service = Channel(agency, service, monitor, 5)
-customer_to_service = Channel(customer, service, monitor, 5)
-service_to_customer = Channel(service, customer, monitor, 5)
+customer_to_agency = asyncio.Queue()
+agency_to_customer = asyncio.Queue()
+agency_to_service = asyncio.Queue()
+customer_to_service = asyncio.Queue()
+service_to_customer = asyncio.Queue()
+
+asyncio.link(customer_to_agency, customer, agency, monitor)
+asyncio.link(agency_to_customer, agency, customer, monitor)
+asyncio.link(agency_to_service, agency, service, monitor)
+asyncio.link(customer_to_service, customer, service, monitor)
+asyncio.link(service_to_customer, service, customer, monitor)
 
 destinations = ["Aruba", "Bonaire", "Germany", "Belgium", "Norway"]
 prices = {"Aruba": 3000, "Bonaire":3200, "Germany":800, "Belgium":500, "Norway":1500}
@@ -25,48 +29,48 @@ async def customer():
     while not going and counter < 6:
         destination = random.choice(destinations)
         print(f"Customer wilt naar {destination}")
-        await customer_to_agency.send(destination)
-        price = await agency_to_customer.receive()
+        await customer_to_agency.put(destination)
+        price = await agency_to_customer.get()
         counter += 1
         if price <= 500:
             print(f"{str(price)} is een mooie prijs")
             going = True
-            await customer_to_agency.send(True)
-            await customer_to_service.send("Adres")
-            date = await service_to_customer.receive()
+            await customer_to_agency.put(True)
+            await customer_to_service.put("Adres")
+            date = await service_to_customer.get()
             print(f"Ticket dispatch date is {date}")
     if not going:
         print(f"Deze agency heeft geen goede prijzen!")
-        await customer_to_agency.send(False)
+        await customer_to_agency.put(False)
 
 async def agency():
     loop_guard = True
-    destination = await customer_to_agency.receive()
+    destination = await customer_to_agency.get()
     while loop_guard:
         price = prices.get(destination)
-        await agency_to_customer.send(price)
-        await agency_to_service.send(destination)
-        bool_or_str = await customer_to_agency.receive()
+        await agency_to_customer.put(price)
+        await agency_to_service.put(destination)
+        bool_or_str = await customer_to_agency.get()
         if type(bool_or_str) == bool:
             loop_guard = False
             if bool_or_str:
-                await agency_to_service.send(True)
+                await agency_to_service.put(True)
             else:
-                await agency_to_service.send(False)
+                await agency_to_service.put(False)
         else:
             destination = bool_or_str
   
 
 async def service():
     loop_guard = True
-    destination = await agency_to_service.receive()
+    destination = await agency_to_service.get()
     while loop_guard:
-        bool_or_string = await agency_to_service.receive()
+        bool_or_string = await agency_to_service.get()
         if type(bool_or_string) == bool:
             loop_guard = False
             if bool_or_string:
-                adres = await customer_to_service.receive()            
-                await service_to_customer.send("1 april")
+                adres = await customer_to_service.get()            
+                await service_to_customer.put("1 april")
         else:
             destination = bool_or_string
 
