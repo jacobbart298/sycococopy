@@ -1,0 +1,10 @@
+roles:
+    A
+    B
+    C
+
+protocol:
+    sequence:
+        send int from A to B
+        send int(<=5) from B to C
+        send int(>4) from C to A

@@ -137,6 +137,7 @@ class FSMbuilder(PythonicVisitor):
 
     # Visit a parse tree produced by PythonicParser#send.
     def visitSend(self, ctx:PythonicParser.SendContext):
+        self.dump(ctx)
         type = ctx.getChild(1).getText()
         sender = ctx.getChild(3).getText()
         receiver = ctx.getChild(5).getText()
