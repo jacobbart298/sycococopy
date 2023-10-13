@@ -17,7 +17,7 @@ class Queue(asyncio.Queue):
 
     async def put(self, item):
         if self in linked_queues:
-            transition = Transition(type(item).__name__, self.sender, self.receiver)
+            transition = Transition(type(item).__name__, self.sender, self.receiver, value = item)
             self.monitor.verifySend(transition)
             #throws an exception from monitor if wrong
             await super().put(item)

@@ -3,7 +3,7 @@ from antlr4.tree.Trees import Trees
 from antlr4.tree.Tree import TerminalNodeImpl
 from antlrFiles.pythonicvisitor import PythonicVisitor
 from src.core.fsm import FSM
-from src.core.transition import Transition
+from src.core.transition import Transition, PredicateTransition
 from src.core.state import State
 from itertools import permutations
 
@@ -137,14 +137,26 @@ class FSMbuilder(PythonicVisitor):
 
     # Visit a parse tree produced by PythonicParser#send.
     def visitSend(self, ctx:PythonicParser.SendContext):
-        self.dump(ctx)
-        type = ctx.getChild(1).getText()
-        sender = ctx.getChild(3).getText()
-        receiver = ctx.getChild(5).getText()
-        transition = Transition(type, sender, receiver)
+        # build transition send without predicate
+        if (ctx.getChild(2).getText() == 'from'):
+            type = ctx.getChild(1).getText()
+            sender = ctx.getChild(3).getText()
+            receiver = ctx.getChild(5).getText()
+            transition = Transition(type, sender, receiver)
+        # build transition send with predicate
+        else:
+            self.dump(ctx)
+            type = ctx.getChild(1).getText()
+            comparator = ctx.getChild(3).getText()
+            value = ctx.getChild(4).getText()
+            sender = ctx.getChild(7).getText()
+            receiver = ctx.getChild(9).getText()
+            transition = PredicateTransition(type, sender, receiver, comparator, value)
+        # add transition to state
         ctx.startState.addTransitionToState(transition, ctx.endState)
         self.roles_in_fsm.add(sender)
         self.roles_in_fsm.add(receiver)
+
 
 
     # Visit a parse tree produced by PythonicParser#close.

@@ -18,6 +18,13 @@ class State:
     
     def containsTransition(self, transition):
         return transition in self.transitionsToStates
+    
+    def getTransitions(self, transition):
+        transitions = []
+        for state_transition in self.transitionsToStates.keys:
+            if (state_transition == transition):
+                transitions.append(state_transition)
+        return transitions
 
     def __str__(self) -> str:
         if len(self.transitionsToStates) == 0:

@@ -27,7 +27,12 @@ class Monitor():
         if self.halted:
             return
         self.transitionHistory.append(transition)
-        transitionAllowed = self.fsm.checkTransition(transition) and self.uncheckedReceives[transition.getSender()] == []
+        transitionAllowedInFSM = self.fsm.checkTransition(transition)
+        if transitionAllowedInFSM:
+            # is er een predikaat?
+            
+            
+            and self.uncheckedReceives[transition.getSender()] == []
         if transitionAllowed:
             self.fsm.makeTransition(transition)
             self.uncheckedReceives[transition.getReceiver()].append(transition)
@@ -44,6 +49,21 @@ class Monitor():
     def initialiseUncheckedReceives(self, roles):
         for role in roles:
             self.uncheckedReceives[role] = []
+
+    def checkPredicate(self, comparator, actual, expected):
+        match comparator:
+            case '<':
+                return actual < expected
+            case '<=':
+                return actual <= expected
+            case '>':
+                return actual > expected
+            case '>=':
+                return actual >= expected
+            case '!=':
+                return actual != expected
+            case '==':
+                return actual == expected
 
     def buildParseTree(self, filePath):
         input = FileStream(filePath)

@@ -8,11 +8,14 @@ C = 'C'
 specification_path = r".\protocol_voorbeeld_programma_predicates.txt"
 monitor = Monitor(specification_path)
 
-async def A:
+async def A():
+    pass
 
-async def B:
+async def B():
+    pass
 
-async def C:
+async def C():
+    pass
 
 async def main():
     async with asyncio.TaskGroup() as task_group:

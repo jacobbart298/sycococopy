@@ -8,10 +8,11 @@ class FSM:
         self.states = {State()}
 
     def checkTransition(self, transition):
+        transitions = []
         for state in self.states:
             if state.containsTransition(transition):
-                return True
-        return False
+                transitions.append(state.getTransitions(transition))
+        return transitions
 
     def makeTransition(self, transition):
         newStates = set()
