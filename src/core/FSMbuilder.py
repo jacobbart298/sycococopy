@@ -25,7 +25,6 @@ class FSMbuilder(PythonicVisitor):
 
     # Visit a parse tree produced by PythonicParser#specification.
     def visitSpecification(self, ctx:PythonicParser.SpecificationContext):
-        # self.dump(ctx)
         self.visitProtocol(ctx.getChild(1))
         return self.fsm, self.roles_in_fsm
 
@@ -145,12 +144,12 @@ class FSMbuilder(PythonicVisitor):
             transition = Transition(type, sender, receiver)
         # build transition send with predicate
         else:
-            self.dump(ctx)
             type = ctx.getChild(1).getText()
             comparator = ctx.getChild(3).getText()
             value = ctx.getChild(4).getText()
             sender = ctx.getChild(7).getText()
             receiver = ctx.getChild(9).getText()
+            value = self.stringToValue(type, value)
             transition = PredicateTransition(type, sender, receiver, comparator, value)
         # add transition to state
         ctx.startState.addTransitionToState(transition, ctx.endState)
@@ -168,6 +167,17 @@ class FSMbuilder(PythonicVisitor):
     def visitBlock(self, ctx:PythonicParser.BlockContext):
         return self.visitChildren(ctx)
 
+
+    def stringToValue(self, type, value):
+        match type:
+            case "int":
+                return int(value)
+            case "float":
+                return float(value)
+            case "bool":
+                return bool(value)
+            case "str":
+                return value
 
     def dump(self, node, depth=0, ruleNames=None):
         depthStr = '. ' * depth

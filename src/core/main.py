@@ -26,6 +26,15 @@ def main(argv):
     print(type(met))
     print(zonder == met)
     print(met == zonder)
+    emptylist = []
+    vollelijst = ["met"]
+    if emptylist:
+        print("leeg")
+    if vollelijst:
+        print("vol")
+
+    isIntEqualToString = int(4) == float('4.000001')
+    print(isIntEqualToString)
     # monitor = Monitor(argv[1])
 
 

@@ -1,4 +1,5 @@
 import src.core.instrumentation as asyncio
+from src.core.instrumentation import Channel
 from src.core.monitor import Monitor
 
 A = 'A'
@@ -8,14 +9,25 @@ C = 'C'
 specification_path = r".\protocol_voorbeeld_programma_predicates.txt"
 monitor = Monitor(specification_path)
 
+aToB = Channel(A, B, monitor)
+bToA = Channel(B, A, monitor)
+bToC = Channel(B, C, monitor)
+
 async def A():
-    pass
+    answer = await bToA.receive()
+    if (answer):
+        await aToB.send(6)
+    else:
+        await aToB.send(-2)
 
 async def B():
-    pass
+    await bToA.send(True)
+    number = await aToB.receive()
+    await bToC.send(f"Number received: {number}")
 
 async def C():
-    pass
+    number_string = await bToC.receive()
+    print(number_string)
 
 async def main():
     async with asyncio.TaskGroup() as task_group:

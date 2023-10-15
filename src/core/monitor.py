@@ -3,7 +3,7 @@ from antlrFiles.PythonicLexer import PythonicLexer
 from antlrFiles.PythonicParser import PythonicParser
 from antlrFiles.PythonicErrorListener import PythonicErrorListener
 from src.core.FSMbuilder import FSMbuilder
-from src.core.transition import Transition
+from src.core.transition import Transition, PredicateTransition
 from src.core.exceptions.illegaltransitionexception import IllegalTransitionException
 from src.core.exceptions.rolemismatchexception import RoleMismatchException
 from src.core.transition import Transition
@@ -22,20 +22,29 @@ class Monitor():
         self.initialiseUncheckedReceives(defined_roles)
         self.halted = False
         
-    def verifySend(self, transition: Transition):
+    def verifySend(self, transition: Transition, item):
         # Exceptions are not immediately raised from event loop. Halted checks if exception was raised already
         if self.halted:
             return
-        self.transitionHistory.append(transition)
-        transitionAllowedInFSM = self.fsm.checkTransition(transition)
-        if transitionAllowedInFSM:
-            # is er een predikaat?
-            
-            
-            and self.uncheckedReceives[transition.getSender()] == []
-        if transitionAllowed:
-            self.fsm.makeTransition(transition)
-            self.uncheckedReceives[transition.getReceiver()].append(transition)
+        self.transitionHistory.append((transition, item))
+        transitionsAllowedInFSM = self.fsm.checkTransition(transition)
+        if transitionsAllowedInFSM:
+            transitionMade = False
+            for allowedTransition in transitionsAllowedInFSM:
+                if isinstance(allowedTransition, PredicateTransition):
+                    if self.checkPredicate(allowedTransition.getComparator(), item, allowedTransition.getValue()):
+                        self.fsm.makeTransition(allowedTransition)
+                        transitionMade = True
+                        self.uncheckedReceives[allowedTransition.getReceiver()].append(allowedTransition)
+                else:
+                    self.fsm.makeTransition(allowedTransition)
+                    transitionMade = True
+                    self.uncheckedReceives[allowedTransition.getReceiver()].append(allowedTransition)
+            if transitionMade:
+                self.fsm.updateStates()
+            else:
+                self.halted = True
+                raise IllegalTransitionException(self.transitionHistory)
         else:
             self.halted = True
             raise IllegalTransitionException(self.transitionHistory)

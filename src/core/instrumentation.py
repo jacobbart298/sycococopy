@@ -17,8 +17,8 @@ class Queue(asyncio.Queue):
 
     async def put(self, item):
         if self in linked_queues:
-            transition = Transition(type(item).__name__, self.sender, self.receiver, value = item)
-            self.monitor.verifySend(transition)
+            transition = Transition(type(item).__name__, self.sender, self.receiver)
+            self.monitor.verifySend(transition, item)
             #throws an exception from monitor if wrong
             await super().put(item)
         else:
@@ -43,7 +43,7 @@ class Channel():
     
     async def send(self, item):
         transition = Transition(type(item).__name__, self.sender, self.receiver)
-        self.monitor.verifySend(transition)
+        self.monitor.verifySend(transition, item)
         #throws an exception from monitor if wrong
         await self.queue.put(item)
     

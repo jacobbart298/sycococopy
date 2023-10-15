@@ -6,19 +6,23 @@ class FSM:
 
     def __init__(self):
         self.states = {State()}
+        self.newStates = set()
+
+    def updateStates(self):
+        self.states.clear()
+        self.states.update(self.newStates)
+        self.newStates.clear()
 
     def checkTransition(self, transition):
         transitions = []
         for state in self.states:
             if state.containsTransition(transition):
-                transitions.append(state.getTransitions(transition))
+                transitions.extend(state.getTransitions(transition))
         return transitions
-
-    def makeTransition(self, transition):
-        newStates = set()
-        for state in self.states:
-            newStates.update(state.getNextStates(transition))
-        self.states = newStates
         
+    def makeTransition(self, transition):
+        for state in self.states:
+            self.newStates.update(state.getNextStates(transition))
+
     def getStates(self):
         return list(self.states)

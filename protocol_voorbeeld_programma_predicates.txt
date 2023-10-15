@@ -4,7 +4,15 @@ roles:
     C
 
 protocol:
-    sequence:
-        send int from A to B
-        send int(<=5) from B to C
-        send int(>4) from C to A
+    loop l1:
+        choice:
+            send int from B to A
+            sequence:
+                send bool from B to A 
+                choice:
+                    sequence:
+                        send int from A to B
+                        repeat l1
+                    sequence:
+                        send int(>4) from A to B
+                        send str from B to C
