@@ -1,5 +1,5 @@
-import asyncio
 from src.core.instrumentation import Channel
+import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor
 
 buyer1 = "buyer1"
@@ -18,15 +18,13 @@ selltobuy2 = Channel(seller, buyer2, monitor)
 async def buyer1():
     await buy1tosell.send("A Rumor of War")
     quote = await selltobuy1.receive()
-    await buy1tobuy2.send(quote//2)
+    await buy1tosell.send(quote//2)
     buys_book = await buy2tobuy1.receive()
     if buys_book:
         await buy1tobuy2.send(quote//2)
     print(f"Buyer1 finished, buys_book = {buys_book}")
 
 async def buyer2():
-    # name = __qualname__
-    # print(f"my name is {name}")
     cost = await selltobuy2.receive()
     buyer1Contributes = await buy1tobuy2.receive()
     if cost-buyer1Contributes >= 20:

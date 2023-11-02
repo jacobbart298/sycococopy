@@ -1,6 +1,10 @@
+import sys
+import traceback
 import asyncio as asyncio
 from src.core.transition import Transition
 from src.core.monitor import Monitor
+from src.core.exceptions.haltedexception import HaltedException
+from src.core.exceptions.illegaltransitionexception import IllegalTransitionException
 
 linked_queues = []
 
@@ -18,9 +22,11 @@ class Queue(asyncio.Queue):
     async def put(self, item):
         if self in linked_queues:
             transition = Transition(type(item).__name__, self.sender, self.receiver)
-            self.monitor.verifySend(transition, item)
-            #throws an exception from monitor if wrong
-            await super().put(item)
+            try:
+                self.monitor.verifySend(transition, item)
+                await super().put(item)
+            except HaltedException:
+                pass
         else:
             await super().put(item)
 
@@ -28,8 +34,11 @@ class Queue(asyncio.Queue):
         if self in linked_queues:
             item = await super().get()
             transition = Transition(type(item).__name__, self.sender, self.receiver)
-            self.monitor.verifyReceive(transition)
-            return item
+            try: 
+                self.monitor.verifyReceive(transition)
+                return item
+            except HaltedException:
+                pass
         else:
             return await super().get()
 
@@ -43,12 +52,23 @@ class Channel():
     
     async def send(self, item):
         transition = Transition(type(item).__name__, self.sender, self.receiver)
-        self.monitor.verifySend(transition, item)
-        #throws an exception from monitor if wrong
-        await self.queue.put(item)
+        try:
+            self.monitor.verifySend(transition, item)
+            await self.queue.put(item)
+        except HaltedException:
+            pass
     
     async def receive(self):
         item = await self.queue.get()
         transition = Transition(type(item).__name__, self.sender, self.receiver)
-        self.monitor.verifyReceive(transition)
-        return item
+        try:
+            self.monitor.verifyReceive(transition)
+            return item
+        except HaltedException:
+            pass
+
+def imposter_syndrome(type, value, traceback):
+    # print("I am a bad coder ☹️")
+    print(f"{type} of error has occurred, the value: {value}, and you can see traceback: {traceback}")
+
+sys.excepthook = imposter_syndrome

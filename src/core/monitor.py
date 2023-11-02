@@ -6,6 +6,7 @@ from src.core.FSMbuilder import FSMbuilder
 from src.core.transition import Transition, PredicateTransition
 from src.core.exceptions.illegaltransitionexception import IllegalTransitionException
 from src.core.exceptions.rolemismatchexception import RoleMismatchException
+from src.core.exceptions.haltedexception import HaltedException
 from src.core.transition import Transition
 from src.core.roleBuilder import Rolebuilder
 
@@ -25,7 +26,8 @@ class Monitor():
     def verifySend(self, transition: Transition, item):
         # Exceptions are not immediately raised from event loop. Halted checks if exception was raised already
         if self.halted:
-            return
+            print("Raise de exception maar!")
+            raise HaltedException()
         self.transitionHistory.append((transition, item))
         transitionsAllowedInFSM = self.fsm.checkTransition(transition)
         if transitionsAllowedInFSM:
@@ -47,12 +49,16 @@ class Monitor():
                 raise IllegalTransitionException(self.transitionHistory)
         else:
             self.halted = True
+            print('Halted made true')
             raise IllegalTransitionException(self.transitionHistory)
     
     def verifyReceive(self, transition: Transition):
+        if self.halted:
+            raise HaltedException()
         if transition in self.uncheckedReceives[transition.getReceiver()]:
             self.uncheckedReceives[transition.getReceiver()].remove(transition)
         else:
+            self.halted = True
             raise IllegalTransitionException(self.transitionHistory)
 
     def initialiseUncheckedReceives(self, roles):

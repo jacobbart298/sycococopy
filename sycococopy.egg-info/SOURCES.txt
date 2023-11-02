@@ -1,9 +1,11 @@
 README.md
 setup.py
+antlrFiles/PythonicErrorListener.py
 antlrFiles/PythonicLexer.py
 antlrFiles/PythonicListener.py
 antlrFiles/PythonicParser.py
 antlrFiles/__init__.py
+antlrFiles/pythonicSyntaxErrorException.py
 antlrFiles/pythonicvisitor.py
 src/__init__.py
 src/core/FSMbuilder.py
@@ -13,6 +15,7 @@ src/core/instrumentation.py
 src/core/main.py
 src/core/monitor.py
 src/core/recursie_main.py
+src/core/roleBuilder.py
 src/core/specification_example.py
 src/core/state.py
 src/core/transition.py
@@ -25,3 +28,9 @@ test/test_FSM.py
 test/test_FSMbuilder.py
 test/test_Monitor.py
 test/test_State.py
+tests/__init__.py
+tests/testFSM.py
+tests/testFSMbuilder.py
+tests/testMonitor.py
+tests/testState.py
+tests/testenDict.py
