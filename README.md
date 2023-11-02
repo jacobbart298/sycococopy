@@ -1,3 +1,7 @@
+py -m pip install -e .
+
+
+
 # SyCoCoCoPy
 
 
