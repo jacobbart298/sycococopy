@@ -32,17 +32,10 @@ class Monitor():
         if transitionsAllowedInFSM:
             transitionMade = False
             for allowedTransition in transitionsAllowedInFSM:
-                if isinstance(allowedTransition, PredicateTransition):
-                    if self.checkPredicate(allowedTransition.getComparator(), item, allowedTransition.getValue()):
-                        self.fsm.makeTransition(allowedTransition)
-                        transitionMade = True
-                        self.uncheckedReceives[allowedTransition.getReceiver()].append(allowedTransition.toSuper())
-                    else:
-                        self.fsm.removePredicateTransition(allowedTransition)
-                else:
+                if allowedTransition.isValid(item):
                     self.fsm.makeTransition(allowedTransition)
                     transitionMade = True
-                    self.uncheckedReceives[allowedTransition.getReceiver()].append(allowedTransition)
+                    self.addToUncheckedReceives(allowedTransition)
             if transitionMade:
                 self.fsm.updateStates()
             else:
@@ -65,20 +58,9 @@ class Monitor():
         for role in roles:
             self.uncheckedReceives[role] = []
 
-    def checkPredicate(self, operator, value1, value2):
-        match operator:
-            case '<':
-                return value1 < value2
-            case '<=':
-                return value1 <= value2
-            case '>':
-                return value1 > value2
-            case '>=':
-                return value1 >= value2
-            case '!=':
-                return value1 != value2
-            case '==':
-                return value1 == value2
+    def addToUncheckedReceives(self, transition: Transition):
+        uncheckedReceive = Transition(transition.getType(), transition.getSender(), transition.getReceiver())
+        self.uncheckedReceives[transition.getReceiver()].append(uncheckedReceive)
 
     def buildParseTree(self, filePath):
         input = FileStream(filePath)

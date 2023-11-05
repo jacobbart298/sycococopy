@@ -51,11 +51,8 @@ class FSMbuilder(PythonicVisitor):
                 self.visitShuffle(expression)
             case "send":
                 self.visitSend(ctx)
-            case "loop":
-                self.visitLoop(ctx)
-            case "repeat":
-                self.visitRepeat(ctx)
-
+            case "close":
+                self.visitClose(ctx)
 
     # Visit a parse tree produced by PythonicParser#sequence.
     def visitSequence(self, ctx:PythonicParser.SequenceContext):
@@ -129,11 +126,6 @@ class FSMbuilder(PythonicVisitor):
         self.visitExpression(expression)
 
 
-    # Visit a parse tree produced by PythonicParser#repeat.
-    def visitRepeat(self, ctx:PythonicParser.RepeatContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by PythonicParser#send.
     def visitSend(self, ctx:PythonicParser.SendContext):
         # build transition send without predicate
@@ -166,14 +158,8 @@ class FSMbuilder(PythonicVisitor):
         self.roles_in_fsm.add(receiver)
 
 
-
     # Visit a parse tree produced by PythonicParser#close.
     def visitClose(self, ctx:PythonicParser.CloseContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by PythonicParser#block.
-    def visitBlock(self, ctx:PythonicParser.BlockContext):
         return self.visitChildren(ctx)
 
 

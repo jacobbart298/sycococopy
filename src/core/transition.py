@@ -16,6 +16,9 @@ class Transition:
     
     def getType(self):
         return self.type
+    
+    def isValid(self, value):
+        return True
 
     def __eq__(self, other):
         return type(self) == type(other) and self.type == other.type and self.sender == other.sender and self.receiver == other.receiver 
@@ -29,27 +32,39 @@ class Transition:
 
 class PredicateTransition(Transition):
 
-    def __init__(self, type, sender, receiver, comparator=None, value=None):
+    def __init__(self, type, sender, receiver, operator=None, value=None):
         super().__init__(type, sender, receiver)
-        self.comparator = comparator
+        self.operator = operator
         self.value = value
 
     def __str__(self):
-        return "send " + str(self.type) + "(" + str(self.comparator) + str(self.value) + ") from " + str(self.sender) + " to " + str(self.receiver)
-
-    def toSuper(self):
-        return Transition(self.type, self.sender, self.receiver)
+        return "send " + str(self.type) + "(" + str(self.operator) + str(self.value) + ") from " + str(self.sender) + " to " + str(self.receiver)
 
     def getComparator(self):
-        return self.comparator
+        return self.operator
     
     def getValue(self):
         return self.value
 
+    def isValid(self, value):
+        match self.operator:
+            case '<':
+                return value < self.value
+            case '<=':
+                return value <= self.value
+            case '>':
+                return value > self.value
+            case '>=':
+                return value >= self.value
+            case '!=':
+                return value != self.value
+            case '==':
+                return value == self.value
+
     def __eq__(self, other):
-        return type(self) == type(other) and self.type == other.type and self.sender == other.sender and self.receiver == other.receiver and self.comparator == other.comparator and self.value == other.value
+        return type(self) == type(other) and self.type == other.type and self.sender == other.sender and self.receiver == other.receiver and self.operator == other.comparator and self.value == other.value
 
     def __hash__(self):
-        return hash(self.type) + hash(self.sender) + hash(self.receiver) + hash(self.comparator) + hash(self.value)
+        return hash(self.type) + hash(self.sender) + hash(self.receiver) + hash(self.operator) + hash(self.value)
     
     

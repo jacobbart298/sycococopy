@@ -18,7 +18,7 @@ selltobuy2 = Channel(seller, buyer2, monitor)
 async def buyer1():
     await buy1tosell.send("A Rumor of War")
     quote = await selltobuy1.receive()
-    await buy1tosell.send(quote//2)
+    await buy1tobuy2.send(quote//2)
     buys_book = await buy2tobuy1.receive()
     if buys_book:
         await buy1tobuy2.send(quote//2)

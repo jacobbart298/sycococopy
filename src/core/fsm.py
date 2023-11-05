@@ -23,13 +23,6 @@ class FSM:
     def makeTransition(self, transition):
         for state in self.states:
             self.newStates.update(state.getNextStates(transition))
-
-    def removePredicateTransition(self, transition: PredicateTransition):
-        for state in self.states:
-            if state.containsTransition(transition):
-                state.removeTransition(transition)
-                if state.isEmpty():
-                    self.states.remove(state)
         
     def getStates(self):
         return list(self.states)
