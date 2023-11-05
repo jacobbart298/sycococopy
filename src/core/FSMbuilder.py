@@ -142,13 +142,22 @@ class FSMbuilder(PythonicVisitor):
             sender = ctx.getChild(3).getText()
             receiver = ctx.getChild(5).getText()
             transition = Transition(type, sender, receiver)
-        # build transition send with predicate
-        else:
+        # build transition send with a non-equal predicate
+        elif ctx.getChild(3).getText() in [">", "<", ">=", "<=", "!="]:
             type = ctx.getChild(1).getText()
             comparator = ctx.getChild(3).getText()
             value = ctx.getChild(4).getText()
             sender = ctx.getChild(7).getText()
             receiver = ctx.getChild(9).getText()
+            value = self.stringToValue(type, value)
+            transition = PredicateTransition(type, sender, receiver, comparator, value)
+        # build transition send with an equal comparator
+        else :
+            type = ctx.getChild(1).getText()
+            comparator = "=="
+            value = ctx.getChild(3).getText()
+            sender = ctx.getChild(6).getText()
+            receiver = ctx.getChild(8).getText()
             value = self.stringToValue(type, value)
             transition = PredicateTransition(type, sender, receiver, comparator, value)
         # add transition to state

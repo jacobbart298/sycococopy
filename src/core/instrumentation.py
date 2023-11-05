@@ -1,5 +1,5 @@
 import sys
-import traceback
+import traceback as tb
 import asyncio as asyncio
 from src.core.transition import Transition
 from src.core.monitor import Monitor
@@ -70,5 +70,6 @@ class Channel():
 def imposter_syndrome(type, value, traceback):
     # print("I am a bad coder ☹️")
     print(f"{type} of error has occurred, the value: {value}, and you can see traceback: {traceback}")
+    tb.print_exception(exc= value, tb=traceback)
 
 sys.excepthook = imposter_syndrome

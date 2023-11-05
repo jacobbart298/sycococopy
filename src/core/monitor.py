@@ -26,7 +26,6 @@ class Monitor():
     def verifySend(self, transition: Transition, item):
         # Exceptions are not immediately raised from event loop. Halted checks if exception was raised already
         if self.halted:
-            print("Raise de exception maar!")
             raise HaltedException()
         self.transitionHistory.append((transition, item))
         transitionsAllowedInFSM = self.fsm.checkTransition(transition)
@@ -37,7 +36,9 @@ class Monitor():
                     if self.checkPredicate(allowedTransition.getComparator(), item, allowedTransition.getValue()):
                         self.fsm.makeTransition(allowedTransition)
                         transitionMade = True
-                        self.uncheckedReceives[allowedTransition.getReceiver()].append(allowedTransition)
+                        self.uncheckedReceives[allowedTransition.getReceiver()].append(allowedTransition.toSuper())
+                    else:
+                        self.fsm.removePredicateTransition(allowedTransition)
                 else:
                     self.fsm.makeTransition(allowedTransition)
                     transitionMade = True
@@ -49,7 +50,6 @@ class Monitor():
                 raise IllegalTransitionException(self.transitionHistory)
         else:
             self.halted = True
-            print('Halted made true')
             raise IllegalTransitionException(self.transitionHistory)
     
     def verifyReceive(self, transition: Transition):
@@ -65,20 +65,20 @@ class Monitor():
         for role in roles:
             self.uncheckedReceives[role] = []
 
-    def checkPredicate(self, comparator, actual, expected):
-        match comparator:
+    def checkPredicate(self, operator, value1, value2):
+        match operator:
             case '<':
-                return actual < expected
+                return value1 < value2
             case '<=':
-                return actual <= expected
+                return value1 <= value2
             case '>':
-                return actual > expected
+                return value1 > value2
             case '>=':
-                return actual >= expected
+                return value1 >= value2
             case '!=':
-                return actual != expected
+                return value1 != value2
             case '==':
-                return actual == expected
+                return value1 == value2
 
     def buildParseTree(self, filePath):
         input = FileStream(filePath)

@@ -1,6 +1,6 @@
 from typing import Any
 from src.core.state import State
-from src.core.transition import Transition
+from src.core.transition import Transition, PredicateTransition
 
 class FSM:
 
@@ -24,5 +24,12 @@ class FSM:
         for state in self.states:
             self.newStates.update(state.getNextStates(transition))
 
+    def removePredicateTransition(self, transition: PredicateTransition):
+        for state in self.states:
+            if state.containsTransition(transition):
+                state.removeTransition(transition)
+                if state.isEmpty():
+                    self.states.remove(state)
+        
     def getStates(self):
         return list(self.states)

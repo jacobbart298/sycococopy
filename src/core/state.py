@@ -28,6 +28,12 @@ class State:
             if state_transition.isSimilar(transition):
                 transitions.append(state_transition)
         return transitions
+    
+    def isEmpty(self):
+        return len(self.transitionsToStates) == 0
+
+    def removeTransition(self, transition: PredicateTransition):
+        del self.transitionsToStates[transition]
 
     def __str__(self) -> str:
         if len(self.transitionsToStates) == 0:
