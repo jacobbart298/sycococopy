@@ -105,7 +105,7 @@ class Channel():
             pass
     
     def close(self):
-
+        pass
 
 '''
 Function that provides a clean print of the transition history on an illegal transition, 
