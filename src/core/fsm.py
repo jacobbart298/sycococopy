@@ -1,3 +1,4 @@
+from collections.abc import Iterable
 from src.core.state import State
 from src.core.transition import Transition
 
@@ -26,7 +27,7 @@ class FSM:
     # Function that checks if a given Transition is available in the current states and
     # returns the list of possible transitions (Transition or PredicateTransition) 
     # VRAAG: KUNNEN WE HIER NIET BETER EEN SET MAKEN ZODAT DUPLICATES VERWIJDERD WORDEN?
-    def checkTransition(self, transition: Transition) -> list(Transition):
+    def checkTransition(self, transition: Transition):
         transitions: list(Transition) = []
         for state in self.states:
             if state.containsTransition(transition):
@@ -35,10 +36,10 @@ class FSM:
 
     # Function that takes the current states and loads the next possible states for a given Transition
     # to the newStates set    
-    def makeTransition(self, transition: Transition) -> None:
+    def makeTransition(self, transition: Transition):
         for state in self.states:
             self.newStates.update(state.getNextStates(transition))
 
     # Function that returns the current states set as an iterable list  
-    def getStates(self) -> list(State):
+    def getStates(self):
         return list(self.states)
