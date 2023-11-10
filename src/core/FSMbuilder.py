@@ -3,7 +3,7 @@ from antlr4.tree.Trees import Trees
 from antlr4.tree.Tree import TerminalNodeImpl
 from antlrFiles.pythonicvisitor import PythonicVisitor
 from src.core.fsm import FSM
-from src.core.transition import Transition
+from src.core.transition import Transition, PredicateTransition
 from src.core.state import State
 from itertools import permutations
 
@@ -25,7 +25,6 @@ class FSMbuilder(PythonicVisitor):
 
     # Visit a parse tree produced by PythonicParser#specification.
     def visitSpecification(self, ctx:PythonicParser.SpecificationContext):
-        # self.dump(ctx)
         self.visitProtocol(ctx.getChild(1))
         return self.fsm, self.roles_in_fsm
 
@@ -52,11 +51,8 @@ class FSMbuilder(PythonicVisitor):
                 self.visitShuffle(expression)
             case "send":
                 self.visitSend(ctx)
-            case "loop":
-                self.visitLoop(ctx)
-            case "repeat":
-                self.visitRepeat(ctx)
-
+            case "close":
+                self.visitClose(ctx)
 
     # Visit a parse tree produced by PythonicParser#sequence.
     def visitSequence(self, ctx:PythonicParser.SequenceContext):
@@ -130,17 +126,33 @@ class FSMbuilder(PythonicVisitor):
         self.visitExpression(expression)
 
 
-    # Visit a parse tree produced by PythonicParser#repeat.
-    def visitRepeat(self, ctx:PythonicParser.RepeatContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by PythonicParser#send.
     def visitSend(self, ctx:PythonicParser.SendContext):
-        type = ctx.getChild(1).getText()
-        sender = ctx.getChild(3).getText()
-        receiver = ctx.getChild(5).getText()
-        transition = Transition(type, sender, receiver)
+        # build transition send without predicate
+        if (ctx.getChild(2).getText() == 'from'):
+            type = ctx.getChild(1).getText()
+            sender = ctx.getChild(3).getText()
+            receiver = ctx.getChild(5).getText()
+            transition = Transition(type, sender, receiver)
+        # build transition send with a non-equal predicate
+        elif ctx.getChild(3).getText() in [">", "<", ">=", "<=", "!="]:
+            type = ctx.getChild(1).getText()
+            comparator = ctx.getChild(3).getText()
+            value = ctx.getChild(4).getText()
+            sender = ctx.getChild(7).getText()
+            receiver = ctx.getChild(9).getText()
+            value = self.stringToValue(type, value)
+            transition = PredicateTransition(type, sender, receiver, comparator, value)
+        # build transition send with an equal comparator
+        else :
+            type = ctx.getChild(1).getText()
+            comparator = "=="
+            value = ctx.getChild(3).getText()
+            sender = ctx.getChild(6).getText()
+            receiver = ctx.getChild(8).getText()
+            value = self.stringToValue(type, value)
+            transition = PredicateTransition(type, sender, receiver, comparator, value)
+        # add transition to state
         ctx.startState.addTransitionToState(transition, ctx.endState)
         self.roles_in_fsm.add(sender)
         self.roles_in_fsm.add(receiver)
@@ -151,10 +163,16 @@ class FSMbuilder(PythonicVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by PythonicParser#block.
-    def visitBlock(self, ctx:PythonicParser.BlockContext):
-        return self.visitChildren(ctx)
-
+    def stringToValue(self, type, value):
+        match type:
+            case "int":
+                return int(value)
+            case "float":
+                return float(value)
+            case "bool":
+                return bool(value)
+            case "str":
+                return value
 
     def dump(self, node, depth=0, ruleNames=None):
         depthStr = '. ' * depth

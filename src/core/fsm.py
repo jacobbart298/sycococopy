@@ -1,23 +1,28 @@
 from typing import Any
 from src.core.state import State
-from src.core.transition import Transition
+from src.core.transition import Transition, PredicateTransition
 
 class FSM:
 
     def __init__(self):
         self.states = {State()}
+        self.newStates = set()
+
+    def updateStates(self):
+        self.states.clear()
+        self.states.update(self.newStates)
+        self.newStates.clear()
 
     def checkTransition(self, transition):
+        transitions = []
         for state in self.states:
             if state.containsTransition(transition):
-                return True
-        return False
-
+                transitions.extend(state.getTransitions(transition))
+        return transitions
+        
     def makeTransition(self, transition):
-        newStates = set()
         for state in self.states:
-            newStates.update(state.getNextStates(transition))
-        self.states = newStates
+            self.newStates.update(state.getNextStates(transition))
         
     def getStates(self):
         return list(self.states)

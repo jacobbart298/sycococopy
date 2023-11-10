@@ -5,7 +5,8 @@ from antlrFiles.PythonicLexer import PythonicLexer
 from antlrFiles.PythonicParser import PythonicParser
 from src.core.FSMbuilder import FSMbuilder
 from src.core.transition import Transition
-from src.core.monitor import Monitor
+# from src.core.monitor import Monitor
+from src.core.transition import Transition, PredicateTransition
 
 #IMPORTANT: test file is now alloperationsgrammar.txt
 
@@ -19,7 +20,22 @@ def dump(node, depth=0, ruleNames=None):
             dump(child, depth + 1, ruleNames)
 
 def main(argv):
-    monitor = Monitor(argv[1])
+    zonder:Transition = Transition('int', 'A', 'B')
+    met:Transition = PredicateTransition('int', 'A', 'B',  '>', '4')
+    print(type(zonder))
+    print(type(met))
+    print(zonder == met)
+    print(met == zonder)
+    emptylist = []
+    vollelijst = ["met"]
+    if emptylist:
+        print("leeg")
+    if vollelijst:
+        print("vol")
+
+    isIntEqualToString = int(4) == float('4.000001')
+    print(isIntEqualToString)
+    # monitor = Monitor(argv[1])
 
 
 

@@ -3,9 +3,10 @@ from antlrFiles.PythonicLexer import PythonicLexer
 from antlrFiles.PythonicParser import PythonicParser
 from antlrFiles.PythonicErrorListener import PythonicErrorListener
 from src.core.FSMbuilder import FSMbuilder
-from src.core.transition import Transition
+from src.core.transition import Transition, PredicateTransition
 from src.core.exceptions.illegaltransitionexception import IllegalTransitionException
 from src.core.exceptions.rolemismatchexception import RoleMismatchException
+from src.core.exceptions.haltedexception import HaltedException
 from src.core.transition import Transition
 from src.core.roleBuilder import Rolebuilder
 
@@ -22,28 +23,44 @@ class Monitor():
         self.initialiseUncheckedReceives(defined_roles)
         self.halted = False
         
-    def verifySend(self, transition: Transition):
+    def verifySend(self, transition: Transition, item):
         # Exceptions are not immediately raised from event loop. Halted checks if exception was raised already
         if self.halted:
-            return
-        self.transitionHistory.append(transition)
-        transitionAllowed = self.fsm.checkTransition(transition) and self.uncheckedReceives[transition.getSender()] == []
-        if transitionAllowed:
-            self.fsm.makeTransition(transition)
-            self.uncheckedReceives[transition.getReceiver()].append(transition)
+            raise HaltedException()
+        self.transitionHistory.append((transition, item))
+        transitionsAllowedInFSM = self.fsm.checkTransition(transition)
+        if transitionsAllowedInFSM:
+            transitionMade = False
+            for allowedTransition in transitionsAllowedInFSM:
+                if allowedTransition.isValid(item):
+                    self.fsm.makeTransition(allowedTransition)
+                    transitionMade = True
+                    self.addToUncheckedReceives(allowedTransition)
+            if transitionMade:
+                self.fsm.updateStates()
+            else:
+                self.halted = True
+                raise IllegalTransitionException(self.transitionHistory)
         else:
             self.halted = True
             raise IllegalTransitionException(self.transitionHistory)
     
     def verifyReceive(self, transition: Transition):
+        if self.halted:
+            raise HaltedException()
         if transition in self.uncheckedReceives[transition.getReceiver()]:
             self.uncheckedReceives[transition.getReceiver()].remove(transition)
         else:
+            self.halted = True
             raise IllegalTransitionException(self.transitionHistory)
 
     def initialiseUncheckedReceives(self, roles):
         for role in roles:
             self.uncheckedReceives[role] = []
+
+    def addToUncheckedReceives(self, transition: Transition):
+        uncheckedReceive = Transition(transition.getType(), transition.getSender(), transition.getReceiver())
+        self.uncheckedReceives[transition.getReceiver()].append(uncheckedReceive)
 
     def buildParseTree(self, filePath):
         input = FileStream(filePath)
