@@ -1,8 +1,0 @@
-roles:
-    buyer1
-    buyer2
-
-protocol:
-    sequence:
-        from A to B
-        send int from B to C
