@@ -1,96 +1,126 @@
-py -m pip install -e .
+# SyCoCoCoPy 
+### Synchronisation and Communication between Coroutines in Concurrent Python
 
-
-
-# SyCoCoCoPy
-
-
-
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
-
-```
-cd existing_repo
-git remote add origin https://gitlab.com/AHESCHO/sycococopy.git
-git branch -M main
-git push -uf origin main
-```
-
-## Integrate with your tools
-
-- [ ] [Set up project integrations](https://gitlab.com/AHESCHO/sycococopy/-/settings/integrations)
-
-## Collaborate with your team
-
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Automatically merge when pipeline succeeds](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
-
-## Test and Deploy
-
-Use the built-in continuous integration in GitLab.
-
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
-
-***
-
-# Editing this README
-
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
-
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
-
-## Name
-Choose a self-explaining name for your project.
+Welcome to the codebase of our Bachelor thesis project at the Open University in the Netherlands. 
+With this project we provide a Python library that can be used to monitor the communication between coroutines at runtime.
 
 ## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+The SyCoCoCoPy library can be used as a debugging tool that can verify if the communication betweeen coroutines in a concurrent Python program runs as described in a given specification. The specification can be written in a Python-like syntax, which is described below. 
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+If a communication occurs outside of the specification, the library will end the asyncio Event loop with an IllegalTransitionException and the executed communication messages plus the violating message will be printed for further evaluation.
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+At this stage, the error should be corrected by revising either the implementation, or the provided specification.
 
 ## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+Before running the program, please install the library with the following command:
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+```
+py -m pip install -e .
+```
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+This will ensure that the packages are correctly recognized.
+
+## Usage as drop-in library for asyncio
+The library requires a specification that defines the roles and describes the allowed order of communication between those roles. Create a specification (as described below) and save it as a .txt file.
+
+The library can be used as a drop-in replacement for the asyncio library within existing Python programs. 
+Instead of importing asyncio, simply import the instrumentation as asyncio. The required imports are then:
+```
+import src.core.instrumentation as asyncio
+from src.core.monitor import Monitor
+```
+To ensure that the instrumentation sends all relevant communication to the run-time verification monitor proceed as follows in the Python program that needs to be checked:
+* Create a monitor with a link to the specification path: `monitor = Monitor(specification_path)`
+* Create queues for inter-coroutine communication: `sender_to_receiver = asyncio.Queue()`
+* Link the queues that are used for inter-coroutine communication to the monitor: `asyncio.link(sender_to_receiver, sender, receiver, monitor)`
+Use the queues in the program for all inter-coroutine communication and run the program. The library will check if the communication adheres to the specification and provide an alert if a communication occurs that is not according to the protocol.
+
+## Usage with Channels for inter-coroutine communication
+The library provides an alternative and possibly more intuitive way of communication via the Channel class. 
+To use the Channel class proceed as follows:
+* Import the Monitor and Channel classes as well as the asyncio library:
+```
+import asyncio
+from src.core.instrumentation import Channel
+from src.core.monitor import Monitor
+```
+* Create a specification (as described below) and save it as a .txt file
+* Create a monitor with a link to the specification path: `monitor = Monitor(specification_path)`
+* Create channels for inter-coroutine communication: `sender_to_receiver = Channel(sender, receiver, monitor)`
+* Use the `send` and `receive` functions of the Channel to send and receive messages between coroutines
+
+## Architecture
+The SyCoCoCoPy library contains the following modules:
+* fsm.py provides the FSM class, which represents a non-deterministic finite state machine. The non-determinism is handled by allowing the fsm to contain more than one state at any given time
+* state.py provides the State class, which links transitions from its own state to a next state
+* transition.py provides the Transition and PredicateTransition classes, that represent a message with a given type (and value checker for a PredicateTransition) from a sender to a receiver
+* FSMbuilder.py parses a given specification to an FSM (item 1) with a start state and creates all the possible states and transitions
+* roleBuilder.py parses a given specification to a set of roles
+* instrumentation.py can be used as a drop-in replacement for the asyncio library, or as a supplier of the Channel class for communication between coroutines. The instrumentation ensures that messages between coroutines in a given program are forwarded to the monitor so they can be checked against the protocol
+* monitor.py is used verify send and receive operations adhere to the protocol
+
+The following exceptions can be raised by the library:
+* An IllegalTransitionException is raised any time transition occurs in the implementation that is not allowed by the specification
+* A HaltedException is raised when a transition occurs, while the operation was already halted by an IllegalTransitionException. This is required because the asyncio event loop continues its operation briefly when a coroutine raises an IllegalTransitionException
+* A RoleMismatchException is raised when there were roles defined, but never used in the specification or when a role is used in a protocol, but never defined in a specification
+
+## Specification keywords
+The following keywords are used in a specification:
+```
+# define roles with keyword role
+roles:
+    name1
+    name2
+
+# define communication protocol with keyword protocol
+protocol:
+    #define the protocol
+
+#send
+send type[(condition)] from p to q 
+
+#sequentiality
+sequence:
+    protocol1
+    protocol2
+
+#shuffling
+shuffle:
+    protocol1
+    protocol2
+
+#choice
+choice:
+    protocol1
+    protocol2
+
+#close channel
+close p to q
+
+#recursion/looping
+loop <identifier>:
+    protocol
+        send type from sender to receiver
+        repeat <identifier> # the repeat keyword MUST follow a send action
+``` 
 
 ## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+The current product is a demonstrator to showcase the possibilities of monitoring of communications between coroutines at runtime in Python. To ensure that the codebase is easily readable and concepts can be extracted without undue difficulty, we have chosen not to harden the code against wrong usage. E.g. a given specification is not checked for correct syntax (other than the regular checks provided by antlr4) or semantics like checking for more than one provided option in a sequence, shuffle or choice. 
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+To enable the use of this library in a production environment, the codebase will need to be hardened to provide correct error messages when the provided specification is incorrect.
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
 
 ## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+This project was created by Teun Schoutens and Jacob Bart as part of their Bachelor thesis project at the Open University in The Netherlands.
 
 ## License
-For open source projects, say how it is licensed.
+Copyright 2023 Open University Netherlands
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+The project is still being worked, expected delivery is January 2024.

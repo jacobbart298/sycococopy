@@ -6,7 +6,7 @@ roles:
     name2
 
 # define communication protocol with keyword protocol
-protocol(name):
+protocol:
     #define the protocol
 
 #send
@@ -20,7 +20,7 @@ sequence:
     protocol1
     protocol2
 
-#shuffling / TODO think of other term
+#shuffling
 shuffle:
     protocol1
     protocol2
@@ -32,6 +32,13 @@ choice:
 
 #close channel
 close p to q
+
+#recursion/looping
+loop <identifier>:
+    protocol
+        send type from sender to receiver
+        repeat <identifier> # the repeat keyword MUST follow a send action
+
 
 
 
