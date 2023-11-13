@@ -1,3 +1,4 @@
+import typing
 from antlr4 import *
 from antlrFiles.PythonicLexer import PythonicLexer
 from antlrFiles.PythonicParser import PythonicParser
@@ -10,9 +11,16 @@ from src.core.exceptions.haltedexception import HaltedException
 from src.core.transition import Transition
 from src.core.roleBuilder import Rolebuilder
 
+'''
+The monitor module is responsible for verifying that the communication between coroutines
+that is forwarded by the instrumentation, is in accordance with a provided specification.
+
+The specification is provided in a .txt file and must be passed to the monitor on creation.
+'''
+
 class Monitor():
 
-    def __init__(self, filePath):
+    def __init__(self, filePath: str):
         self.transitionHistory = []
         self.uncheckedReceives = {}
         tree = self.buildParseTree(filePath)
