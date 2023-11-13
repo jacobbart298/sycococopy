@@ -16,17 +16,14 @@ class Rolebuilder(PythonicVisitor):
     def __init__(self):
         self.roles = set()
 
-
     # Visit a parse tree produced by PythonicParser#specification.
     def visitSpecification(self, ctx:PythonicParser.SpecificationContext):
         self.visitRoles(ctx.getChild(0))
         return self.roles
     
-
     # Visit a parse tree produced by PythonicParser#role.
     def visitRole(self, ctx:PythonicParser.RoleContext):
         return ctx.getChild(0).getText()
-
 
     # Visit a parse tree produced by PythonicParser#roles.
     def visitRoles(self, ctx:PythonicParser.RolesContext):
@@ -35,7 +32,6 @@ class Rolebuilder(PythonicVisitor):
         for roleNode in roleNodes:
             role = self.visitRole(ctx.getChild(1).getChild(roleNode))
             self.roles.add(role)
-
 
     def dump(self, node, depth=0, ruleNames=None):
         depthStr = '. ' * depth
