@@ -53,6 +53,8 @@ class FSMbuilder(PythonicVisitor):
                 self.visitSend(ctx)
             case "close":
                 self.visitClose(ctx)
+            case "loop":
+                self.visitLoop(ctx)
 
     # Visit a parse tree produced by PythonicParser#sequence.
     def visitSequence(self, ctx:PythonicParser.SequenceContext):
