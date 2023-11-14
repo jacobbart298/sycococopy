@@ -16,7 +16,7 @@ bToC = Channel(B, C, monitor)
 async def A():
     answer = await bToA.receive()
     if (answer):
-        await aToB.send(3)
+        await aToB.send(4)
     else:
         await aToB.send(-2)
 
