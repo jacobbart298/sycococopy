@@ -56,26 +56,25 @@ class FSMbuilder(PythonicVisitor):
             case "loop":
                 self.visitLoop(ctx)
 
+ 
     # Visit a parse tree produced by PythonicParser#sequence.
     def visitSequence(self, ctx:PythonicParser.SequenceContext):
         repeat = False
-        loopState = State()
-        expressionCount = ctx.getChildCount() - 2
+        expressionCount = ctx.getChildCount() - 2    
+
         # check whether last child is a repeat expression
         lastChild = ctx.getChild(expressionCount).getChild(0)
         if lastChild.getChild(0).getText() == "repeat":
             repeat = True
-            loopTag = lastChild.getChild(1).getText() 
-            loopState = self.loop_dictionary[loopTag]
-            expressionCount -= 1     
-        expressionIndices = range(1, expressionCount + 1)
-        currentState = ctx.startState    
-        counter = 0
+            expressionCount -= 1    
+
+        currentState = ctx.startState
+        expressionIndices = range(1, expressionCount + 1)    
         for index in expressionIndices:
-            counter += 1
-            if counter == expressionCount:
+            if index == expressionCount:
                 if repeat:
-                    nextState = loopState
+                    loopTag = lastChild.getChild(1).getText() 
+                    nextState =  self.loop_dictionary[loopTag]
                 else:
                     nextState = ctx.endState
             else:
