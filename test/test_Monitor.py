@@ -109,6 +109,8 @@ class TestMonitor(unittest.TestCase):
         self.assertEqual(0, len(monitor.uncheckedReceives["A"]))
         self.assertEqual(0, len(monitor.uncheckedReceives["B"]))
 
+        # Note that sending True from B to A satisfies two edges in the FSM.
+        # However, only one unchecked receive should be added to the monitor.
         monitor.verifySend(t2_B_A, True)
         self.assertEqual(1, len(monitor.uncheckedReceives["A"]))
         self.assertEqual(0, len(monitor.uncheckedReceives["B"]))
@@ -125,6 +127,8 @@ class TestMonitor(unittest.TestCase):
         self.assertEqual(0, len(monitor.uncheckedReceives["A"]))
         self.assertEqual(0, len(monitor.uncheckedReceives["B"]))
 
+        # Note that sending False from B to A satisfies one edge in the FSM.
+        # Therefore, only one unchecked receive should be added to the monitor.
         monitor.verifySend(t2_B_A, False)
         self.assertEqual(1, len(monitor.uncheckedReceives["A"]))
         self.assertEqual(0, len(monitor.uncheckedReceives["B"]))
@@ -132,3 +136,9 @@ class TestMonitor(unittest.TestCase):
         monitor.verifyReceive(t2_B_A)
         self.assertEqual(0, len(monitor.uncheckedReceives["A"]))
         self.assertEqual(0, len(monitor.uncheckedReceives["B"]))
+
+        # At this point the protocol has terminated: no further communication is allowed.
+        try:
+            monitor.verifySend(t1_A_B, "hello")
+        except IllegalTransitionException:
+            pass
