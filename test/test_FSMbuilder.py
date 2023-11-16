@@ -9,27 +9,28 @@ class TestFSMBuilder(unittest.TestCase):
 
     def test_singleSend(self):
         # see singleSend.png in tests/testcases/fsms for fsm
+        send = Transition("U", "B", "A")
         fsm = self.buildFSM("singleSend.txt")
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
-        send = Transition("U", "B", "A")
         # in q0 there is one transition: send
         self.assertEqual(1, len(q0.transitionsToStates))
         self.assertIn(send, q0.transitionsToStates)
 
         # make transition send
         fsm.makeTransition(send)
+        fsm.updateStates()
         q1 = fsm.getStates()[0]
         # in q1 there is no transition
         self.assertEqual(0, len(q1.transitionsToStates))
     
     def test_singleChoice(self):
         # see singleChoice.png in tests/testcases/fsms for fsm
+        choice_a = Transition("V", "A", "B")
+        choice_b = Transition("W", "B", "A")
         fsm = self.buildFSM("singleChoice.txt")
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
-        choice_a = Transition("V", "A", "B")
-        choice_b = Transition("W", "B", "A")
         # in q0 there are two transitions: choice_a and choice_b
         self.assertEqual(2, len(q0.transitionsToStates))
         self.assertIn(choice_a, q0.transitionsToStates)
@@ -37,15 +38,17 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition choice_a
         fsm.makeTransition(choice_a)
+        fsm.updateStates()
         q1_a = fsm.getStates()[0]
         # in q1_a there is no transition
         self.assertEqual(0, len(q1_a.transitionsToStates))
 
         # reset fsm
-        fsm.states = [q0]
+        fsm.states = {q0}
 
         # make transition choice_b
         fsm.makeTransition(choice_b)
+        fsm.updateStates()
         q1_b = fsm.getStates()[0]
         # in q1_b there is no transition
         self.assertEqual(0, len(q1_b.transitionsToStates))
@@ -55,17 +58,18 @@ class TestFSMBuilder(unittest.TestCase):
 
     def test_singleSequence(self):
         # see singleSequence.png in tests/testcases/fsms for fsm
+        sequence_a = Transition("Q", "A", "B")
+        sequence_b = Transition("R", "B", "A")
         fsm = self.buildFSM("singleSequence.txt")
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
-        sequence_a = Transition("Q", "A", "B")
-        sequence_b = Transition("R", "B", "A")
         # in start_state there is one transition: send_1
         self.assertEqual(1, len(q0.transitionsToStates))
         self.assertIn(sequence_a, q0.transitionsToStates)
 
         # make transition sequence_a
         fsm.makeTransition(sequence_a)
+        fsm.updateStates()
         q1 = fsm.getStates()[0]
         # in q1 there is one transition: sequence_b
         self.assertEqual(1, len(q1.transitionsToStates))
@@ -73,17 +77,18 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition sequence_b
         fsm.makeTransition(sequence_b)
+        fsm.updateStates()
         q2 = fsm.getStates()[0]
         # in q2 there is no transition
         self.assertEqual(0, len(q2.transitionsToStates))
 
     def test_singleShuffle(self):
         # see singleShuffle.png in tests/testcases/fsms for fsm
+        shuffle_a = Transition("X", "A", "B")
+        shuffle_b = Transition("Y", "B", "A")
         fsm = self.buildFSM("singleShuffle.txt")
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
-        shuffle_a = Transition("X", "A", "B")
-        shuffle_b = Transition("Y", "B", "A")
         # in q0 there are two transitions: shuffle_a and shuffle_b
         self.assertEqual(2, len(q0.transitionsToStates))
         self.assertIn(shuffle_a, q0.transitionsToStates)
@@ -92,28 +97,32 @@ class TestFSMBuilder(unittest.TestCase):
         # perform shuffle: first shuffle_a then shuffle_b
         # make transition shuffle_a
         fsm.makeTransition(shuffle_a)
+        fsm.updateStates()
         q1 = fsm.getStates()[0]
         # in q1 there is one transition: shuffle_b
         self.assertEqual(1, len(q1.transitionsToStates))
         self.assertIn(shuffle_b, q1.transitionsToStates)
         # make transition shuffle_b
         fsm.makeTransition(shuffle_b)
+        fsm.updateStates()
         q3_a_b = fsm.getStates()[0]
         # in q3_a_b there is no transition
         self.assertEqual(0, len(q3_a_b.transitionsToStates))
 
         # reset fsm
-        fsm.states = [q0]
+        fsm.states = {q0}
 
         # perform shuffle: first shuffle_b then shuffle_a
         # make transition shuffle_b
         fsm.makeTransition(shuffle_b)
+        fsm.updateStates()
         q2 = fsm.getStates()[0]
         # in q2 there is one transition: shuffle_a
         self.assertEqual(1, len(q2.transitionsToStates))
         self.assertIn(shuffle_a, q2.transitionsToStates)
         # make transition shuffle_a
         fsm.makeTransition(shuffle_a)
+        fsm.updateStates()
         q3_b_a = fsm.getStates()[0]
         # in q3_b_a there is no transition
         self.assertEqual(0, len(q3_b_a.transitionsToStates))
@@ -123,12 +132,12 @@ class TestFSMBuilder(unittest.TestCase):
 
     def test_choiceInShuffle(self):
         # see choiceInShuffle.png in tests/testcases/fsms for fsm
+        choice_a = Transition("V", "A", "B")
+        choice_b = Transition("W", "B", "A")
+        send = Transition("U", "B", "A")
         fsm = self.buildFSM("choiceInShuffle.txt")
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
-        send = Transition("U", "B", "A")
-        choice_a = Transition("V", "A", "B")
-        choice_b = Transition("W", "B", "A")
         # in q0 there are 3 transitions: choice_a, choice_b and send
         self.assertEqual(3, len(q0.transitionsToStates))
         self.assertIn(choice_a, q0.transitionsToStates)
@@ -138,6 +147,7 @@ class TestFSMBuilder(unittest.TestCase):
         # perform shuffle: first send then choice
         # make transition send
         fsm.makeTransition(send)
+        fsm.updateStates()
         q1 = fsm.getStates()[0]
         # in q1 there are 2 transitions: 
         self.assertEqual(2, len(q1.transitionsToStates))
@@ -145,13 +155,15 @@ class TestFSMBuilder(unittest.TestCase):
         self.assertIn(choice_b, q1.transitionsToStates)
         # make transition choice_a
         fsm.makeTransition(choice_a)
+        fsm.updateStates()
         q3_send_a = fsm.getStates()[0]
         # in q3_send_a there is no transition
         self.assertEqual(0, len(q3_send_a.transitionsToStates))
         # revert fsm to q1
-        fsm.states = [q1]
+        fsm.states = {q1}
         # make transition choice_b
         fsm.makeTransition(choice_b)
+        fsm.updateStates()
         q3_send_b = fsm.getStates()[0]
         # in q3_send_b there is no transition
         self.assertEqual(0, len(q3_send_b.transitionsToStates))
@@ -159,19 +171,21 @@ class TestFSMBuilder(unittest.TestCase):
         self.assertEqual(q3_send_a, q3_send_b)
 
         # revert fsm to q0
-        fsm.states = [q0]
+        fsm.states = {q0}
 
         # perform shuffle: first choice then send
         # make transition choice_a
         fsm.makeTransition(choice_a)
+        fsm.updateStates()
         q2_a = fsm.getStates()[0]
         # in q2_a there is 1 transition: send
         self.assertEqual(1, len(q2_a.transitionsToStates))
         self.assertIn(send, q2_a.transitionsToStates)
         # revert fsm to q0
-        fsm.states = [q0]
+        fsm.states = {q0}
         # make transition choice_b
         fsm.makeTransition(choice_b)
+        fsm.updateStates()
         q2_b = fsm.getStates()[0]
         # in q2_b there is 1 transition: send
         self.assertEqual(1, len(q2_b.transitionsToStates))
@@ -180,6 +194,7 @@ class TestFSMBuilder(unittest.TestCase):
         self.assertEqual(q2_a, q2_b)
         # make transition send
         fsm.makeTransition(send)
+        fsm.updateStates()
         q3_b_send = fsm.getStates()[0]
         # in q3_b_send there is no transition
         self.assertEqual(0, len(q3_b_send.transitionsToStates))
@@ -189,12 +204,12 @@ class TestFSMBuilder(unittest.TestCase):
 
     def test_sequenceInShuffle(self):
         # see sequenceInShuffle.png in tests/testcases/fsms for fsm
-        fsm = self.buildFSM("sequenceInShuffle.txt")
-        self.assertEqual(1, len(fsm.getStates()))
-        q0 = fsm.getStates()[0]
         send = Transition("U", "B", "A")
         sequence_a = Transition("Q", "A", "B")
         sequence_b = Transition("R", "B", "A")
+        fsm = self.buildFSM("sequenceInShuffle.txt")
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
         # in q0 there are 2 transitions: sequence_a and send
         self.assertEqual(2, len(q0.transitionsToStates))
         self.assertIn(sequence_a, q0.transitionsToStates)
@@ -203,39 +218,45 @@ class TestFSMBuilder(unittest.TestCase):
         # perform shuffle: first sequence then send
         # make transition sequence_a
         fsm.makeTransition(sequence_a)
+        fsm.updateStates()
         q1 = fsm.getStates()[0]
         # in q1 there is one transition: sequence_b
         self.assertEqual(1, len(q1.transitionsToStates))
         self.assertIn(sequence_b, q1.transitionsToStates)
         # make transition sequence_b
         fsm.makeTransition(sequence_b)
+        fsm.updateStates()
         q3 = fsm.getStates()[0]
         # in q3 there is one transition: send
         self.assertEqual(1, len(q3.transitionsToStates))
         # make transition send
         fsm.makeTransition(send)
+        fsm.updateStates()
         q5_sequence_send = fsm.getStates()[0]
         # in q5_sequence_send there is no transition
         self.assertEqual(0, len(q5_sequence_send.transitionsToStates))
 
         # reset fsm
-        fsm.states = [q0]
+        fsm.states = {q0}
 
         # perform shuffle: first send then sequence
         # make transition send
         fsm.makeTransition(send)
+        fsm.updateStates()
         q2 = fsm.getStates()[0]
         # in q2 there is one transition: sequence_a
         self.assertEqual(1, len(q2.transitionsToStates))
         self.assertIn(sequence_a, q2.transitionsToStates)        
         # make transition sequence_a
         fsm.makeTransition(sequence_a)
+        fsm.updateStates()
         q4 = fsm.getStates()[0]
         # in q4 there is one transition: sequence_b
         self.assertEqual(1, len(q4.transitionsToStates))
         self.assertIn(sequence_b, q4.transitionsToStates)        
         # make transition sequence_b
         fsm.makeTransition(sequence_b)
+        fsm.updateStates()
         q5_send_sequence = fsm.getStates()[0]
         # in q5_send_sequence there is no transition
         self.assertEqual(0, len(q5_send_sequence.transitionsToStates))
@@ -245,12 +266,12 @@ class TestFSMBuilder(unittest.TestCase):
 
     def test_shuffleInShuffle(self):
         # see shuffleInShuffle.png in tests/testcases/fsms for fsm
-        fsm = self.buildFSM("shuffleInShuffle.txt")
-        self.assertEqual(1, len(fsm.getStates()))
-        q0 = fsm.getStates()[0]
         shuffle_a = Transition("X", "A", "B")
         shuffle_b = Transition("Y", "B", "A")
         send = Transition("U", "B", "A")
+        fsm = self.buildFSM("shuffleInShuffle.txt")
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
         # in q0 there are 3 transitions: shuffle_a, shuffle_b and send
         self.assertEqual(3, len(q0.transitionsToStates))
         self.assertIn(shuffle_a, q0.transitionsToStates)
@@ -261,27 +282,31 @@ class TestFSMBuilder(unittest.TestCase):
         # perform shuffle: first shuffle_a then shuffle_b
         # make transition shuffle_a
         fsm.makeTransition(shuffle_a)
+        fsm.updateStates()
         q2 = fsm.getStates()[0]
         # in q2 there is one transition: shuffle_b
         self.assertEqual(1, len(q2.transitionsToStates))
         self.assertIn(shuffle_b, q2.transitionsToStates)
         # make transition shuffle_b
         fsm.makeTransition(shuffle_b)
+        fsm.updateStates()
         q6_a_b = fsm.getStates()[0] 
         # in q6_a_b there is 1 transition: send
         self.assertEqual(1, len(q6_a_b.transitionsToStates))
         self.assertIn(send, q6_a_b.transitionsToStates)
         # reset fsm
-        fsm.states = [q0]
+        fsm.states = {q0}
         # perform shuffle: first shuffle_b then shuffle_a
         # make transition shuffle_b
         fsm.makeTransition(shuffle_b)
+        fsm.updateStates()
         q3 = fsm.getStates()[0]
         # in q3 there is one transition: shuffle_a
         self.assertEqual(1, len(q3.transitionsToStates))
         self.assertIn(shuffle_a, q3.transitionsToStates)
         # make transition shuffle_a
         fsm.makeTransition(shuffle_a)
+        fsm.updateStates()
         q6_b_a = fsm.getStates()[0]
         # in q6_b_a there is 1 transition: send
         self.assertEqual(1, len(q6_b_a.transitionsToStates))
@@ -290,16 +315,18 @@ class TestFSMBuilder(unittest.TestCase):
         self.assertEqual(q6_a_b, q6_b_a)        
         # make transition send
         fsm.makeTransition(send)
+        fsm.updateStates()
         q7_shuffle_b_a_send = fsm.getStates()[0]
         # in q7_shuffle_b_a_send there is no transition
         self.assertEqual(0, len(q7_shuffle_b_a_send.transitionsToStates))
 
         # reset fsm
-        fsm.states = [q0]
+        fsm.states = {q0}
 
         # perform shuffle: first send then shuffle
         # make transition send
         fsm.makeTransition(send)
+        fsm.updateStates()
         q1 = fsm.getStates()[0]
         # in q1 there are two transitions: shuffle_a and shuffle_b
         self.assertEqual(2, len(q1.transitionsToStates))
@@ -308,26 +335,30 @@ class TestFSMBuilder(unittest.TestCase):
         # perform inner shuffle: first shuffle_b then shuffle_a
         # make transition shuffle_b
         fsm.makeTransition(shuffle_b)
+        fsm.updateStates()
         q5 = fsm.getStates()[0]
         # in q5 there is one transition: shuffle_a
         self.assertEqual(1, len(q5.transitionsToStates))
         self.assertIn(shuffle_a, q5.transitionsToStates)
         # make transition shuffle_a
         fsm.makeTransition(shuffle_a)
+        fsm.updateStates()
         q7_send_shuffle_b_a = fsm.getStates()[0]
         # in q7_send_shuffle_b_a there is no transition
         self.assertEqual(0, len(q7_send_shuffle_b_a.transitionsToStates))
         # revert fsm to q1
-        fsm.states = [q1]
+        fsm.states = {q1}
         # perform inner shuffle: first shuffle_a then shuffle_b
         # make transition shuffle_a
         fsm.makeTransition(shuffle_a)
+        fsm.updateStates()
         q4 = fsm.getStates()[0]
         # in q2 there is one transition: shuffle_b
         self.assertEqual(1, len(q4.transitionsToStates))
         self.assertIn(shuffle_b, q4.transitionsToStates)
         # make transition shuffle_b
         fsm.makeTransition(shuffle_b)
+        fsm.updateStates()
         q7_send_shuffle_a_b = fsm.getStates()[0] 
         # in q7_send_shuffle_a_b there is no transition
         self.assertEqual(0, len(q7_send_shuffle_a_b.transitionsToStates))
@@ -339,12 +370,12 @@ class TestFSMBuilder(unittest.TestCase):
 
     def test_choiceInSequence(self):
         # see choiceInSequence.png in tests/testcases/fsms for fsm
-        fsm = self.buildFSM("choiceInSequence.txt")
-        self.assertEqual(1, len(fsm.getStates()))
-        q0 = fsm.getStates()[0]
         choice_a = Transition("V", "A", "B")
         choice_b = Transition("W", "B", "A")
         send = Transition("U", "B", "A")
+        fsm = self.buildFSM("choiceInSequence.txt")
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
         # in q0 there are 2 transitions: choice_a, choice_b
         self.assertEqual(2, len(q0.transitionsToStates))
         self.assertIn(choice_a, q0.transitionsToStates)
@@ -352,16 +383,18 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition choice_a
         fsm.makeTransition(choice_a)
+        fsm.updateStates()
         q1_a = fsm.getStates()[0]
         # in q1_a there is one transition: send
         self.assertEqual(1, len(q1_a.transitionsToStates))
         self.assertIn(send, q1_a.transitionsToStates)
 
         # reset fsm
-        fsm.states = [q0]
+        fsm.states = {q0}
 
         # make transition choice_b
         fsm.makeTransition(choice_b)
+        fsm.updateStates()
         q1_b = fsm.getStates()[0]
         # in q1_b there is one transition: send
         self.assertEqual(1, len(q1_b.transitionsToStates))
@@ -372,24 +405,26 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition send
         fsm.makeTransition(send)
+        fsm.updateStates()
         q2 = fsm.getStates()[0]
         # in q2 there is no transition
         self.assertEqual(0, len(q2.transitionsToStates))
 
     def test_sequenceInSequence(self):
         # see sequenceInSequence.png in tests/testcases/fsms for fsm
-        fsm = self.buildFSM("sequenceInSequence.txt")
-        self.assertEqual(1, len(fsm.getStates()))
-        q0 = fsm.getStates()[0]
         sequence_a = Transition("Q", "A", "B")
         sequence_b = Transition("R", "B", "A")
         send = Transition("U", "B", "A")
+        fsm = self.buildFSM("sequenceInSequence.txt")
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
         # in q0 there is one transitions: sequence_a
         self.assertEqual(1, len(q0.transitionsToStates))
         self.assertIn(sequence_a, q0.transitionsToStates)
 
         # make transition sequence_a
         fsm.makeTransition(sequence_a)
+        fsm.updateStates()
         q1 = fsm.getStates()[0]
         # in q1 there is one transition: sequence_b
         self.assertEqual(1, len(q1.transitionsToStates))
@@ -397,6 +432,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition sequence_b
         fsm.makeTransition(sequence_b)
+        fsm.updateStates()
         q2 = fsm.getStates()[0]
         # in q2 there is one transition: send
         self.assertEqual(1, len(q2.transitionsToStates))
@@ -404,18 +440,19 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition send
         fsm.makeTransition(send)
+        fsm.updateStates()
         q3 = fsm.getStates()[0]
         # in q3 there is no transition
         self.assertEqual(0, len(q3.transitionsToStates))
 
     def test_shuffleInSequence(self):
         # see shuffleInSequence.png in tests/testcases/fsms for fsm
-        fsm = self.buildFSM("shuffleInSequence.txt")
-        self.assertEqual(1, len(fsm.getStates()))
-        q0 = fsm.getStates()[0]
         shuffle_a = Transition("X", "A", "B")
         shuffle_b = Transition("Y", "B", "A")
         send = Transition("U", "B", "A")
+        fsm = self.buildFSM("shuffleInSequence.txt")
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
         # in q0 there are 2 transitions: shuffle_a, shuffle_b
         self.assertEqual(2, len(q0.transitionsToStates))
         self.assertIn(shuffle_a, q0.transitionsToStates)
@@ -424,29 +461,33 @@ class TestFSMBuilder(unittest.TestCase):
         # perform shuffle: first a then b
         # make transition shuffle_a
         fsm.makeTransition(shuffle_a)
+        fsm.updateStates()
         q1 = fsm.getStates()[0]
         # in q1 there is one transition: shuffle_b
         self.assertEqual(1, len(q1.transitionsToStates))
         self.assertIn(shuffle_b, q1.transitionsToStates)
         # make transition shuffle_b
         fsm.makeTransition(shuffle_b)
+        fsm.updateStates()
         q3_shuffle_a_b = fsm.getStates()[0]
         # in q3_shuffle_a_b there is one transition: send
         self.assertEqual(1, len(q3_shuffle_a_b.transitionsToStates))
         self.assertIn(send, q3_shuffle_a_b.transitionsToStates)
 
         # reset fsm
-        fsm.states = [q0]
+        fsm.states = {q0}
 
         # perform shuffle: first b then a
         # make transition shuffle_b
         fsm.makeTransition(shuffle_b)
+        fsm.updateStates()
         q2 = fsm.getStates()[0]
         # in q2 there is one transition: shuffle_a
         self.assertEqual(1, len(q2.transitionsToStates))
         self.assertIn(shuffle_a, q2.transitionsToStates)
         # make transition shuffle_a
         fsm.makeTransition(shuffle_a)
+        fsm.updateStates()
         q3_shuffle_b_a = fsm.getStates()[0]
         # in q3_shuffle_b_a there is one transition: send
         self.assertEqual(1, len(q3_shuffle_b_a.transitionsToStates))
@@ -454,18 +495,19 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition send
         fsm.makeTransition(send)
+        fsm.updateStates()
         q4 = fsm.getStates()[0]
         # in q4 there is no transition
         self.assertEqual(0, len(q4.transitionsToStates))
 
     def test_choiceInChoice(self):
         # see choiceInChoice.png in tests/testcases/fsms for fsm
-        fsm = self.buildFSM("choiceInChoice.txt")
-        self.assertEqual(1, len(fsm.getStates()))
-        q0 = fsm.getStates()[0]
         choice_a = Transition("V", "A", "B")
         choice_b = Transition("W", "B", "A")
         send = Transition("U", "B", "A")
+        fsm = self.buildFSM("choiceInChoice.txt")
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
         # in q0 there are 3 transitions: send, choice_a and choice_b
         self.assertEqual(3, len(q0.transitionsToStates))
         self.assertIn(choice_a, q0.transitionsToStates)
@@ -474,24 +516,27 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition choice_a
         fsm.makeTransition(choice_a)
+        fsm.updateStates()
         q1_a = fsm.getStates()[0]
         # in q1_a there is no transition
         self.assertEqual(0, len(q1_a.transitionsToStates))
 
         # reset fsm
-        fsm.states = [q0]
+        fsm.states = {q0}
 
         # make transition choice_b
         fsm.makeTransition(choice_b)
+        fsm.updateStates()
         q1_b = fsm.getStates()[0]
         # in q1_b there is no transition
         self.assertEqual(0, len(q1_b.transitionsToStates))
 
         # reset fsm
-        fsm.states = [q0]
+        fsm.states = {q0}
 
         # make transition send
         fsm.makeTransition(send)
+        fsm.updateStates()
         q1_send = fsm.getStates()[0]
         # in q1_send there is no transition
         self.assertEqual(0, len(q1_send.transitionsToStates))
@@ -502,12 +547,12 @@ class TestFSMBuilder(unittest.TestCase):
 
     def test_sequenceInChoice(self):
         # see sequenceInChoice.png in tests/testcases/fsms for fsm
-        fsm = self.buildFSM("sequenceInChoice.txt")
-        self.assertEqual(1, len(fsm.getStates()))
-        q0 = fsm.getStates()[0]
         sequence_a = Transition("Q", "A", "B")
         sequence_b = Transition("R", "B", "A")
         send = Transition("U", "B", "A")
+        fsm = self.buildFSM("sequenceInChoice.txt")
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
         # in q0 there is are two transitions: sequence_a, send
         self.assertEqual(2, len(q0.transitionsToStates))
         self.assertIn(sequence_a, q0.transitionsToStates)
@@ -515,6 +560,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition sequence_a
         fsm.makeTransition(sequence_a)
+        fsm.updateStates()
         q1 = fsm.getStates()[0]
         # in q1 there is one transition: sequence_b
         self.assertEqual(1, len(q1.transitionsToStates))
@@ -522,15 +568,17 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition sequence_b
         fsm.makeTransition(sequence_b)
+        fsm.updateStates()
         q2_sequence = fsm.getStates()[0]
         # in q2_sequence there is no transition
         self.assertEqual(0, len(q2_sequence.transitionsToStates))
 
         # reset fsm
-        fsm.states = [q0]
+        fsm.states = {q0}
 
         # make transition send
         fsm.makeTransition(send)
+        fsm.updateStates()
         q2_send = fsm.getStates()[0]
         # in q2_send there is no transition
         self.assertEqual(0, len(q2_send.transitionsToStates))
@@ -540,12 +588,12 @@ class TestFSMBuilder(unittest.TestCase):
 
     def test_shuffleInChoice(self):
         # see shuffleInChoice.png in tests/testcases/fsms for fsm
-        fsm = self.buildFSM("shuffleInChoice.txt")
-        self.assertEqual(1, len(fsm.getStates()))
-        q0 = fsm.getStates()[0]
         shuffle_a = Transition("X", "A", "B")
         shuffle_b = Transition("Y", "B", "A")
         send = Transition("U", "B", "A")
+        fsm = self.buildFSM("shuffleInChoice.txt")
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
         # in q0 there are 3 transitions: shuffle_a, shuffle_b and send
         self.assertEqual(3, len(q0.transitionsToStates))
         self.assertIn(shuffle_a, q0.transitionsToStates)
@@ -555,37 +603,42 @@ class TestFSMBuilder(unittest.TestCase):
         # perform shuffle: first shuffle_a then shuffle_b
         # make transition shuffle_a
         fsm.makeTransition(shuffle_a)
+        fsm.updateStates()
         q1 = fsm.getStates()[0]
         # in q1 there is one transition: shuffle_b
         self.assertEqual(1, len(q1.transitionsToStates))
         self.assertIn(shuffle_b, q1.transitionsToStates)
         # make transition shuffle_b
         fsm.makeTransition(shuffle_b)
+        fsm.updateStates()
         q3_shuffle_a_b = fsm.getStates()[0]
         # in q3_shuffle_a_b there is no transition
         self.assertEqual(0, len(q3_shuffle_a_b.transitionsToStates))
 
         # reset fsm
-        fsm.states = [q0]
+        fsm.states = {q0}
 
         # perform shuffle: first shuffle_b then shuffle_a
         # make transition shuffle_b
         fsm.makeTransition(shuffle_b)
+        fsm.updateStates()
         q2 = fsm.getStates()[0]
         # in q2 there is one transition: shuffle_a
         self.assertEqual(1, len(q2.transitionsToStates))
         self.assertIn(shuffle_a, q2.transitionsToStates)
         # make transition shuffle_a
         fsm.makeTransition(shuffle_a)
+        fsm.updateStates()
         q3_shuffle_b_a = fsm.getStates()[0]
         # in q3_shuffle_b_a there is no transition
         self.assertEqual(0, len(q3_shuffle_b_a.transitionsToStates))
 
         # reset fsm
-        fsm.states = [q0]
+        fsm.states = {q0}
 
         # make transition send
         fsm.makeTransition(send)
+        fsm.updateStates()
         q3_send = fsm.getStates()[0]
         # in q3_send there is no transition
         self.assertEqual(0, len(q3_send.transitionsToStates))
@@ -608,6 +661,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition t1_A_B
         fsm.makeTransition(t1_A_B)
+        fsm.updateStates()
         # transition t1_A_B leads to one state
         self.assertEqual(1, len(fsm.getStates()))
         q1 = fsm.getStates()[0]
@@ -620,26 +674,31 @@ class TestFSMBuilder(unittest.TestCase):
     
         # make transition t2_B_A
         fsm.makeTransition(t2_B_A)
+        fsm.updateStates()
         # transition t2_B_A leads to one state: q0
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q0, fsm.getStates()[0])
         # make transition t1_A_B
         fsm.makeTransition(t1_A_B)
+        fsm.updateStates()
 
         # enter loop second time
 
         # make transition t2_B_A
         fsm.makeTransition(t2_B_A)
+        fsm.updateStates()
         # transition t2_B_A leads to one state: q0
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q0, fsm.getStates()[0])
         # make transition t1_A_B
         fsm.makeTransition(t1_A_B)
+        fsm.updateStates()
 
         # exit loop
 
         # make transition t3_B_A
         fsm.makeTransition(t3_B_A)
+        fsm.updateStates()
         # transition t3_B_A leads to one state
         self.assertEqual(1, len(fsm.getStates()))
         q2 = fsm.getStates()[0]
@@ -659,6 +718,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition t1_A_B
         fsm.makeTransition(t1_A_B)
+        fsm.updateStates()
         # transition t1_A_B leads to one state
         self.assertEqual(1, len(fsm.getStates()))
         q1 = fsm.getStates()[0]
@@ -668,6 +728,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition t2_B_A
         fsm.makeTransition(t2_B_A)
+        fsm.updateStates()
         # transition t2_B_A leads to two states: q0 and q2
         self.assertEqual(2, len(fsm.getStates()))
         if fsm.getStates()[0].containsTransition(t1_A_B):
@@ -683,11 +744,13 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition t1_A_B
         fsm.makeTransition(t1_A_B)
+        fsm.updateStates()
         # transition t1_A_B leads to one state: q1
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q1, fsm.getStates()[0])        
         # make transition t2_B_A
         fsm.makeTransition(t2_B_A)
+        fsm.updateStates()
         # transition t2_B_A leads to two states
         self.assertEqual(2, len(fsm.getStates()))
         if fsm.getStates()[0].containsTransition(t1_A_B):
@@ -716,6 +779,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition t0_A_B
         fsm.makeTransition(t0_A_B)
+        fsm.updateStates()
         # transition t0_A_B leads to one state
         self.assertEqual(1, len(fsm.getStates()))
         q1 = fsm.getStates()[0]
@@ -725,6 +789,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition t1_A_B
         fsm.makeTransition(t1_A_B)
+        fsm.updateStates()
         # transition t1_A_B leads to one state
         self.assertEqual(1, len(fsm.getStates()))
         q2 = fsm.getStates()[0]
@@ -734,6 +799,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition t2_A_B
         fsm.makeTransition(t2_A_B)
+        fsm.updateStates()
         # transition t2_A_B leads to one state
         self.assertEqual(1, len(fsm.getStates()))
         q3 = fsm.getStates()[0]
@@ -748,16 +814,19 @@ class TestFSMBuilder(unittest.TestCase):
         # perform outer loop
         # make transition t4_B_A
         fsm.makeTransition(t4_B_A)
+        fsm.updateStates()
         # transition t4_B_A leads to one state: q1
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q1, fsm.getStates()[0])
         # make transition t1_A_B
         fsm.makeTransition(t1_A_B)
+        fsm.updateStates()
         # transition t1_A_B leads to one state: q2
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q2, fsm.getStates()[0])
         # make transition t2_A_B
         fsm.makeTransition(t2_A_B)
+        fsm.updateStates()
         # transition t2_A_B leads to one state: q3
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q3, fsm.getStates()[0])
@@ -765,11 +834,13 @@ class TestFSMBuilder(unittest.TestCase):
         # perform inner loop
         # make transition t3_B_A
         fsm.makeTransition(t3_B_A)
+        fsm.updateStates()
         # transition t3_B_A leads to one state: q2
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q2, fsm.getStates()[0])
         # make transition t2_A_B
         fsm.makeTransition(t2_A_B)
+        fsm.updateStates()
         # transition t2_A_B leads to one state: q3
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q3, fsm.getStates()[0])
@@ -777,16 +848,19 @@ class TestFSMBuilder(unittest.TestCase):
         # perform outer loop again
         # make transition t4_B_A
         fsm.makeTransition(t4_B_A)
+        fsm.updateStates()
         # transition t4_B_A leads to one state: q1
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q1, fsm.getStates()[0])
         # make transition t1_A_B
         fsm.makeTransition(t1_A_B)
+        fsm.updateStates()
         # transition t1_A_B leads to one state: q2
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q2, fsm.getStates()[0])
         # make transition t2_A_B
         fsm.makeTransition(t2_A_B)
+        fsm.updateStates()
         # transition t2_A_B leads to one state: q3
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q3, fsm.getStates()[0])
@@ -794,11 +868,13 @@ class TestFSMBuilder(unittest.TestCase):
         # perform inner loop again
         # make transition t3_B_A
         fsm.makeTransition(t3_B_A)
+        fsm.updateStates()
         # transition t3_B_A leads to one state: q2
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q2, fsm.getStates()[0])
         # make transition t2_A_B
         fsm.makeTransition(t2_A_B)
+        fsm.updateStates()
         # transition t2_A_B leads to one state: q3
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q3, fsm.getStates()[0])
@@ -807,6 +883,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition t5_B_A
         fsm.makeTransition(t5_B_A)
+        fsm.updateStates()
         # transition t5_B_A leads to one state
         self.assertEqual(1, len(fsm.getStates()))
         q4 = fsm.getStates()[0]
@@ -829,6 +906,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition t0_A_B
         fsm.makeTransition(t0_A_B)
+        fsm.updateStates()
         # transition t0_A_B leads to one state
         self.assertEqual(1, len(fsm.getStates()))
         q1 = fsm.getStates()[0]
@@ -838,6 +916,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition t1_A_B
         fsm.makeTransition(t1_A_B)
+        fsm.updateStates()
         # transition t1_A_B leads to one state
         self.assertEqual(1, len(fsm.getStates()))
         q2 = fsm.getStates()[0]
@@ -847,6 +926,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition t2_A_B
         fsm.makeTransition(t2_A_B)
+        fsm.updateStates()
         # transition t2_A_B leads to one state
         self.assertEqual(1, len(fsm.getStates()))
         q3 = fsm.getStates()[0]
@@ -860,6 +940,7 @@ class TestFSMBuilder(unittest.TestCase):
         # perform outer loop
         # make transition t3_B_A
         fsm.makeTransition(t3_B_A)
+        fsm.updateStates()
         # transition t3_B_A leads to two states
         self.assertEqual(2, len(fsm.getStates()))
         if fsm.getStates()[0].containsTransition(t1_A_B):
@@ -872,11 +953,13 @@ class TestFSMBuilder(unittest.TestCase):
             self.fail("Builder fails to handle recursive non-determinism")
         # make transition t1_A_B
         fsm.makeTransition(t1_A_B)
+        fsm.updateStates()
         # transition t1_A_B leads to one state: q2
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q2, fsm.getStates()[0])
         # make transition t2_A_B
         fsm.makeTransition(t2_A_B)
+        fsm.updateStates()
         # transition t2_A_B leads to one state: q3
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q3, fsm.getStates()[0])
@@ -884,6 +967,7 @@ class TestFSMBuilder(unittest.TestCase):
         # perform inner loop
         # make transition t3_B_A
         fsm.makeTransition(t3_B_A)
+        fsm.updateStates()
         # transition t3_B_A leads to two states: q1 and q2
         self.assertEqual(2, len(fsm.getStates()))
         if fsm.getStates()[0].containsTransition(t1_A_B):
@@ -896,6 +980,7 @@ class TestFSMBuilder(unittest.TestCase):
             self.fail("Builder fails to handle recursive non-determinism")
         # make transition t2_A_B
         fsm.makeTransition(t2_A_B)
+        fsm.updateStates()
         # transition t2_A_B leads to one state: q3
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q3, fsm.getStates()[0])
@@ -903,6 +988,7 @@ class TestFSMBuilder(unittest.TestCase):
         # perform outer loop again
         # make transition t3_B_A
         fsm.makeTransition(t3_B_A)
+        fsm.updateStates()
         # transition t3_B_A leads to two states: q1 and q2
         self.assertEqual(2, len(fsm.getStates()))
         if fsm.getStates()[0].containsTransition(t1_A_B):
@@ -915,11 +1001,13 @@ class TestFSMBuilder(unittest.TestCase):
             self.fail("Builder fails to handle recursive non-determinism")
         # make transition t1_A_B
         fsm.makeTransition(t1_A_B)
+        fsm.updateStates()
         # transition t1_A_B leads to one state: q2
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q2, fsm.getStates()[0])
         # make transition t2_A_B
         fsm.makeTransition(t2_A_B)
+        fsm.updateStates()
         # transition t2_A_B leads to one state: q3
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q3, fsm.getStates()[0])
@@ -927,6 +1015,7 @@ class TestFSMBuilder(unittest.TestCase):
         # perform inner loop
         # make transition t3_B_A
         fsm.makeTransition(t3_B_A)
+        fsm.updateStates()
         # transition t3_B_A leads to two states: q1 and q2
         self.assertEqual(2, len(fsm.getStates()))
         if fsm.getStates()[0].containsTransition(t1_A_B):
@@ -939,6 +1028,7 @@ class TestFSMBuilder(unittest.TestCase):
             self.fail("Builder fails to handle recursive non-determinism")
         # make transition t2_A_B
         fsm.makeTransition(t2_A_B)
+        fsm.updateStates()
         # transition t2_A_B leads to one state: q3
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q3, fsm.getStates()[0])
@@ -947,6 +1037,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition t4_B_A
         fsm.makeTransition(t4_B_A)
+        fsm.updateStates()
         # transition t4_B_A leads to one state
         self.assertEqual(1, len(fsm.getStates()))
         q4 = fsm.getStates()[0]
@@ -971,6 +1062,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition t0_A_B
         fsm.makeTransition(t0_A_B)
+        fsm.updateStates()
         # transition t0_A_B leads to one state: q1
         self.assertEqual(1, len(fsm.getStates()))
         q1 = fsm.getStates()[0]
@@ -983,6 +1075,7 @@ class TestFSMBuilder(unittest.TestCase):
         # loop from q1 to q1 via first loop
         # make transition t1_A_B
         fsm.makeTransition(t1_A_B)
+        fsm.updateStates()
         # transition t1_A_B leads to one state: q2
         self.assertEqual(1, len(fsm.getStates()))
         q2 = fsm.getStates()[0]
@@ -991,6 +1084,7 @@ class TestFSMBuilder(unittest.TestCase):
         self.assertIn(t2_A_B, q2.transitionsToStates)
         # make transition t2_A_B
         fsm.makeTransition(t2_A_B)
+        fsm.updateStates()
         # transition t2_A_B leads to one state: q3
         self.assertEqual(1, len(fsm.getStates()))
         q3 = fsm.getStates()[0]
@@ -1000,6 +1094,7 @@ class TestFSMBuilder(unittest.TestCase):
         self.assertIn(t4_B_C, q3.transitionsToStates)
         # make transition t3_B_A
         fsm.makeTransition(t3_B_A)
+        fsm.updateStates()
         # transition t3_B_A leads to one state: q1
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q1, fsm.getStates()[0])
@@ -1007,6 +1102,7 @@ class TestFSMBuilder(unittest.TestCase):
         # move to q2
         # make transition t1_A_B
         fsm.makeTransition(t1_A_B)
+        fsm.updateStates()
         # transition t1_A_B leads to one state: q2
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q2, fsm.getStates()[0])
@@ -1014,11 +1110,13 @@ class TestFSMBuilder(unittest.TestCase):
         # loop from q2 to q2 via second loop
         # make transition t2_A_B
         fsm.makeTransition(t2_A_B)
+        fsm.updateStates()
         # transition t2_A_B leads to one state: q3
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q3, fsm.getStates()[0])
         # make transition t5_B_C
         fsm.makeTransition(t4_B_C)
+        fsm.updateStates()
         # transition t5_B_C leads to one state: q4
         self.assertEqual(1, len(fsm.getStates()))
         q4 = fsm.getStates()[0]
@@ -1028,6 +1126,7 @@ class TestFSMBuilder(unittest.TestCase):
         self.assertIn(t6_C_D, q4.transitionsToStates)
         # make transition t5_C_A
         fsm.makeTransition(t5_C_A)
+        fsm.updateStates()
         # transition t5_C_A leads to one state: q2
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q2, fsm.getStates()[0])
@@ -1035,6 +1134,7 @@ class TestFSMBuilder(unittest.TestCase):
         # move to q3
         # make transition t2_A_B
         fsm.makeTransition(t2_A_B)
+        fsm.updateStates()
         # transition t2_A_B leads to one state: q3
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q3, fsm.getStates()[0])
@@ -1042,16 +1142,19 @@ class TestFSMBuilder(unittest.TestCase):
         # move from q3 to q3 via first loop
         # make transition t3_B_A
         fsm.makeTransition(t3_B_A)
+        fsm.updateStates()
         # transition t3_B_A leads to one state: q1
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q1, fsm.getStates()[0])
         # make transition t1_A_B
         fsm.makeTransition(t1_A_B)
+        fsm.updateStates()
         # transition t1_A_B leads to one state: q2
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q2, fsm.getStates()[0])
         # make transition t2_A_B
         fsm.makeTransition(t2_A_B)
+        fsm.updateStates()
         # transition t2_A_B leads to one state: q3
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q3, fsm.getStates()[0])
@@ -1059,6 +1162,7 @@ class TestFSMBuilder(unittest.TestCase):
         # move to q4
         # make transition t4_B_C
         fsm.makeTransition(t4_B_C)
+        fsm.updateStates()
         # transition t4_B_C leads to one state: q4
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q4, fsm.getStates()[0])
@@ -1066,16 +1170,19 @@ class TestFSMBuilder(unittest.TestCase):
         # loop from q4 to q4 via second loop
         # make transition t5_C_A
         fsm.makeTransition(t5_C_A)
+        fsm.updateStates()
         # transition t5_C_A leads to one state: q2
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q2, fsm.getStates()[0])
         # make transition t2_A_B
         fsm.makeTransition(t2_A_B)
+        fsm.updateStates()
         # transition t2_A_B leads to one state: q3
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q3, fsm.getStates()[0])
         # make transition t4_B_C
         fsm.makeTransition(t4_B_C)
+        fsm.updateStates()
         # transition t5_B_C leads to one state: q4
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q4, fsm.getStates()[0])
@@ -1083,6 +1190,7 @@ class TestFSMBuilder(unittest.TestCase):
         # move to state q5
         # make transition t6_C_D
         fsm.makeTransition(t6_C_D)
+        fsm.updateStates()
         # transition t6_C_D leads to one state: q5
         self.assertEqual(1, len(fsm.getStates()))
         q5 = fsm.getStates()[0]
@@ -1108,6 +1216,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition t0_A_B
         fsm.makeTransition(t0_A_B)
+        fsm.updateStates()
         # transition t0_A_B leads to one state: q1
         self.assertEqual(1, len(fsm.getStates()))
         q1 = fsm.getStates()[0]
@@ -1118,6 +1227,7 @@ class TestFSMBuilder(unittest.TestCase):
         # loop from q1 to q1
         # make transition t1_A_B
         fsm.makeTransition(t1_A_B)
+        fsm.updateStates()
         # transition t1_A_B leads to one state: q2
         self.assertEqual(1, len(fsm.getStates()))
         q2 = fsm.getStates()[0]
@@ -1127,6 +1237,7 @@ class TestFSMBuilder(unittest.TestCase):
         self.assertIn(t3_B_C, q2.transitionsToStates)
         # make transition t2_B_A
         fsm.makeTransition(t2_B_A)
+        fsm.updateStates()
         # transition t2_B_A leads to one state: q1
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q1, fsm.getStates()[0])
@@ -1134,11 +1245,13 @@ class TestFSMBuilder(unittest.TestCase):
         # move to q3
         # make transition t1_A_B
         fsm.makeTransition(t1_A_B)
+        fsm.updateStates()
         # transition t1_A_B leads to one state: q2
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q2, fsm.getStates()[0])
         # make transition t3_B_C
         fsm.makeTransition(t3_B_C)
+        fsm.updateStates()
         # transition t3_B_C leads to one state: q3
         self.assertEqual(1, len(fsm.getStates()))
         q3 = fsm.getStates()[0]
@@ -1149,6 +1262,7 @@ class TestFSMBuilder(unittest.TestCase):
         # loop from q3 to q3
         # make transition t4_B_C
         fsm.makeTransition(t4_B_C)
+        fsm.updateStates()
         # transition t4_B_C leads to one state: q4
         self.assertEqual(1, len(fsm.getStates()))
         q4 = fsm.getStates()[0]
@@ -1157,6 +1271,7 @@ class TestFSMBuilder(unittest.TestCase):
         self.assertIn(t5_C_D, q4.transitionsToStates)
         # make transition t5_C_D
         fsm.makeTransition(t5_C_D)
+        fsm.updateStates()
         # transition t5_C_D leads to one state: q5
         self.assertEqual(1, len(fsm.getStates()))
         q5 = fsm.getStates()[0]
@@ -1166,6 +1281,7 @@ class TestFSMBuilder(unittest.TestCase):
         self.assertIn(t7_D_E, q5.transitionsToStates)
         # make transition t6_D_B
         fsm.makeTransition(t6_D_B)
+        fsm.updateStates()
         # transition t6_D_B leads to one state: q3
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q3, fsm.getStates()[0])
@@ -1173,16 +1289,19 @@ class TestFSMBuilder(unittest.TestCase):
         # continue to state q6
         # make transition t4_B_C
         fsm.makeTransition(t4_B_C)
+        fsm.updateStates()
         # transition t4_B_C leads to one state: q4
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q4, fsm.getStates()[0])
         # make transition t5_C_D
         fsm.makeTransition(t5_C_D)
+        fsm.updateStates()
         # transition t5_C_D leads to one state: q5
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q5, fsm.getStates()[0])
         # make transition t7_D_E
         fsm.makeTransition(t7_D_E)
+        fsm.updateStates()
         # transition t7_D_E leads to one state: q6
         self.assertEqual(1, len(fsm.getStates()))
         q6 = fsm.getStates()[0]
@@ -1205,6 +1324,7 @@ class TestFSMBuilder(unittest.TestCase):
         # loop from q0 to q0 via l1        
         # make transition t0_A_B
         fsm.makeTransition(t0_A_B)
+        fsm.updateStates()
         # transition t0_A_B leads to one state: q1
         self.assertEqual(1, len(fsm.getStates()))
         q1 = fsm.getStates()[0]
@@ -1214,6 +1334,7 @@ class TestFSMBuilder(unittest.TestCase):
         self.assertIn(t2_B_A, q1.transitionsToStates)
         # make transition t2_B_A
         fsm.makeTransition(t2_B_A)
+        fsm.updateStates()
         # transition t2_B_A leads to one state: q0
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q0, fsm.getStates()[0])
@@ -1221,6 +1342,7 @@ class TestFSMBuilder(unittest.TestCase):
         # move to q1
         # make transition t0_A_B
         fsm.makeTransition(t0_A_B)
+        fsm.updateStates()
         # transition t0_A_B leads to one state: q1
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q1, fsm.getStates()[0])
@@ -1228,6 +1350,7 @@ class TestFSMBuilder(unittest.TestCase):
         # loop from q1 to q1 via l2        
         # make transition t1_B_C
         fsm.makeTransition(t1_B_C)
+        fsm.updateStates()
         # transition t1_A_B leads to one state: q2
         self.assertEqual(1, len(fsm.getStates()))
         q2 = fsm.getStates()[0]
@@ -1236,6 +1359,7 @@ class TestFSMBuilder(unittest.TestCase):
         self.assertIn(t2_C_B, q2.transitionsToStates)
         # make transition t2_C_B
         fsm.makeTransition(t2_C_B)
+        fsm.updateStates()
         # transition t2_C_B leads to one state: q1
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q1, fsm.getStates()[0])
@@ -1243,11 +1367,13 @@ class TestFSMBuilder(unittest.TestCase):
         # loop from q1 to q1 via l2        
         # make transition t1_B_C
         fsm.makeTransition(t1_B_C)
+        fsm.updateStates()
         # transition t1_A_B leads to one state: q2
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q2, fsm.getStates()[0])
         # make transition t2_C_B
         fsm.makeTransition(t2_C_B)
+        fsm.updateStates()
         # transition t2_C_B leads to one state: q1
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q1, fsm.getStates()[0])
@@ -1255,6 +1381,7 @@ class TestFSMBuilder(unittest.TestCase):
         # return to q0 via l1
         # make transition t2_B_A
         fsm.makeTransition(t2_B_A)
+        fsm.updateStates()
         # transition t2_B_A leads to one state: q0
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q0, fsm.getStates()[0])
@@ -1277,6 +1404,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition t0_A_B
         fsm.makeTransition(t0_A_B)
+        fsm.updateStates()
         # transition t0_A_B leads to one state: q1
         self.assertEqual(1, len(fsm.getStates()))
         q1 = fsm.getStates()[0]
@@ -1288,6 +1416,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition t1_A_B
         fsm.makeTransition(t1_A_B)
+        fsm.updateStates()
         # transition t1_A_B leads to one state: q2
         self.assertEqual(1, len(fsm.getStates()))
         q2 = fsm.getStates()[0]
@@ -1298,6 +1427,7 @@ class TestFSMBuilder(unittest.TestCase):
         # loop from q2 to q2 via l2
         # make transition t2_A_B
         fsm.makeTransition(t2_A_B)
+        fsm.updateStates()
         # transition t2_A_B leads to one state: q3
         self.assertEqual(1, len(fsm.getStates()))
         q3 = fsm.getStates()[0]
@@ -1307,6 +1437,7 @@ class TestFSMBuilder(unittest.TestCase):
         self.assertIn(t4_B_C, q3.transitionsToStates)
         # make transition t3_B_A
         fsm.makeTransition(t3_B_A)
+        fsm.updateStates()
         # transition t3_B_A leads to one state: q2
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q2, fsm.getStates()[0])
@@ -1314,11 +1445,13 @@ class TestFSMBuilder(unittest.TestCase):
         # loop back to q1 via q4
         # make transition t2_A_B
         fsm.makeTransition(t2_A_B)
+        fsm.updateStates()
         # transition t2_A_B leads to one state: q3
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q3, fsm.getStates()[0])
         # make transition t4_B_C
         fsm.makeTransition(t4_B_C)
+        fsm.updateStates()
         # transition t4_B_C leads to one state: q4
         self.assertEqual(1, len(fsm.getStates()))
         q4 = fsm.getStates()[0]
@@ -1328,6 +1461,7 @@ class TestFSMBuilder(unittest.TestCase):
         self.assertIn(t6_C_D, q4.transitionsToStates)
         # make transition t5_C_A
         fsm.makeTransition(t5_C_A)
+        fsm.updateStates()
         # transition t5_C_A leads to one state: q1
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q1, fsm.getStates()[0])
@@ -1336,33 +1470,39 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition t1_A_B
         fsm.makeTransition(t1_A_B)
+        fsm.updateStates()
         # transition t1_A_B leads to one state: q2
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q2, fsm.getStates()[0])
         # loop from q2 to q2 via l2
         # make transition t2_A_B
         fsm.makeTransition(t2_A_B)
+        fsm.updateStates()
         # transition t2_A_B leads to one state: q3
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q3, fsm.getStates()[0])
         # make transition t3_B_A
         fsm.makeTransition(t3_B_A)
+        fsm.updateStates()
         # transition t3_B_A leads to one state: q2
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q2, fsm.getStates()[0])        
         # loop back to q1 via q4
         # make transition t2_A_B
         fsm.makeTransition(t2_A_B)
+        fsm.updateStates()
         # transition t2_A_B leads to one state: q3
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q3, fsm.getStates()[0])
         # make transition t4_B_C
         fsm.makeTransition(t4_B_C)
+        fsm.updateStates()
         # transition t4_B_C leads to one state: q4
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q4, fsm.getStates()[0])
         # make transition t5_C_A
         fsm.makeTransition(t5_C_A)
+        fsm.updateStates()
         # transition t5_C_A leads to one state: q1
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q1, fsm.getStates()[0])
@@ -1370,21 +1510,25 @@ class TestFSMBuilder(unittest.TestCase):
         # move to q5
         # make transition t1_A_B
         fsm.makeTransition(t1_A_B)
+        fsm.updateStates()
         # transition t1_A_B leads to one state: q2
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q2, fsm.getStates()[0])
         # make transition t2_A_B
         fsm.makeTransition(t2_A_B)
+        fsm.updateStates()
         # transition t2_A_B leads to one state: q3
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q3, fsm.getStates()[0])
         # make transition t4_B_C
         fsm.makeTransition(t4_B_C)
+        fsm.updateStates()
         # transition t4_B_C leads to one state: q4
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q4, fsm.getStates()[0])
         # make transition t6_C_D
         fsm.makeTransition(t6_C_D)
+        fsm.updateStates()
         # transition t6_C_D leads to one state: q5
         self.assertEqual(1, len(fsm.getStates()))
         q5 = fsm.getStates()[0]
@@ -1408,6 +1552,7 @@ class TestFSMBuilder(unittest.TestCase):
         
         # transition t0_A_B leads to q1
         fsm.makeTransition(t0_A_B)
+        fsm.updateStates()
         self.assertEqual(1, len(fsm.getStates()))
         q1 = fsm.getStates()[0]
         # in q1 there is one transition: t1_A_B
@@ -1416,6 +1561,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # transition t1_A_B leads to q2
         fsm.makeTransition(t1_A_B)
+        fsm.updateStates()
         self.assertEqual(1, len(fsm.getStates()))
         q2 = fsm.getStates()[0]
         # in q2 there are two transitions: t2_B_C and t3_B_A
@@ -1425,16 +1571,19 @@ class TestFSMBuilder(unittest.TestCase):
 
         # transition t3_B_A leads to q1
         fsm.makeTransition(t3_B_A)
+        fsm.updateStates()
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q1, fsm.getStates()[0])
 
         # transition t1_A_B leads to q2
         fsm.makeTransition(t1_A_B)
+        fsm.updateStates()
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q2, fsm.getStates()[0])
 
         # transition t1_A_B leads to q3
         fsm.makeTransition(t2_B_C)
+        fsm.updateStates()
         self.assertEqual(1, len(fsm.getStates()))
         q3 = fsm.getStates()[0]
         # in q3 there are two transitions: t3_C_A and t4_C_D
@@ -1444,21 +1593,25 @@ class TestFSMBuilder(unittest.TestCase):
 
         # transition t3_C_A leads to q1
         fsm.makeTransition(t3_C_A)
+        fsm.updateStates()
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q1, fsm.getStates()[0])
         
         # transition t1_A_B leads to q2
         fsm.makeTransition(t1_A_B)
+        fsm.updateStates()
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q2, fsm.getStates()[0])
        
         # transition t1_A_B leads to q3
         fsm.makeTransition(t2_B_C)
+        fsm.updateStates()
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q3, fsm.getStates()[0])
 
         # transition t4_C_D leads to q4
         fsm.makeTransition(t4_C_D)
+        fsm.updateStates()
         self.assertEqual(1, len(fsm.getStates()))
         q4 = fsm.getStates()[0]
         # in q4 there are no transitions
@@ -1481,6 +1634,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # transition t1_A_B leads to q1 and q2
         fsm.makeTransition(t1_A_B)
+        fsm.updateStates()
         self.assertEqual(2, len(fsm.getStates()))
         if fsm.getStates()[0].containsTransition(t1_A_C):
             q1 = fsm.getStates()[0]
@@ -1499,6 +1653,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # transition t1_A_C leads to q3
         fsm.makeTransition(t1_A_C)
+        fsm.updateStates()
         self.assertEqual(1, len(fsm.getStates()))
         q3 = fsm.getStates()[0]
         # in q3 there are two transitions: t4_C_B and t3_B_D
@@ -1508,11 +1663,13 @@ class TestFSMBuilder(unittest.TestCase):
 
         # transition t4_C_B leads to q0
         fsm.makeTransition(t4_C_B)
+        fsm.updateStates()
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q0, fsm.getStates()[0])
 
         # transition t1_A_B leads to q1 and q2
         fsm.makeTransition(t1_A_B)
+        fsm.updateStates()
         self.assertEqual(2, len(fsm.getStates()))
         if fsm.getStates()[0].containsTransition(t1_A_C):
             self.assertEqual(q1, fsm.getStates()[0])
@@ -1525,11 +1682,13 @@ class TestFSMBuilder(unittest.TestCase):
 
         # transition t2_A_C leads to q3
         fsm.makeTransition(t2_A_C)
+        fsm.updateStates()
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q3, fsm.getStates()[0])
 
         # transition t3_B_D leads to q4
         fsm.makeTransition(t3_B_D)
+        fsm.updateStates()
         self.assertEqual(1, len(fsm.getStates()))
         q4 = fsm.getStates()[0]
         # in q4 there is one transition: t4_C_D
@@ -1538,6 +1697,7 @@ class TestFSMBuilder(unittest.TestCase):
         
         # transition t4_C_D leads to q5
         fsm.makeTransition(t4_C_D)
+        fsm.updateStates()
         self.assertEqual(1, len(fsm.getStates()))
         q5 = fsm.getStates()[0]
         # in q5 there is no transition
@@ -1559,6 +1719,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # transition t3_B_D leads to q1
         fsm.makeTransition(t3_B_D)
+        fsm.updateStates()
         self.assertEqual(1, len(fsm.getStates()))
         q1 = fsm.getStates()[0]
         # in q1 there is one transition: t4_C_D
@@ -1567,6 +1728,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # transition t4_C_D leads to q3
         fsm.makeTransition(t4_C_D)
+        fsm.updateStates()
         self.assertEqual(1, len(fsm.getStates()))
         q3 = fsm.getStates()[0]
         # in q3 there is one transition: t1_A_B
@@ -1574,6 +1736,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # transition t1_A_B leads to q0 and q4
         fsm.makeTransition(t1_A_B)
+        fsm.updateStates()
         self.assertEqual(2, len(fsm.getStates()))
         if fsm.getStates()[0].containsTransition(t2_B_A):
             q4 = fsm.getStates()[0]
@@ -1589,6 +1752,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # transition t4_C_D leads to q2
         fsm.makeTransition(t4_C_D)
+        fsm.updateStates()
         self.assertEqual(1, len(fsm.getStates()))
         q2 = fsm.getStates()[0]
         # in q2 there is one transition: t3_B_D
@@ -1597,11 +1761,13 @@ class TestFSMBuilder(unittest.TestCase):
 
         # transition t3_B_D leads to q3
         fsm.makeTransition(t3_B_D)
+        fsm.updateStates()
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q3, fsm.getStates()[0])
         
         # transition t1_A_B leads to q0 and q4
         fsm.makeTransition(t1_A_B)
+        fsm.updateStates()
         self.assertEqual(2, len(fsm.getStates()))
         if fsm.getStates()[0].containsTransition(t2_B_A):
             self.assertEqual(q4, fsm.getStates()[0])
@@ -1614,6 +1780,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # transition t2_B_A leads to q5
         fsm.makeTransition(t2_B_A)
+        fsm.updateStates()
         self.assertEqual(1, len(fsm.getStates()))
         q5 = fsm.getStates()[0]
         # in q5 there is no transition
@@ -1633,11 +1800,13 @@ class TestFSMBuilder(unittest.TestCase):
 
         # transition t1_A_B leads to q0
         fsm.makeTransition(t1_A_B)
+        fsm.updateStates()
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q0, fsm.getStates()[0])
 
         # transition t2_A_B leads to q1
         fsm.makeTransition(t2_A_B)
+        fsm.updateStates()
         self.assertEqual(1, len(fsm.getStates()))
         q1 = fsm.getStates()[0]
         # in q1 there is no transition
@@ -1661,6 +1830,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition str_b1_s
         fsm.makeTransition(str_b1_s)
+        fsm.updateStates()
         # transition str_b1_s leads to one state
         self.assertEqual(1, len(fsm.getStates()))
         q1 = fsm.getStates()[0]
@@ -1672,6 +1842,7 @@ class TestFSMBuilder(unittest.TestCase):
         # perform shuffle: first int_s_b1 then int_s_b2
         # make transition int_s_b1
         fsm.makeTransition(int_s_b1)
+        fsm.updateStates()
         # transition int_s_b1 leads to one state
         self.assertEqual(1, len(fsm.getStates()))
         q2 = fsm.getStates()[0]
@@ -1680,6 +1851,7 @@ class TestFSMBuilder(unittest.TestCase):
         self.assertIn(int_s_b2, q2.transitionsToStates)
         # make transition int_s_b2
         fsm.makeTransition(int_s_b2)
+        fsm.updateStates()
         # transition int_s_b2 leads to one state
         self.assertEqual(1, len(fsm.getStates()))
         q4_b1_b2 = fsm.getStates()[0]
@@ -1688,11 +1860,12 @@ class TestFSMBuilder(unittest.TestCase):
         self.assertIn(int_b1_b2, q4_b1_b2.transitionsToStates)
 
         # revert fsm to state q1
-        fsm.states = [q1]
+        fsm.states = {q1}
 
         # perform shuffle: first int_s_b2 then int_s_b1
         # make transition int_s_b2
         fsm.makeTransition(int_s_b2)
+        fsm.updateStates()
         # transition int_s_b2 leads to one state
         self.assertEqual(1, len(fsm.getStates()))
         q3 = fsm.getStates()[0]
@@ -1701,6 +1874,7 @@ class TestFSMBuilder(unittest.TestCase):
         self.assertIn(int_s_b1, q3.transitionsToStates)
         # make transition int_s_b1
         fsm.makeTransition(int_s_b1)
+        fsm.updateStates()
         # transition int_s_b1 leads to one state
         self.assertEqual(1, len(fsm.getStates()))
         q4_b2_b1 = fsm.getStates()[0]
@@ -1710,6 +1884,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition int_b1_b2
         fsm.makeTransition(int_b1_b2)
+        fsm.updateStates()
         # transition int_b1_b2 leads to one state
         self.assertEqual(1, len(fsm.getStates()))
         q5 = fsm.getStates()[0]
@@ -1721,6 +1896,7 @@ class TestFSMBuilder(unittest.TestCase):
         # perform shuffle: first bool_b2_s then bool_b2_b1
         # make transition bool_b2_s
         fsm.makeTransition(bool_b2_s)
+        fsm.updateStates()
         # transition bool_b2_s leads to one state
         self.assertEqual(1, len(fsm.getStates()))
         q6 = fsm.getStates()[0]
@@ -1729,6 +1905,7 @@ class TestFSMBuilder(unittest.TestCase):
         self.assertIn(bool_b2_b1, q6.transitionsToStates)
         # make transition bool_b2_b1
         fsm.makeTransition(bool_b2_b1)
+        fsm.updateStates()
         # transition bool_b2_b1 leads to one state
         self.assertEqual(1, len(fsm.getStates()))
         q10_s_b1 = fsm.getStates()[0]
@@ -1736,11 +1913,12 @@ class TestFSMBuilder(unittest.TestCase):
         self.assertEqual(0, len(q10_s_b1.transitionsToStates))
 
         # revert fsm to state q5
-        fsm.states = [q5]
+        fsm.states = {q5}
 
         # perform shuffle: first bool_b2_b1 then bool_b2_s
         # make transition bool_b2_b1
         fsm.makeTransition(bool_b2_b1)
+        fsm.updateStates()
         # transition bool_b2_b1 leads to two states
         self.assertEqual(2, len(fsm.getStates()))
         if fsm.getStates()[0].containsTransition(bool_b2_s):
@@ -1759,6 +1937,7 @@ class TestFSMBuilder(unittest.TestCase):
         self.assertIn(int_b1_b2, q7.transitionsToStates)
         # make transition bool_b2_s
         fsm.makeTransition(bool_b2_s)
+        fsm.updateStates()
         # transition bool_b2_s leads to one state
         self.assertEqual(1, len(fsm.getStates()))        
         q10_b1_s = fsm.getStates()[0]
@@ -1766,12 +1945,14 @@ class TestFSMBuilder(unittest.TestCase):
         self.assertEqual(0, len(q10_b1_s.transitionsToStates))
 
         # revert fsm to state q5
-        fsm.states = [q5]
+        fsm.states = {q5}
 
         # make transition bool_b2_b1
         fsm.makeTransition(bool_b2_b1)
+        fsm.updateStates()
         # make transition int_b1_b2
         fsm.makeTransition(int_b1_b2)
+        fsm.updateStates()
         # transition int_b1_b2 leads to one state
         self.assertEqual(1, len(fsm.getStates()))
         q8 = fsm.getStates()[0]
@@ -1781,6 +1962,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition int_b2_s
         fsm.makeTransition(int_b2_s)
+        fsm.updateStates()
         # transition int_b1_b2 leads to one state
         self.assertEqual(1, len(fsm.getStates()))
         q10_sequence = fsm.getStates()[0]
@@ -1809,6 +1991,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition str_C_A
         fsm.makeTransition(str_C_A)
+        fsm.updateStates()
         # transition str_C_A leads to a single state
         self.assertEqual(1, len(fsm.getStates()))
         q1 = fsm.getStates()[0]
@@ -1818,6 +2001,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition int_A_C
         fsm.makeTransition(int_A_C)
+        fsm.updateStates()
         # transition int_A_C leads to a single state
         self.assertEqual(1, len(fsm.getStates()))
         q2 = fsm.getStates()[0]
@@ -1827,6 +2011,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition str_A_S
         fsm.makeTransition(str_A_S)
+        fsm.updateStates()
         # transition str_A_S leads to two states
         self.assertEqual(2, len(fsm.getStates()))
         if fsm.getStates()[0].containsTransition(str_C_A):
@@ -1845,16 +2030,19 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition str_C_A
         fsm.makeTransition(str_C_A)
+        fsm.updateStates()
         # transition str_C_A leads to state q1
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(fsm.getStates()[0], q1)
         # make transition int_A_C
         fsm.makeTransition(int_A_C)
+        fsm.updateStates()
         # transition int_A_C leads to q2
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(fsm.getStates()[0], q2)
         # make transition str_A_S
         fsm.makeTransition(str_A_S)
+        fsm.updateStates()
         # transition str_A_S leads to two states
         self.assertEqual(2, len(fsm.getStates()))
         if fsm.getStates()[0].containsTransition(str_C_A):
@@ -1870,6 +2058,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition bool_C_A
         fsm.makeTransition(bool_C_A)
+        fsm.updateStates()
         # transition bool_C_A leads to two states
         self.assertEqual(2, len(fsm.getStates()))
         if fsm.getStates()[0].containsTransition(str_C_S):
@@ -1890,6 +2079,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition bool_A_S
         fsm.makeTransition(bool_A_S)
+        fsm.updateStates()
         # transition bool_A_S leads to two states
         self.assertEqual(2, len(fsm.getStates()))
         if fsm.getStates()[0].containsTransition(str_C_S):
@@ -1906,6 +2096,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition str_C_S
         fsm.makeTransition(str_C_S)
+        fsm.updateStates()
         # transition str_C_S leads to one state
         self.assertEqual(1, len(fsm.getStates()))
         q8 = fsm.getStates()[0]
@@ -1914,18 +2105,23 @@ class TestFSMBuilder(unittest.TestCase):
         self.assertIn(str_S_C, q8.transitionsToStates)
 
         # reset fsm
-        fsm.states = [q0]
+        fsm.states = {q0}
         # make transition str_C_A
         fsm.makeTransition(str_C_A)
+        fsm.updateStates()
         # make transition int_A_C
         fsm.makeTransition(int_A_C)
+        fsm.updateStates()
         # make transition str_A_S
         fsm.makeTransition(str_A_S)
+        fsm.updateStates()
         # make transition bool_C_A
         fsm.makeTransition(bool_C_A)
+        fsm.updateStates()
 
         # make transition str_C_S
         fsm.makeTransition(str_C_S)
+        fsm.updateStates()
         # transition str_C_S leads to a single state
         self.assertEqual(1, len(fsm.getStates()))
         q7 = fsm.getStates()[0]
@@ -1935,12 +2131,14 @@ class TestFSMBuilder(unittest.TestCase):
 
         # make transition bool_A_S
         fsm.makeTransition(bool_A_S)
+        fsm.updateStates()
         # transition bool_A_S leads to a single state
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q8, fsm.getStates()[0])
 
         # make transition str_S_C
         fsm.makeTransition(str_S_C)
+        fsm.updateStates()
         # transition str_S_C leads to one state: q9
         self.assertEqual(1, len(fsm.getStates()))
         self.assertEqual(q9, fsm.getStates()[0])
@@ -1960,9 +2158,11 @@ class TestFSMBuilder(unittest.TestCase):
 
         # fsm contains two states after t1_A_B
         fsm.makeTransition(t1_A_B)        
+        fsm.updateStates()
         self.assertEqual(2, len(fsm.getStates()))
         # fsm contains one state after t2_A_C
         fsm.makeTransition(t2_A_C)
+        fsm.updateStates()
         self.assertEqual(1, len(fsm.getStates()))
 
     def buildFSM(self, fileName):
