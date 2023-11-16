@@ -35,8 +35,8 @@ class Monitor():
                 if allowedTransition.isValid(item):
                     self.fsm.makeTransition(allowedTransition)
                     transitionMade = True
-                    self.addToUncheckedReceives(allowedTransition)
             if transitionMade:
+                self.addToUncheckedReceives(transition)
                 self.fsm.updateStates()
             else:
                 self.halted = True
