@@ -706,7 +706,7 @@ class TestFSMBuilder(unittest.TestCase):
         self.assertEqual(0, len(q2.transitionsToStates))
 
     def test_single_loop_non_deterministic(self):
-        # see single_loop_npn_deterministic.png in tests/testcases/fsms for fsm
+        # see single_loop_non_deterministic.png in tests/testcases/fsms for fsm
         t1_A_B = Transition("t1", "A", "B")
         t2_B_A = Transition("t2", "B", "A")
         fsm = self.buildFSM("single_loop_non_deterministic.txt")
