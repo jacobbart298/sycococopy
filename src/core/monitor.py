@@ -28,19 +28,9 @@ class Monitor():
         if self.halted:
             raise HaltedException()
         self.transitionHistory.append((transition, item))
-        transitionsAllowedInFSM = self.fsm.checkTransition(transition)
-        if transitionsAllowedInFSM:
-            transitionMade = False
-            for allowedTransition in transitionsAllowedInFSM:
-                if allowedTransition.isValid(item):
-                    self.fsm.makeTransition(allowedTransition)
-                    transitionMade = True
-            if transitionMade:
-                self.addToUncheckedReceives(transition)
-                self.fsm.updateStates()
-            else:
-                self.halted = True
-                raise IllegalTransitionException(self.transitionHistory)
+        transitionMade = self.fsm.makeTransition(transition, item)
+        if transitionMade:
+            self.addToUncheckedReceives(transition)
         else:
             self.halted = True
             raise IllegalTransitionException(self.transitionHistory)

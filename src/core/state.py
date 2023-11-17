@@ -12,22 +12,22 @@ class State:
             self.transitionsToStates[transition] = {state}
     
     def getNextStates(self, transition): 
-        if self.containsTransition(transition):
-            return self.transitionsToStates[transition]                
+        if transition in self.transitionsToStates:
+            return self.transitionsToStates[transition]        
         return set()
+        
+    def getSimilarTransitions(self, transition):
+        similarTransitions = []
+        for transitionToStates in self.transitionsToStates:
+            if transitionToStates.isSimilar(transition):
+                similarTransitions.append(transitionToStates)
+        return similarTransitions
     
-    def containsTransition(self, checkTransition: Transition):
-        for transition in self.transitionsToStates:
-            if transition.isSimilar(checkTransition):
-                return True
-        return False
+    def containsTransition(self, transition):
+        return transition in self.transitionsToStates
     
-    def getTransitions(self, transition):
-        transitions = []
-        for state_transition in self.transitionsToStates:
-            if state_transition.isSimilar(transition):
-                transitions.append(state_transition)
-        return transitions
+    def getTransitions(self):
+        return self.transitionsToStates.keys()
 
     def __str__(self) -> str:
         if len(self.transitionsToStates) == 0:

@@ -6,23 +6,16 @@ class FSM:
 
     def __init__(self):
         self.states = {State()}
-        self.newStates = set()
-
-    def updateStates(self):
-        self.states.clear()
-        self.states.update(self.newStates)
-        self.newStates.clear()
-
-    def checkTransition(self, transition):
-        transitions = []
-        for state in self.states:
-            if state.containsTransition(transition):
-                transitions.extend(state.getTransitions(transition))
-        return transitions
         
-    def makeTransition(self, transition):
+    def makeTransition(self, transition, item = None):
+        newStates = set()
         for state in self.states:
-            self.newStates.update(state.getNextStates(transition))
+            similarTransitions = state.getSimilarTransitions(transition)
+            for similarTransition in similarTransitions:
+                if similarTransition.isValid(item):
+                    newStates.update(state.getNextStates(similarTransition))
+        self.states = newStates
+        return len(self.states) != 0
         
     def getStates(self):
         return list(self.states)
