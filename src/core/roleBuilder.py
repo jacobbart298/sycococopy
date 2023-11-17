@@ -1,3 +1,4 @@
+import typing
 from antlr4 import *
 from antlr4.tree.Trees import Trees
 from antlr4.tree.Tree import TerminalNodeImpl
