@@ -11,11 +11,12 @@ class TestMonitor(unittest.TestCase):
         monitor = Monitor(specification)
 
         transition = Transition("str", "buyer1", "seller")
-        monitor.verifySend(transition)
+        message = "hello world"
+        monitor.verifySend(transition, message)
         # ensure transition is added to transition hostory
-        self.assertIn(transition, monitor.transitionHistory, "Failed to add transition to transition history")
+        self.assertIn((transition, message), monitor.transitionHistory)
         # ensure transition is added to unchecked receives for seller
-        self.assertIn(transition, monitor.uncheckedReceives['seller'], "Failed to add transition to unchecked receives")
+        self.assertIn(transition, monitor.uncheckedReceives['seller'])
         # ensure transition is not accidentally loaded to sender side of uncheckedreceives
         self.assertNotIn(transition, monitor.uncheckedReceives['buyer1'], "Transition was loaded to sender")
 
@@ -26,11 +27,9 @@ class TestMonitor(unittest.TestCase):
         monitor = Monitor(specification)
 
         faketransition = Transition("Integer", "Teun", "Jacob")
-        with self.assertRaises(IllegalTransitionException) as error:
-            monitor.verifySend(faketransition)
-        message = str(error.exception)
-        self.assertIn("TRANSITION FAILURE:", message, "Exception did not contain TRANSITION FAILURE header")
-        self.assertIn(str(faketransition), message, "Offending transition not printed in exception message")
+        message = 42
+        with self.assertRaises(IllegalTransitionException):
+            monitor.verifySend(faketransition, message)
     
 
     def testVerifyCorrectReceive(self):
@@ -40,12 +39,13 @@ class TestMonitor(unittest.TestCase):
 
         # send the first message
         transition = Transition("str", "buyer1", "seller")
-        monitor.verifySend(transition)
+        message = "hello world"
+        monitor.verifySend(transition, message)
         # verify transition is in uncheckedReceives for seller
-        self.assertIn(transition, monitor.uncheckedReceives['seller'], "Failed to add transition to unchecked receives")
+        self.assertIn(transition, monitor.uncheckedReceives['seller'])
         # receive message and verify tranistion is removed
         monitor.verifyReceive(transition)
-        self.assertNotIn(transition, monitor.uncheckedReceives['seller'], "Transition was not removed after recieve")
+        self.assertNotIn(transition, monitor.uncheckedReceives['seller'])
 
 
     def testVerifyIncorrectReceive(self):
@@ -55,11 +55,12 @@ class TestMonitor(unittest.TestCase):
 
         # send the first message
         transition = Transition("str", "buyer1", "seller")
-        monitor.verifySend(transition)
+        message = "hello world"
+        monitor.verifySend(transition, message)
         # verify transition is in uncheckedReceives for seller
-        self.assertIn(transition, monitor.uncheckedReceives['seller'], "Failed to add transition to unchecked receives")
+        self.assertIn(transition, monitor.uncheckedReceives['seller'])
         faketransition = Transition("str", "seller", "buyer1")
-        with self.assertRaises(IllegalTransitionException) as error:
+        with self.assertRaises(IllegalTransitionException):
             monitor.verifyReceive(faketransition)
 
     
@@ -68,11 +69,12 @@ class TestMonitor(unittest.TestCase):
         specification = r".\test\Test specifications\test_monitor_grammar.txt"
         monitor = Monitor(specification)
 
-        transition1 = Transition("str", "buyer1", "seller")
-        transition2 = Transition("str", "seller", "buyer1")
-        monitor.verifySend(transition1)
+        transition1 = Transition("bool", "buyer1", "seller")
+        transition2 = Transition("bool", "seller", "buyer1")
+        message = True
+        monitor.verifySend(transition1, message)
         # seller needs to receive the message from buyer1 before sending, check Exception is raised otherwise
-        with self.assertRaises(IllegalTransitionException) as error:
+        with self.assertRaises(IllegalTransitionException):
             monitor.verifyReceive(transition2)
 
 
@@ -101,7 +103,7 @@ class TestMonitor(unittest.TestCase):
         self.assertEqual(0, len(monitor.uncheckedReceives["A"]))
         self.assertEqual(0, len(monitor.uncheckedReceives["B"]))
 
-        monitor.verifySend(t1_A_B, "hello")
+        monitor.verifySend(t1_A_B, "hello world")
         self.assertEqual(0, len(monitor.uncheckedReceives["A"]))
         self.assertEqual(1, len(monitor.uncheckedReceives["B"]))
 
@@ -119,7 +121,7 @@ class TestMonitor(unittest.TestCase):
         self.assertEqual(0, len(monitor.uncheckedReceives["A"]))
         self.assertEqual(0, len(monitor.uncheckedReceives["B"]))
 
-        monitor.verifySend(t1_A_B, "hello")
+        monitor.verifySend(t1_A_B, "hello world")
         self.assertEqual(0, len(monitor.uncheckedReceives["A"]))
         self.assertEqual(1, len(monitor.uncheckedReceives["B"]))
 
@@ -138,7 +140,5 @@ class TestMonitor(unittest.TestCase):
         self.assertEqual(0, len(monitor.uncheckedReceives["B"]))
 
         # At this point the protocol has terminated: no further communication is allowed.
-        try:
-            monitor.verifySend(t1_A_B, "hello")
-        except IllegalTransitionException:
-            pass
+        with self.assertRaises(IllegalTransitionException):
+            monitor.verifySend(t1_A_B, "hello world")
