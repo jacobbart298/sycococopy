@@ -10,10 +10,7 @@ class FSM:
     def makeTransition(self, transition, item = None):
         newStates = set()
         for state in self.states:
-            similarTransitions = state.getSimilarTransitions(transition)
-            for similarTransition in similarTransitions:
-                if similarTransition.isValid(item):
-                    newStates.update(state.getNextStates(similarTransition))
+            newStates.update(state.getNextStates(transition, item))
         self.states = newStates
         return len(self.states) != 0
         

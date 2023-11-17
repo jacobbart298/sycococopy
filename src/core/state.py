@@ -11,17 +11,12 @@ class State:
         else:
             self.transitionsToStates[transition] = {state}
     
-    def getNextStates(self, transition): 
-        if transition in self.transitionsToStates:
-            return self.transitionsToStates[transition]        
-        return set()
-        
-    def getSimilarTransitions(self, transition):
-        similarTransitions = []
+    def getNextStates(self, transition, item): 
+        nextStates = set()
         for transitionToStates in self.transitionsToStates:
-            if transitionToStates.isSimilar(transition):
-                similarTransitions.append(transitionToStates)
-        return similarTransitions
+            if transitionToStates.satisfies(transition) and transitionToStates.isValid(item):
+                nextStates.update(self.transitionsToStates[transitionToStates])
+        return nextStates
     
     def containsTransition(self, transition):
         return transition in self.transitionsToStates
