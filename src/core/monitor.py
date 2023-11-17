@@ -22,7 +22,7 @@ The specification is provided in a .txt file and must be passed to the monitor o
 class Monitor():
 
     def __init__(self, filePath: str):
-        self.transitionHistory: list[Transition] = []
+        self.transitionHistory: list[tuple(Transition, any)] = []
         self.uncheckedReceives: dict[str, Transition] = {}
         tree = self.buildParseTree(filePath)
         self.fsm, used_roles = FSMbuilder().visitSpecification(tree) #I Can't annotated a tuple in typing here
