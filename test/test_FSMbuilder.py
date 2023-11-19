@@ -5,6 +5,7 @@ from antlrFiles.PythonicLexer import PythonicLexer
 from antlrFiles.PythonicParser import PythonicParser
 from src.core.FSMbuilder import FSMbuilder
 from src.core.transition import Transition
+
 class TestFSMBuilder(unittest.TestCase):
 
     def test_singleSend(self):

@@ -1,8 +1,6 @@
 from src.core.state import State
 from src.core.transition import Transition
-
 import unittest
-
 
 class TestState(unittest.TestCase):
     
