@@ -1,8 +1,0 @@
-roles:
-    A
-    B
-
-protocol(singleChoice):
-    choice:
-        send V from A to B
-        send W from B to A
