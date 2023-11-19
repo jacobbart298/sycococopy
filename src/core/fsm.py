@@ -11,7 +11,7 @@ class FSM:
         newStates = set()
         for state in self.states:
             for stateTransition in state.getTransitions():
-                if stateTransition.satisfies(transition) and stateTransition.isValid(item):
+                if stateTransition.satisfies(transition, item):
                     newStates.update(state.getNextStates(stateTransition))
         self.states = newStates
         return len(self.states) != 0
