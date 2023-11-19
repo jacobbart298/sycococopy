@@ -1,14 +1,13 @@
 from antlr4 import *
 from antlrFiles.PythonicLexer import PythonicLexer
 from antlrFiles.PythonicParser import PythonicParser
-from antlrFiles.PythonicErrorListener import PythonicErrorListener
 from src.core.FSMbuilder import FSMbuilder
 from src.core.transition import Transition, PredicateTransition
+from src.core.transition import Transition
+from src.core.roleBuilder import Rolebuilder
 from src.core.exceptions.illegaltransitionexception import IllegalTransitionException
 from src.core.exceptions.rolemismatchexception import RoleMismatchException
 from src.core.exceptions.haltedexception import HaltedException
-from src.core.transition import Transition
-from src.core.roleBuilder import Rolebuilder
 
 class Monitor():
 
@@ -24,10 +23,13 @@ class Monitor():
         self.halted = False
         
     def verifySend(self, transition: Transition, item):
-        # Exceptions are not immediately raised from event loop. Halted checks if exception was raised already
         if self.halted:
-            raise HaltedException()
+            raise HaltedException()     
         self.transitionHistory.append((transition, item))
+        # sending is not allowed if the sender is waiting for any messages
+        if self.uncheckedReceives[transition.getSender()]:
+            self.halted = True
+            raise IllegalTransitionException(self.transitionHistory)        
         transitionMade = self.fsm.makeTransition(transition, item)
         if transitionMade:
             self.addToUncheckedReceives(transition)
@@ -57,9 +59,5 @@ class Monitor():
         lexer = PythonicLexer(input)
         stream = CommonTokenStream(lexer)
         parser = PythonicParser(stream)
-        # Remove the default error listener, so we don't output to terminal automatically
-        # parser.removeErrorListeners()
-        # Add our own ErrorListener
-        # parser.addErrorListener(PythonicErrorListener())
         return parser.specification() 
     
