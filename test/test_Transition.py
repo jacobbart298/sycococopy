@@ -1,6 +1,8 @@
 from src.core.transition import Transition, PredicateTransition
 import unittest
 
+# Method "satisfies" is always called with a Transition object as the first parameter.
+# This test set is limited to this scenario.
 class TestTransition(unittest.TestCase):
 
 
@@ -81,9 +83,6 @@ class TestTransition(unittest.TestCase):
         transition_2 = PredicateTransition("float", "A", "B", "<=", 3.4)
         self.assertNotEqual(transition_1, transition_2)
 
-
-    # Method satisfies is always called with a Transition object as the first parameter.
-    # This test set is limited to this scenario.
 
     def testSatisfiesRegularAndRegularTransition(self):
         
