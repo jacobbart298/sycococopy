@@ -16,9 +16,6 @@ class State:
            return self.transitionsToStates[transition]
         return set()
     
-    def containsTransition(self, transition):
-        return transition in self.transitionsToStates
-    
     def getTransitions(self):
         return self.transitionsToStates.keys()
 
