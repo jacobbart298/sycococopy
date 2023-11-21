@@ -148,10 +148,10 @@ class FSMbuilder(PythonicVisitor):
         else :
             type = ctx.getChild(1).getText()
             comparator = "=="
-            value = ctx.getChild(3).getText()
+            stringValue = ctx.getChild(3).getText()
             sender = ctx.getChild(6).getText()
             receiver = ctx.getChild(8).getText()
-            value = self.stringToValue(type, value)
+            value = self.stringToValue(type, stringValue)
             transition = PredicateTransition(type, sender, receiver, comparator, value)
         # add transition to state
         ctx.startState.addTransitionToState(transition, ctx.endState)
@@ -164,16 +164,17 @@ class FSMbuilder(PythonicVisitor):
         return self.visitChildren(ctx)
 
 
-    def stringToValue(self, type, value):
+    def stringToValue(self, type, string):
         match type:
             case "int":
-                return int(value)
+                return int(string)
             case "float":
-                return float(value)
+                return float(string)
             case "bool":
-                return bool(value)
+                return string == "True"
             case "str":
-                return value
+                return string
+
 
     def dump(self, node, depth=0, ruleNames=None):
         depthStr = '. ' * depth
