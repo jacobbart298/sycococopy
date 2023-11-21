@@ -4,18 +4,18 @@ roles:
 
 protocol:
     sequence:
-        send t0 from A to B
+        send int from A to B
         loop outer:
             sequence:
-                send t1 from A to B
+                send str from A to B
                 loop inner:
                     sequence:
-                        send t2 from A to B
+                        send float from A to B
                         choice:
                             sequence:
-                                send t3 from B to A
+                                send bool(True) from B to A
                                 repeat inner
                             sequence:
-                                send t4 from B to A
+                                send bool(False) from B to A
                                 repeat outer
-                            send t5 from B to A
+                            send str from B to A

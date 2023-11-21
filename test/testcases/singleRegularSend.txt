@@ -3,4 +3,4 @@ roles:
     B
 
 protocol:
-    send U from B to A
+    send int from B to A

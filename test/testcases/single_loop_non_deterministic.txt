@@ -5,9 +5,9 @@ roles:
 protocol:
     loop l:
         sequence:
-            send t1 from A to B
+            send bool(True) from A to B
             choice:
                 sequence:
-                    send t2 from B to A
+                    send int(>=-42) from B to A
                     repeat l
-                send t2 from B to A
+                send int(>=-42) from B to A

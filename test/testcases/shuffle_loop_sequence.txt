@@ -8,12 +8,12 @@ protocol:
     loop l:
         sequence:
             shuffle:
-                send t3 from B to D
-                send t4 from C to D
+                send float from B to D
+                send float from C to D
             choice:
                 sequence:
-                    send t1 from A to B
+                    send bool from A to B
                     repeat l
                 sequence:
-                    send t1 from A to B
-                    send t2 from B to A
+                    send bool from A to B
+                    send str from B to A

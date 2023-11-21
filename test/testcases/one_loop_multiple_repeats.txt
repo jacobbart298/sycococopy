@@ -6,18 +6,18 @@ roles:
 
 protocol:
     sequence:
-        send t0 from A to B
+        send int(!=69) from A to B
         loop l1:
             sequence:
-                send t1 from A to B
+                send str from A to B
                 choice:
                     sequence:
-                        send t3 from B to A
+                        send bool from B to A
                         repeat l1
                     sequence:
-                        send t2 from B to C
+                        send str from B to C
                         choice:
                             sequence:
-                                send t3 from C to A
+                                send bool from C to A
                                 repeat l1
-                            send t4 from C to D
+                            send float from C to D

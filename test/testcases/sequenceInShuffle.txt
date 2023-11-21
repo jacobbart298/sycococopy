@@ -5,6 +5,6 @@ roles:
 protocol:
     shuffle:
         sequence:
-            send Q from A to B
-            send R from B to A
-        send U from B to A
+            send int(5) from A to B
+            send bool(True) from B to A
+        send str from B to A
