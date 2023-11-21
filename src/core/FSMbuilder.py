@@ -173,7 +173,8 @@ class FSMbuilder(PythonicVisitor):
             case "bool":
                 return string == "True"
             case "str":
-                return string
+                # remove the additional first and last double quotes
+                return string[1:len(string)-1]
 
 
     def dump(self, node, depth=0, ruleNames=None):
