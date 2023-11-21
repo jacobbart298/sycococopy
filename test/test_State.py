@@ -17,10 +17,12 @@ class TestState(unittest.TestCase):
         q0 = State()
         q1 = State()
         q2 = State()
+        q3 = State()
         bool_A_A = Transition("bool", "A", "A")
         bool_A_B = Transition("bool", "A", "B")
         bool_A_C = Transition("bool", "A", "C")
         p_bool_A_B = PredicateTransition("bool", "A", "B", "==", True)
+        p_float_A_D = PredicateTransition("float", "A", "D", "<", -4.809)
 
         self.assertEqual(0, len(q0.getTransitions()))
         
@@ -35,12 +37,15 @@ class TestState(unittest.TestCase):
         q0.addTransitionToState(p_bool_A_B, q2)
         # add a different transition to the same state
         q0.addTransitionToState(bool_A_C, q2)
+        # add a predicate transition to another state
+        q0.addTransitionToState(p_float_A_D, q3)
 
-        self.assertEqual(4, len(q0.getTransitions()))
+        self.assertEqual(5, len(q0.getTransitions()))
         self.assertIn(bool_A_A, q0.getTransitions())
         self.assertIn(bool_A_B, q0.getTransitions())
         self.assertIn(bool_A_C, q0.getTransitions())
         self.assertIn(p_bool_A_B, q0.getTransitions())
+        self.assertIn(p_float_A_D, q0.getTransitions())
 
 
     def testAddTransitionToState(self):
@@ -48,10 +53,12 @@ class TestState(unittest.TestCase):
         q0 = State()
         q1 = State()
         q2 = State()
+        q3 = State()
         bool_A_A = Transition("bool", "A", "A")
         bool_A_B = Transition("bool", "A", "B")
         bool_A_C = Transition("bool", "A", "C")
         p_bool_A_B = PredicateTransition("bool", "A", "B", "==", True)
+        p_str_A_D = PredicateTransition("str", "A", "D", "!=", "hello world")
 
         self.assertEqual(0, len(q0.getTransitions()))
 
@@ -66,12 +73,15 @@ class TestState(unittest.TestCase):
         q0.addTransitionToState(p_bool_A_B, q2)
         # add a different transition to the same state
         q0.addTransitionToState(bool_A_C, q2)
+        # add a predicate transition to another state
+        q0.addTransitionToState(p_str_A_D, q3)
 
-        self.assertEqual(4, len(q0.getTransitions()))
+        self.assertEqual(5, len(q0.getTransitions()))
         self.assertIn(bool_A_A, q0.getTransitions())
         self.assertIn(bool_A_B, q0.getTransitions())
         self.assertIn(bool_A_C, q0.getTransitions())
         self.assertIn(p_bool_A_B, q0.getTransitions())
+        self.assertIn(p_str_A_D, q0.getTransitions())
 
         self.assertTrue(1, len(q0.getNextStates(bool_A_A)))
         self.assertIn(q0, q0.getNextStates(bool_A_A))
@@ -86,21 +96,27 @@ class TestState(unittest.TestCase):
         self.assertTrue(1, len(q0.getNextStates(bool_A_C)))
         self.assertIn(q2, q0.getNextStates(bool_A_C))
 
+        self.assertTrue(1, len(q0.getNextStates(p_str_A_D)))
+        self.assertIn(q3, q0.getNextStates(p_str_A_D))
+
 
     def testGetNextStates(self):
 
         q0 = State()
         q1 = State()
         q2 = State()
+        q3 = State()
         bool_A_A = Transition("bool", "A", "A")
         bool_A_B = Transition("bool", "A", "B")
         bool_A_C = Transition("bool", "A", "C")
-        p_bool_A_B = PredicateTransition("bool", "A", "B", "==", True)
+        p_bool_A_B = PredicateTransition("bool", "A", "B", "==", False)
+        p_int_A_D = PredicateTransition("int", "A", "D", ">", 42)
 
         self.assertEqual(0, len(q0.getNextStates(bool_A_A)))
         self.assertEqual(0, len(q0.getNextStates(bool_A_B)))
         self.assertEqual(0, len(q0.getNextStates(bool_A_C)))
         self.assertEqual(0, len(q0.getNextStates(p_bool_A_B)))
+        self.assertEqual(0, len(q0.getNextStates(p_int_A_D)))
 
         # add a reflexive transition to q0
         q0.addTransitionToState(bool_A_A, q0)
@@ -113,6 +129,8 @@ class TestState(unittest.TestCase):
         q0.addTransitionToState(p_bool_A_B, q2)
         # add a different transition to the same state
         q0.addTransitionToState(bool_A_C, q2)
+        # add a predicate transition to another state
+        q0.addTransitionToState(p_int_A_D, q3)
 
         self.assertTrue(1, len(q0.getNextStates(bool_A_A)))
         self.assertIn(q0, q0.getNextStates(bool_A_A))
@@ -126,6 +144,9 @@ class TestState(unittest.TestCase):
 
         self.assertTrue(1, len(q0.getNextStates(bool_A_C)))
         self.assertIn(q2, q0.getNextStates(bool_A_C))
+
+        self.assertTrue(1, len(q0.getNextStates(p_int_A_D)))
+        self.assertIn(q3, q0.getNextStates(p_int_A_D))
 
 
 if __name__ == '__main__':
