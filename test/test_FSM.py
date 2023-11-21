@@ -278,6 +278,43 @@ class TestFSM(unittest.TestCase):
         self.assertIn(q4, fsm.getStates())
 
 
+    def testMultipleStatesWithSameTransitionOneLegalTransition(self):
+       
+        fsm = FSM()
+        
+        q0 = fsm.getStates()[0]
+        q1 = State()
+        q2 = State()
+        q3 = State()
+        q4 = State()
+
+        int_A_B = Transition("int", "A", "B")
+        p_int_A_B_10 = PredicateTransition("int", "A", "B", ">", 10)
+        p_int_A_B_20 = PredicateTransition("int", "A", "B", ">", 20)
+        p_int_A_B_30 = PredicateTransition("int", "A", "B", ">", 30)
+
+        bool_B_C = Transition("bool", "B", "C")
+        p_bool_B_C = PredicateTransition("bool", "B", "C", "==", True)
+
+        q0.addTransitionToState(p_int_A_B_10, q1)
+        q0.addTransitionToState(p_int_A_B_20, q2)
+        q0.addTransitionToState(p_int_A_B_30, q3)
+        q1.addTransitionToState(p_bool_B_C, q4)
+        q2.addTransitionToState(p_bool_B_C, q4)
+
+        transitionMade = fsm.makeTransition(int_A_B, 40)
+        self.assertTrue(transitionMade)
+        self.assertEqual(3, len(fsm.getStates()))
+        self.assertIn(q1, fsm.getStates())
+        self.assertIn(q2, fsm.getStates())
+        self.assertIn(q3, fsm.getStates())
+
+        transitionMade = fsm.makeTransition(bool_B_C, True)
+        self.assertTrue(transitionMade)
+        self.assertEqual(1, len(fsm.getStates()))
+        self.assertIn(q4, fsm.getStates())
+
+
     def testMultipleStatesWithOneTransitionMultipleLegalTransitions(self):
 
         fsm = FSM()
