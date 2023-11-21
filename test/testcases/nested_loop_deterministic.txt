@@ -18,4 +18,4 @@ protocol:
                             sequence:
                                 send bool(False) from B to A
                                 repeat outer
-                            send str from B to A
+                            send str("hello world") from B to A

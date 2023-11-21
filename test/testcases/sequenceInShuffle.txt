@@ -5,6 +5,6 @@ roles:
 protocol:
     shuffle:
         sequence:
-            send int(5) from A to B
+            send int(5234904798238) from A to B
             send bool(True) from B to A
         send str from B to A

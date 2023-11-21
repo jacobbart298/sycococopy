@@ -10,7 +10,7 @@ protocol:
         send bool from A to B
         loop l1:
             sequence:
-                send str from A to B
+                send str(!="420691337") from A to B
                 choice:
                     sequence:
                         send bool(False) from B to A

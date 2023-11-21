@@ -4,5 +4,5 @@ roles:
 
 protocol:
     shuffle:
-        send float(<-4.2) from A to B
+        send float(<=-44.29) from A to B
         send int from B to A

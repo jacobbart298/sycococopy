@@ -113,7 +113,7 @@ class TestFSMBuilder(unittest.TestCase):
     # see singleShuffle.png in tests/testcases/fsms for fsm 
     def test_singleShuffle(self):
 
-        shuffle_a = PredicateTransition("float", "A", "B", "<", -4.2)
+        shuffle_a = PredicateTransition("float", "A", "B", "<=", -44.29)
         shuffle_b = Transition("int", "B", "A")
 
         fsm = self.buildFSM("singleShuffle.txt")
@@ -154,7 +154,7 @@ class TestFSMBuilder(unittest.TestCase):
     def test_choiceInShuffle(self):
 
         choice_a = Transition("int", "A", "B")
-        choice_b = PredicateTransition("float", "B", "A", "<", 13.37)
+        choice_b = PredicateTransition("float", "B", "A", ">", 13333.7)
 
         send = Transition("str", "B", "A")        
 
@@ -204,7 +204,7 @@ class TestFSMBuilder(unittest.TestCase):
     def test_sequenceInShuffle(self):
 
         send = Transition("str", "B", "A")
-        sequence_a = PredicateTransition("int", "A", "B", "==", 5)
+        sequence_a = PredicateTransition("int", "A", "B", "==", 5234904798238)
         sequence_b = PredicateTransition("bool", "B", "A", "==", True)
 
         fsm = self.buildFSM("sequenceInShuffle.txt")
@@ -324,7 +324,7 @@ class TestFSMBuilder(unittest.TestCase):
     # see choiceInSequence.png in tests/testcases/fsms for fsm
     def test_choiceInSequence(self):
 
-        choice_a = PredicateTransition("int", "A", "B", ">", 1024)
+        choice_a = PredicateTransition("int", "A", "B", "<", 1024)
         choice_b = Transition("bool", "B", "A")
         send = Transition("int", "B", "A")
 
@@ -356,7 +356,7 @@ class TestFSMBuilder(unittest.TestCase):
     # see sequenceInSequence.png in tests/testcases/fsms for fsm
     def test_sequenceInSequence(self):
 
-        sequence_a = Transition("float", "A", "B")
+        sequence_a = PredicateTransition("float", "A", "B", "<", -438923.34832488394834)
         sequence_b = PredicateTransition("bool", "B", "A", "==", True)
         send = Transition("str", "B", "A")
 
@@ -392,7 +392,7 @@ class TestFSMBuilder(unittest.TestCase):
 
         shuffle_a = PredicateTransition("bool", "A", "B", "==", True)
         shuffle_b = Transition("bool", "B", "A")
-        send = Transition("int", "B", "A")
+        send = PredicateTransition("str", "B", "A", "==", "")
 
         fsm = self.buildFSM("shuffleInSequence.txt")
         
@@ -435,8 +435,8 @@ class TestFSMBuilder(unittest.TestCase):
     # see choiceInChoice.png in tests/testcases/fsms for fsm
     def test_choiceInChoice(self):
 
-        choice_a = PredicateTransition("float", "A", "B", "<", -1.0)
-        choice_b = PredicateTransition("float", "B", "A", ">", 1.0)
+        choice_a = PredicateTransition("float", "A", "B", "<=", -1.000000000)
+        choice_b = PredicateTransition("float", "B", "A", ">=", 1.000000000)
         send = Transition("bool", "B", "A")
 
         fsm = self.buildFSM("choiceInChoice.txt")
@@ -576,7 +576,7 @@ class TestFSMBuilder(unittest.TestCase):
     def test_single_loop_non_deterministic(self):
         
         t1_A_B = PredicateTransition("bool", "A", "B", "==", True)
-        t2_B_A = PredicateTransition("int", "B", "A", ">=", -42)
+        t2_B_A = PredicateTransition("int", "B", "A", ">=", -422390482308423)
 
         fsm = self.buildFSM("single_loop_non_deterministic.txt")
 
@@ -610,7 +610,7 @@ class TestFSMBuilder(unittest.TestCase):
         t2_A_B = Transition("float", "A", "B")
         t3_B_A = PredicateTransition("bool", "B", "A", "==", True)
         t4_B_A = PredicateTransition("bool", "B", "A", "==", False)
-        t5_B_A = Transition("str", "B", "A")
+        t5_B_A = PredicateTransition("str", "B", "A", "==", "hello world")
 
         fsm = self.buildFSM("nested_loop_deterministic.txt")
 
@@ -660,7 +660,7 @@ class TestFSMBuilder(unittest.TestCase):
     def test_nested_loop_non_deterministic(self):
         
         t0_A_B = Transition("int", "A", "B")
-        t1_A_B = Transition("str", "A", "B")
+        t1_A_B = PredicateTransition("str", "A", "B", "==", "s2348SJrfh2314")
         t2_A_B = Transition("bool", "A", "B")
         t3_B_A = PredicateTransition("bool", "B", "A", "==", True)
         t4_B_A = PredicateTransition("bool", "B", "A", "==", False)
@@ -712,7 +712,7 @@ class TestFSMBuilder(unittest.TestCase):
         t0_A_B = Transition("bool", "A", "B")
         t1_A_B = Transition("int", "A", "B")
         t2_A_B = Transition("bool", "A", "B")
-        t3_B_A = PredicateTransition("int", "B", "A", ">=", 42)
+        t3_B_A = PredicateTransition("int", "B", "A", "<=", -42342432)
         t4_B_C = Transition("int", "B", "C")
         t5_C_A = PredicateTransition("float", "C", "A", "<", 3.9)
         t6_C_D = Transition("str", "C", "D")
@@ -769,7 +769,7 @@ class TestFSMBuilder(unittest.TestCase):
     def test_non_intertwined_loops(self):
 
         t0_A_B = Transition("bool", "A", "B")
-        t1_A_B = Transition("str", "A", "B")
+        t1_A_B = PredicateTransition("str", "A", "B", "!=", "420691337")
         t2_B_A = PredicateTransition("bool", "B", "A", "==", False)
         t3_B_C = PredicateTransition("bool", "B", "C", "==", False)
         t4_B_C = Transition("int", "B", "C")
@@ -927,7 +927,7 @@ class TestFSMBuilder(unittest.TestCase):
     # see one_loop_multiple_repeats.png in tests/testcases/fsms for fsm
     def one_loop_multiple_repeats(self):
         
-        t0_A_B = PredicateTransition("int", "A", "B", "!=", 69)
+        t0_A_B = PredicateTransition("int", "A", "B", "!=", 0)
         t1_A_B = Transition("str", "A", "B")
         t2_B_C = Transition("str", "B", "C")
         t3_B_A = Transition("bool", "B", "A")

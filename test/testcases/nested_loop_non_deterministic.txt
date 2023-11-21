@@ -7,7 +7,7 @@ protocol:
         send int from A to B
         loop outer:
             sequence:
-                send str from A to B
+                send str("s2348SJrfh2314") from A to B
                 loop inner:
                     sequence:
                         send bool from A to B

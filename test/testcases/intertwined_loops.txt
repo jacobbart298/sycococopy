@@ -14,7 +14,7 @@ protocol:
                         send bool from A to B
                         choice:
                             sequence:
-                                send int(>=42) from B to A
+                                send int(<=-42342432) from B to A
                                 repeat first
                             sequence:
                                 send int from B to C

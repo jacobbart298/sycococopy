@@ -5,6 +5,6 @@ roles:
 protocol:
     choice:
         choice:
-            send float(<-1.0) from A to B
-            send float(>1.0) from B to A
+            send float(<=-1.000000000) from A to B
+            send float(>=1.000000000) from B to A
         send bool from B to A

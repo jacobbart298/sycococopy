@@ -8,6 +8,6 @@ protocol:
             send bool(True) from A to B
             choice:
                 sequence:
-                    send int(>=-42) from B to A
+                    send int(>=-422390482308423) from B to A
                     repeat l
-                send int(>=-42) from B to A
+                send int(>=-422390482308423) from B to A

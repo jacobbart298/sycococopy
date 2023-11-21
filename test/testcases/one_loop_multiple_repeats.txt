@@ -6,7 +6,7 @@ roles:
 
 protocol:
     sequence:
-        send int(!=69) from A to B
+        send int(!=0) from A to B
         loop l1:
             sequence:
                 send str from A to B
