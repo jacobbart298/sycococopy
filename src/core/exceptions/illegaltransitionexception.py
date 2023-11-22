@@ -7,8 +7,8 @@ Takes the transition history and prints it for fault finding
 '''
 class IllegalTransitionException(Exception):
 
-    def __init__(self, transitionHistory: list[tuple(Transition, any)]):
-        self.transitionHistory: list[tuple(Transition, any)] = transitionHistory
+    def __init__(self, transitionHistory: list[tuple[Transition, any]]):
+        self.transitionHistory: list[tuple[Transition, any]] = transitionHistory
         
     def __str__(self) -> str:
         failedTransition, itemFailedTransition = self.transitionHistory[len(self.transitionHistory)-1]

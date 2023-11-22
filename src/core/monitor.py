@@ -7,6 +7,7 @@ from src.core.FSMbuilder import FSMbuilder
 from src.core.transition import Transition, PredicateTransition
 from src.core.exceptions.illegaltransitionexception import IllegalTransitionException
 from src.core.exceptions.rolemismatchexception import RoleMismatchException
+from src.core.exceptions.illegalTerminationException import IllegalTerminationException
 from src.core.exceptions.haltedexception import HaltedException
 from src.core.transition import Transition
 from src.core.roleBuilder import Rolebuilder
@@ -31,6 +32,20 @@ class Monitor():
             raise RoleMismatchException(used_roles, defined_roles)
         self.initialiseUncheckedReceives(defined_roles)
         self.halted = False
+
+    def __del__(self):
+        inEndState = False
+        lostMessages = []
+        states = self.fsm.getStates()
+        for state in states:
+            if not state.getTransitionKeys():
+                inEndState = True
+        for receiver in self.uncheckedReceives:
+            if len(self.uncheckedReceives[receiver]) != 0:
+                lostMessages.extend(self.uncheckedReceives[receiver]) 
+        if not inEndState or len(lostMessages) != 0:
+            print(self.buildErrorMessage(lostMessages, inEndState))
+            # raise IllegalTerminationException(self.transitionHistory, lostMessages, inEndState)
 
     # Function that checks if a send (Predicate)Transition is allowed in the current possible states
     # returns a HaltedException if FSM was already halted or an IllegalTransitionException if Transition is not allowed    
@@ -86,3 +101,16 @@ class Monitor():
         parser = PythonicParser(stream)
         return parser.specification() 
     
+    def buildErrorMessage(self, lostMessages, hasTerminated):
+        message: str = "\nUNEXPECTED TERMINATION:" 
+        if not hasTerminated:
+            message += "\nProgram failed to reach end of protocol!\n"
+            count: int = 1
+            for transition, item in self.transitionHistory:
+                message += f"{str(count)}: send {str(transition.getType())}({str(item)}) from {str(transition.getSender())} to {str(transition.getReceiver())}\n"
+                count += 1
+        if len(lostMessages) > 0:
+            message += "\nThe following messages were lost:\n"
+            for transition in lostMessages:
+                message += f"{str(transition.getReceiver())} is waiting for a message of type {str(transition.getType())} from {str(transition.getSender())}\n"
+        return message
