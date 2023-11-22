@@ -33,6 +33,8 @@ class Monitor():
         self.initialiseUncheckedReceives(defined_roles)
         self.halted = False
 
+    # Function called when monitor is destroyed, does not raise Exception because Exceptions raised in 
+    # the __del__ method are silenced
     def __del__(self):
         inEndState = False
         lostMessages = []
@@ -45,7 +47,6 @@ class Monitor():
                 lostMessages.extend(self.uncheckedReceives[receiver]) 
         if not inEndState or len(lostMessages) != 0:
             print(self.buildErrorMessage(lostMessages, inEndState))
-            # raise IllegalTerminationException(self.transitionHistory, lostMessages, inEndState)
 
     # Function that checks if a send (Predicate)Transition is allowed in the current possible states
     # returns a HaltedException if FSM was already halted or an IllegalTransitionException if Transition is not allowed    
@@ -101,6 +102,7 @@ class Monitor():
         parser = PythonicParser(stream)
         return parser.specification() 
     
+    # Function that builds the errorMessage in case the program terminates prematurely.
     def buildErrorMessage(self, lostMessages, hasTerminated):
         message: str = "\nUNEXPECTED TERMINATION:" 
         if not hasTerminated:
