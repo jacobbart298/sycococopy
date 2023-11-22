@@ -58,12 +58,12 @@ class Monitor():
             self.halted = True
             raise IllegalTransitionException(self.transitionHistory)
 
-    # Initiatialises the dictionary of unCheckReceives with an empty list for each role.
+    # Initiatialises the dictionary of uncheckedReceives with an empty list for each role.
     def initialiseUncheckedReceives(self, roles: set[str]):
         for role in roles:
             self.uncheckedReceives[role] = []
 
-    # Adds a transition to the receiver's list of uncheckReceives.
+    # Adds a transition to the receiver's list of uncheckedReceives.
     def addToUncheckedReceives(self, transition: Transition) -> None:
         uncheckedReceive: Transition = Transition(transition.getType(), transition.getSender(), transition.getReceiver())
         self.uncheckedReceives[transition.getReceiver()].append(uncheckedReceive)
