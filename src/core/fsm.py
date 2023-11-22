@@ -1,13 +1,20 @@
-from typing import Any
+import typing
 from src.core.state import State
-from src.core.transition import Transition, PredicateTransition
+from src.core.transition import Transition
+
+'''
+The FSM module is the starting point for the monitor to check whether a transition adheres to the
+given protocol. 
+
+An FSM object is responsible for managing a set of State objects.
+'''
 
 class FSM:
 
     def __init__(self):
-        self.states = {State()}
+        self.states: set(State) = {State()}
         
-    def makeTransition(self, transition, item = None):
+    def makeTransition(self, transition: Transition, item: any) -> bool:
         newStates = set()
         for state in self.states:
             for stateTransition in state.getTransitions():
