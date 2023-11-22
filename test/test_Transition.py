@@ -183,7 +183,7 @@ class TestTransition(unittest.TestCase):
     def testSatisfiesRegularAndPredicateTransitionUnequalType(self):
 
         transition_1 = Transition("int", "A", "B")
-        transition_2 = PredicateTransition("bool", "A", "B", "!=", False)
+        transition_2 = PredicateTransition("str", "A", "B", "==", "hello world")
         value = 3        
         self.assertFalse(transition_2.satisfies(transition_1, value))
 
