@@ -26,8 +26,6 @@ class Transition:
         return self.type == other.type and self.sender == other.sender and self.receiver == other.receiver
     
     def __eq__(self, other: any) -> bool:
-        if not isinstance(other, Transition):
-            return False
         return type(self) == type(other) and self.type == other.type and self.sender == other.sender and self.receiver == other.receiver 
 
     def __hash__(self) -> int:
@@ -67,8 +65,6 @@ class PredicateTransition(Transition):
         return isValueValid
 
     def __eq__(self, other: any) -> bool:
-        if not isinstance(other, PredicateTransition):
-            return False
         return type(self) == type(other) and self.type == other.type and self.sender == other.sender and self.receiver == other.receiver and self.comparator == other.comparator and self.value == other.value
 
     def __hash__(self) -> int:
