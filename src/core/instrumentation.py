@@ -1,6 +1,7 @@
 import sys
 import traceback as tb
 import logging
+import typing
 import asyncio as asyncio
 from src.core.transition import Transition
 from src.core.monitor import Monitor
@@ -18,10 +19,10 @@ used as a drop in replacement for the asyncio library (simply import the instrum
 '''
 
 # list of queues that are linked to the monitor
-linked_queues = []
+linked_queues: list[asyncio.Queue] = []
 
 # Function that links a Queue to a sender, receiver and monitor
-def link(queue: asyncio.Queue, sender: str, receiver: str, monitor: Monitor):
+def link(queue: asyncio.Queue, sender: str, receiver: str, monitor: Monitor) -> None:
     queue.sender = sender
     queue.receiver = receiver
     queue.monitor = monitor
@@ -41,9 +42,9 @@ class Queue(asyncio.Queue):
 
     If the Queue is not linked, the put operation is handled by the asyncio library.
     '''
-    async def put(self, item):
+    async def put(self, item: any) -> None:
         if self in linked_queues:
-            transition = Transition(type(item).__name__, self.sender, self.receiver)
+            transition: Transition = Transition(type(item).__name__, self.sender, self.receiver)
             try:
                 self.monitor.verifySend(transition, item)
                 await super().put(item)
@@ -60,10 +61,10 @@ class Queue(asyncio.Queue):
 
     If the Queue is not linked, the get operation is handled by the asyncio library.
     '''
-    async def get(self):
+    async def get(self) -> any:
         if self in linked_queues:
-            item = await super().get()
-            transition = Transition(type(item).__name__, self.sender, self.receiver)
+            item: any = await super().get()
+            transition: Transition = Transition(type(item).__name__, self.sender, self.receiver)
             try: 
                 self.monitor.verifyReceive(transition)
                 return item
@@ -79,15 +80,15 @@ class Channel():
     Underlying structure uses an asyncio.Queue for the communication. Default maxsize is set to 0 (unlimited),
     but a user can override as required
     '''
-    def __init__(self, sender, receiver, monitor: Monitor, maxsize=0):
+    def __init__(self, sender: str, receiver: str, monitor: Monitor, maxsize=0):
         self.queue = asyncio.Queue(maxsize)
         self.sender = sender
         self.receiver = receiver
         self.monitor = monitor
     
     # Function that checks is send is allowed by the monitor and, if so, adds item to the queue
-    async def send(self, item):
-        transition = Transition(type(item).__name__, self.sender, self.receiver)
+    async def send(self, item: any) -> None:
+        transition: Transition = Transition(type(item).__name__, self.sender, self.receiver)
         try:
             self.monitor.verifySend(transition, item)
             await self.queue.put(item)
@@ -95,16 +96,16 @@ class Channel():
             pass
     
     # Function that checks if receive is allowed by the monitor and, if so, returns the item on the queue
-    async def receive(self):
-        item = await self.queue.get()
-        transition = Transition(type(item).__name__, self.sender, self.receiver)
+    async def receive(self) -> any:
+        item: any = await self.queue.get()
+        transition: Transition = Transition(type(item).__name__, self.sender, self.receiver)
         try:
             self.monitor.verifyReceive(transition)
             return item
         except HaltedException:
             pass
     
-    def close(self):
+    def close(self) -> None:
         pass
 
 
