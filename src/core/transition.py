@@ -22,9 +22,13 @@ class Transition:
     def getType(self) -> any:
         return self.type
     
+    # Determines whether this Transition satisfies the given Transition.
+    # That is to say, it checks whether this Transition's type, sender 
+    # and receiver are equal to those of the given Transition.
     def satisfies(self, other: Transition, _: any) -> bool:
         return self.type == other.type and self.sender == other.sender and self.receiver == other.receiver
     
+    # Checks if the given object is a Transition equal to this Transition. 
     def __eq__(self, other: any) -> bool:
         return type(self) == type(other) and self.type == other.type and self.sender == other.sender and self.receiver == other.receiver 
 
@@ -45,25 +49,28 @@ class PredicateTransition(Transition):
         self.comparator = comparator
         self.value = value
     
+    # Determines whether this PredicateTransition satisfies the given Transition, value combination. 
+    # That is to say, it checks whether this PredicateTransition's type, sender and receiver are 
+    # equal to those of the given Transition and whether this PredicateTransition's value satisfies
+    # the given value using this PredicateTransition's comparator.
     def satisfies(self, other: Transition, value: any) -> bool:
         if not super().satisfies(other, value):
             return False        
-        isValueValid: bool = False
         match self.comparator:
             case '<':
-                isValueValid = value < self.value
+                return value < self.value
             case '<=':
-                isValueValid = value <= self.value
+                return value <= self.value
             case '>':
-                isValueValid = value > self.value
+                return value > self.value
             case '>=':
-                isValueValid = value >= self.value
+                return value >= self.value
             case '!=':
-                isValueValid = value != self.value
+                return value != self.value
             case '==':
-                isValueValid = value == self.value
-        return isValueValid
+                return value == self.value
 
+    # Checks if the given object is a PredicateTransition equal to this PredicateTransition. 
     def __eq__(self, other: any) -> bool:
         return type(self) == type(other) and self.type == other.type and self.sender == other.sender and self.receiver == other.receiver and self.comparator == other.comparator and self.value == other.value
 
