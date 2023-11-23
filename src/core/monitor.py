@@ -65,8 +65,7 @@ class Monitor():
 
     # Adds a transition to the receiver's list of uncheckedReceives.
     def addToUncheckedReceives(self, transition: Transition) -> None:
-        uncheckedReceive: Transition = Transition(transition.getType(), transition.getSender(), transition.getReceiver())
-        self.uncheckedReceives[transition.getReceiver()].append(uncheckedReceive)
+        self.uncheckedReceives[transition.getReceiver()].append(transition)
 
     # Parses the given specification in the filePath to a parse tree.
     def buildParseTree(self, filePath: str):
