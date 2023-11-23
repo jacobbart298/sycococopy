@@ -12,11 +12,8 @@ src/core/FSMbuilder.py
 src/core/__init__.py
 src/core/fsm.py
 src/core/instrumentation.py
-src/core/main.py
 src/core/monitor.py
-src/core/recursie_main.py
 src/core/roleBuilder.py
-src/core/specification_example.py
 src/core/state.py
 src/core/transition.py
 sycococopy.egg-info/PKG-INFO

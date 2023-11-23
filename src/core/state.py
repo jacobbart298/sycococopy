@@ -44,6 +44,9 @@ class State:
             if state_transition.isSimilar(transition):
                 transitions.append(state_transition)
         return transitions
+    
+    def getTransitionKeys(self):
+        return self.transitionsToStates.keys()
 
     # Function used for troubleshooting, which identifies the state when printed
     def __str__(self) -> str:
