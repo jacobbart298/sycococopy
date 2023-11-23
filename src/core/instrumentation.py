@@ -109,21 +109,3 @@ class Channel():
         pass
 
 
-legacy_excepthook = sys.excepthook
-
-'''
-Function that provides a clean print of the transition history on an illegal transition, 
-but the normal stack trace if there was no IllegalTransitionException
-'''
-def exceptionHandler(type, value, traceback):
-    noIllegalTransitionPresent = True
-    for exception in value.args[1]:
-        if isinstance(exception, IllegalTransitionException):
-            print(str(exception))
-            noIllegalTransitionPresent = False
-    if noIllegalTransitionPresent:
-        legacy_excepthook(type, value, traceback)
-        
-
-# changes standard Python interperter Exception handler to our exception handler
-sys.excepthook = exceptionHandler

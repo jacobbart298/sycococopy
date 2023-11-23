@@ -1,4 +1,5 @@
 import typing
+import sys
 from antlr4 import *
 from antlrFiles.PythonicLexer import PythonicLexer
 from antlrFiles.PythonicParser import PythonicParser
@@ -7,7 +8,6 @@ from src.core.FSMbuilder import FSMbuilder
 from src.core.transition import Transition, PredicateTransition
 from src.core.exceptions.illegaltransitionexception import IllegalTransitionException
 from src.core.exceptions.rolemismatchexception import RoleMismatchException
-from src.core.exceptions.illegalTerminationException import IllegalTerminationException
 from src.core.exceptions.haltedexception import HaltedException
 from src.core.transition import Transition
 from src.core.roleBuilder import Rolebuilder
@@ -32,21 +32,27 @@ class Monitor():
             raise RoleMismatchException(used_roles, defined_roles)
         self.initialiseUncheckedReceives(defined_roles)
         self.halted = False
+        self.setExceptionHook()
 
     # Function called when monitor is destroyed, does not raise Exception because Exceptions raised in 
     # the __del__ method are silenced
     def __del__(self):
-        inEndState = False
-        lostMessages = []
-        states = self.fsm.getStates()
-        for state in states:
-            if not state.getTransitionKeys():
-                inEndState = True
-        for receiver in self.uncheckedReceives:
-            if len(self.uncheckedReceives[receiver]) != 0:
-                lostMessages.extend(self.uncheckedReceives[receiver]) 
-        if not inEndState or len(lostMessages) != 0:
-            print(self.buildErrorMessage(lostMessages, inEndState))
+        # keys = sys._current_exceptions().keys()
+        # for key in keys:
+        #     if sys._current_exceptions()[key] != None:
+        #         self.halted = True
+        if not self.halted:
+            inEndState = False
+            lostMessages = []
+            states = self.fsm.getStates()
+            for state in states:
+                if not state.getTransitionKeys():
+                    inEndState = True
+            for receiver in self.uncheckedReceives:
+                if len(self.uncheckedReceives[receiver]) != 0:
+                    lostMessages.extend(self.uncheckedReceives[receiver]) 
+            if not inEndState or len(lostMessages) != 0:
+                print(self.buildErrorMessage(lostMessages, inEndState))
 
     # Function that checks if a send (Predicate)Transition is allowed in the current possible states
     # returns a HaltedException if FSM was already halted or an IllegalTransitionException if Transition is not allowed    
@@ -116,3 +122,24 @@ class Monitor():
             for transition in lostMessages:
                 message += f"{str(transition.getReceiver())} is waiting for a message of type {str(transition.getType())} from {str(transition.getSender())}\n"
         return message
+    
+    
+    def setExceptionHook(self) -> None:
+        legacy_excepthook = sys.excepthook
+
+        '''
+        Function that provides a clean print of the transition history on an illegal transition, 
+        but the normal stack trace if there was no IllegalTransitionException
+        '''
+        def exceptionHandler(type, value, traceback):
+            noIllegalTransitionPresent = True
+            for exception in value.args[1]:
+                if isinstance(exception, IllegalTransitionException):
+                    print(str(exception))
+                    noIllegalTransitionPresent = False
+            if noIllegalTransitionPresent:
+                self.halted = True
+                legacy_excepthook(type, value, traceback)
+            
+        # changes standard Python interperter Exception handler to our exception handler
+        sys.excepthook = exceptionHandler
