@@ -12,7 +12,7 @@ class State:
     def __init__(self):
         self.transitionsToStates: dict[Transition, set[State]] = {}
 
-    # Adds a Transition, State pair to this State's dictionary
+    # Adds a Transition, State pair to this State.
     def addTransitionToState(self, transition: Transition, state: State) -> None:
         if transition in self.transitionsToStates: 
             self.transitionsToStates[transition].add(state)
@@ -26,11 +26,10 @@ class State:
            return self.transitionsToStates[transition]
         return set()
     
-    # Function that returns a list of possible Transitions in this State.
+    # Returns a list of possible Transitions in this State.
     def getTransitions(self) -> list[Transition]:
         return list(self.transitionsToStates.keys())
 
-    # Function used for troubleshooting, which identifies the state when printed.
     def __str__(self) -> str:
         if len(self.transitionsToStates) == 0:
             return "I'm a state that supports no transitions"
