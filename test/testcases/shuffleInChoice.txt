@@ -5,6 +5,6 @@ roles:
 protocol:
     choice:
         shuffle:
-            send X from A to B
-            send Y from B to A
-        send U from B to A
+            send int from A to B
+            send bool from B to A
+        send int(<-48790) from B to A

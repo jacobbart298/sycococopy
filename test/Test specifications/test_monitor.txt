@@ -3,6 +3,6 @@ roles:
     B
 
 protocol:
-    shuffle:
-        send float(<=-44.29) from A to B
+    sequence:
+        send str from A to B
         send int from B to A

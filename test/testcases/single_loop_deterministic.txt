@@ -5,9 +5,9 @@ roles:
 protocol:
     loop l:
         sequence:
-            send t1 from A to B
+            send int from A to B
             choice:
                 sequence:
-                    send t2 from B to A
+                    send bool from B to A
                     repeat l
-                send t3 from B to A
+                send str from B to A
