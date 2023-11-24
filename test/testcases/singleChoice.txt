@@ -4,5 +4,5 @@ roles:
 
 protocol:
     choice:
-        send V from A to B
-        send W from B to A
+        send int from A to B
+        send bool(True) from B to A

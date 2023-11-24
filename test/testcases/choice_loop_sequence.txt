@@ -9,15 +9,15 @@ protocol:
         sequence:
             choice:
                 sequence:
-                    send t1 from A to B
-                    send t1 from A to C
+                    send int(>0) from A to B
+                    send int(>0) from A to C
                 sequence:
-                    send t1 from A to B
-                    send t2 from A to C
+                    send int(>0) from A to B
+                    send str from A to C
             choice:
                 sequence:
-                    send t4 from C to B
+                    send bool(False) from C to B
                     repeat l
                 sequence:
-                    send t3 from B to D
-                    send t4 from C to D
+                    send int from B to D
+                    send bool(False) from C to D

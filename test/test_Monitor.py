@@ -2,69 +2,425 @@ import unittest
 from src.core.monitor import Monitor
 from src.core.transition import Transition
 from src.core.exceptions.illegaltransitionexception import IllegalTransitionException
+from src.core.exceptions.rolemismatchexception import RoleMismatchException
+from src.core.exceptions.haltedexception import HaltedException
 
 class TestMonitor(unittest.TestCase):
 
+
+    def testCorrectRoles(self):        
+        specification = r".\test\Test specifications\test_monitor.txt"
+        try:
+            Monitor(specification)
+        except RoleMismatchException:
+            self.fail
+  
+
+    def testRoleNotUsed(self):        
+        specification = r".\test\Test specifications\test_role_not_used.txt"
+        with self.assertRaises(RoleMismatchException):
+            Monitor(specification)
+        
+
+    def testRoleNotDefined(self):
+        specification = r".\test\Test specifications\test_role_not_defined.txt"
+        with self.assertRaises(RoleMismatchException):
+            Monitor(specification)
+
+
+    def testRoleNotDefinedNotUsed(self):
+        specification = r".\test\Test specifications\test_role_not_defined_not_used.txt"
+        with self.assertRaises(RoleMismatchException):
+            Monitor(specification)
+
+
+    def testInitializationTransitionHistory(self):
+        specification = r".\test\Test specifications\test_monitor.txt"
+        monitor = Monitor(specification)
+        # initally, transition history is empty
+        self.assertEqual(0, len(monitor.transitionHistory))
+
+
+    def testTransitionHistoryOnlyContainsSends(self):
+        specification = r".\test\Test specifications\test_monitor.txt"
+        monitor = Monitor(specification)
+
+        str_A_B = Transition("str", "A", "B")
+        int_B_A = Transition("int", "B", "A")
+        message_str = "hello world"
+        message_int = 42
+
+        # initally, transition history is empty
+        self.assertEqual(0, len(monitor.transitionHistory))
+
+        monitor.verifySend(str_A_B, message_str)
+        # send is added to the transition history
+        self.assertEqual(1, len(monitor.transitionHistory))
+        self.assertIn((str_A_B, message_str), monitor.transitionHistory)
+       
+        monitor.verifyReceive(str_A_B)
+        # receive is not added to the transition history
+        self.assertEqual(1, len(monitor.transitionHistory))
+        self.assertIn((str_A_B, message_str), monitor.transitionHistory)
+        
+        monitor.verifySend(int_B_A, message_int)
+        # send is added to the transition history
+        self.assertEqual(2, len(monitor.transitionHistory))
+        self.assertIn((str_A_B, message_str), monitor.transitionHistory)
+        self.assertIn((int_B_A, message_int), monitor.transitionHistory)
+
+        monitor.verifyReceive(int_B_A)
+        # receive is not added to the transition history
+        self.assertEqual(2, len(monitor.transitionHistory))
+        self.assertIn((str_A_B, message_str), monitor.transitionHistory)
+        self.assertIn((int_B_A, message_int), monitor.transitionHistory)
     
-    def setUp(self):
-        test_specification = r".\test\Test specifications\test_monitor_grammar.txt"
-        self.test_monitor = Monitor(test_specification)
+
+    def testTransitionHistoryIncludesIllegalSend(self):
+        specification = r".\test\Test specifications\test_monitor.txt"
+        monitor = Monitor(specification)
+
+        str_A_B = Transition("str", "A", "B")
+        bool_B_A = Transition("bool", "B", "A")
+        message_str = "hello world"
+        message_bool = True
+
+        # initally, transition history is empty
+        self.assertEqual(0, len(monitor.transitionHistory))
+
+        monitor.verifySend(str_A_B, message_str)
+        # send is added to the transition history
+        self.assertEqual(1, len(monitor.transitionHistory))
+        self.assertIn((str_A_B, message_str), monitor.transitionHistory)
+
+        monitor.verifyReceive(str_A_B)
+
+        with self.assertRaises(IllegalTransitionException):
+            monitor.verifySend(bool_B_A, message_bool)     
+        # illegal send is added to the transition history 
+        self.assertEqual(2, len(monitor.transitionHistory))
+        self.assertIn((str_A_B, message_str), monitor.transitionHistory)
+        self.assertIn((bool_B_A, message_bool), monitor.transitionHistory)
 
 
-    def testVerifyCorrectSend(self):
-        transition = Transition("str", "buyer1", "seller")
-        self.test_monitor.verifySend(transition)
-        # ensure transition is added to transition hostory
-        self.assertIn(transition, self.test_monitor.transitionHistory, "Failed to add transition to transition history")
-        # ensure transition is added to unchecked receives for seller
-        self.assertIn(transition, self.test_monitor.uncheckedReceives['seller'], "Failed to add transition to unchecked receives")
-        # ensure transition is not accidentally loaded to sender side of uncheckedreceives
-        self.assertNotIn(transition, self.test_monitor.uncheckedReceives['buyer1'], "Transition was loaded to sender")
+    def testTransitionHistoryDoesNotIncludeIllegalReceive(self):
+        specification = r".\test\Test specifications\test_monitor.txt"
+        monitor = Monitor(specification)
+
+        str_A_B = Transition("str", "A", "B")
+        bool_B_A = Transition("bool", "B", "A")
+        message_str = "hello world"
+
+        # initally, transition history is empty
+        self.assertEqual(0, len(monitor.transitionHistory))
+
+        monitor.verifySend(str_A_B, message_str)
+        # send is added to the transition history
+        self.assertEqual(1, len(monitor.transitionHistory))
+        self.assertIn((str_A_B, message_str), monitor.transitionHistory)
+
+        with self.assertRaises(IllegalTransitionException):
+            monitor.verifyReceive(bool_B_A)
+        # transition history does not contain the illegal receive
+        self.assertEqual(1, len(monitor.transitionHistory))
+        self.assertIn((str_A_B, message_str), monitor.transitionHistory)
 
 
-    def testVerifyIncorrectSend(self):
-        faketransition = Transition("Integer", "Teun", "Jacob")
-        with self.assertRaises(IllegalTransitionException) as error:
-            self.test_monitor.verifySend(faketransition)
-        message = str(error.exception)
-        self.assertIn("TRANSITION FAILURE:", message, "Exception did not contain TRANSITION FAILURE header")
-        self.assertIn(str(faketransition), message, "Offending transition not printed in exception message")
-    
+    def testInitializationUncheckedReceives(self):
+        specification = r".\test\Test specifications\test_monitor.txt"
+        monitor = Monitor(specification)
 
-    def testVerifyCorrectReceive(self):
-        # send the first message
-        transition = Transition("str", "buyer1", "seller")
-        self.test_monitor.verifySend(transition)
-        # verify transition is in uncheckedReceives for seller
-        self.assertIn(transition, self.test_monitor.uncheckedReceives['seller'], "Failed to add transition to unchecked receives")
-        # receive message and verify tranistion is removed
-        self.test_monitor.verifyReceive(transition)
-        self.assertNotIn(transition, self.test_monitor.uncheckedReceives['seller'], "Transition was not removed after recieve")
+        # Upon initialization uncheckedReceives has keys for A and B
+        self.assertEqual(2, len(monitor.uncheckedReceives))    
+        self.assertIn("A", monitor.uncheckedReceives)  
+        self.assertIn("B", monitor.uncheckedReceives)  
+
+        # Upon initialization A and B have no unchecked receives
+        self.assertEqual(0, len(monitor.uncheckedReceives["A"]))
+        self.assertEqual(0, len(monitor.uncheckedReceives["B"]))
 
 
-    def testVerifyIncorrectReceive(self):
-        # send the first message
-        transition = Transition("str", "buyer1", "seller")
-        self.test_monitor.verifySend(transition)
-        # verify transition is in uncheckedReceives for seller
-        self.assertIn(transition, self.test_monitor.uncheckedReceives['seller'], "Failed to add transition to unchecked receives")
-        faketransition = Transition("str", "seller", "buyer1")
-        with self.assertRaises(IllegalTransitionException) as error:
-            self.test_monitor.verifyReceive(faketransition)
+    def testInitializationHalted(self):
+        specification = r".\test\Test specifications\test_monitor.txt"
+        monitor = Monitor(specification)
 
-    
-    def testSendImpossibleWithUnreceivedMessage(self):    
-        transition1 = Transition("str", "buyer1", "seller")
-        transition2 = Transition("str", "seller", "buyer1")
-        self.test_monitor.verifySend(transition1)
-        # seller needs to receive the message from buyer1 before sending, check Exception is raised otherwise
-        with self.assertRaises(IllegalTransitionException) as error:
-            self.test_monitor.verifyReceive(transition2)
+        # Upon initialization halted is false
+        self.assertFalse(monitor.halted)
 
 
-    def testInitialiseUncheckedReceives(self):
-        # check initialise in setup worked correctly
-        self.assertEqual(3, len(self.test_monitor.uncheckedReceives.keys()), "size of uncheckedReceives is incorrect after initial set-up")
-        # adding roles is possible for new names
-        self.test_monitor.initialiseUncheckedReceives(['Teun'])
-        self.assertEqual(4, len(self.test_monitor.uncheckedReceives.keys()), "size of uncheckedReceives is incorrect after addition of role")
+    def testHaltedRemainsFalseAfterLegalSend(self):
+        specification = r".\test\Test specifications\test_monitor.txt"
+        monitor = Monitor(specification)
+        
+        str_A_B = Transition("str", "A", "B")
+        message_str = "hello world"
+
+        # A is allowed to send a str to B
+        self.assertFalse(monitor.halted)
+        monitor.verifySend(str_A_B, message_str)   
+        self.assertFalse(monitor.halted)
+
+
+    def testHaltedRemainsFalseAfterLegalReceive(self):
+        specification = r".\test\Test specifications\test_monitor.txt"
+        monitor = Monitor(specification)
+        
+        str_A_B = Transition("str", "A", "B")
+        message_str = "hello world"
+
+        monitor.verifySend(str_A_B, message_str)       
+        # B is allowed to receive a str from A
+        self.assertFalse(monitor.halted)
+        monitor.verifyReceive(str_A_B)   
+        self.assertFalse(monitor.halted)
+
+
+    def testHaltedBecomesTrueAfterIllegalSend(self):
+        specification = r".\test\Test specifications\test_monitor.txt"
+        monitor = Monitor(specification)
+        
+        int_B_A = Transition("int", "B", "A")
+        message_bool = 42
+
+        # B is not allowed to send a int to A
+        self.assertFalse(monitor.halted)
+        with self.assertRaises(IllegalTransitionException):
+            monitor.verifySend(int_B_A, message_bool)    
+        self.assertTrue(monitor.halted)
+
+
+    def testHaltedBecomesTrueAfterIllegalReceive(self):
+        specification = r".\test\Test specifications\test_monitor.txt"
+        monitor = Monitor(specification)
+        
+        str_A_B = Transition("str", "A", "B")
+
+        # A is not allowed to receive any messages that have not been sent
+        self.assertFalse(monitor.halted)
+        with self.assertRaises(IllegalTransitionException):
+            monitor.verifyReceive(str_A_B)   
+        self.assertTrue(monitor.halted)
+
+
+    def testNoTransitionsLegalOnceHalted(self):
+        specification = r".\test\Test specifications\test_monitor.txt"
+        monitor = Monitor(specification)
+        
+        str_A_B = Transition("str", "A", "B")
+        message_str = "hello world"
+
+        # A is not allowed to receive any messages that have not been sent
+        self.assertFalse(monitor.halted)
+        with self.assertRaises(IllegalTransitionException):
+            monitor.verifyReceive(str_A_B)   
+        self.assertTrue(monitor.halted)
+
+        # once halted, further transitions are illegal      
+        with self.assertRaises(HaltedException):
+            monitor.verifySend(str_A_B, message_str)
+
+
+    def testNoSendsAddedToTransitionHistoryOnceHalted(self):
+        specification = r".\test\Test specifications\test_monitor.txt"
+        monitor = Monitor(specification)
+        
+        str_A_B = Transition("str", "A", "B")
+        bool_B_A = Transition("bool", "A", "B")
+        int_B_A = Transition("int", "A", "B")
+        message_str = "hello world"
+        message_bool = True
+        message_int = 42
+
+        monitor.verifySend(str_A_B, message_str)
+        monitor.verifyReceive(str_A_B)    
+
+        self.assertFalse(monitor.halted)
+        with self.assertRaises(IllegalTransitionException):
+            monitor.verifySend(bool_B_A, message_bool)   
+        self.assertTrue(monitor.halted)
+
+        # transition history once halted
+        self.assertEqual(2, len(monitor.transitionHistory))
+        self.assertIn((str_A_B, message_str), monitor.transitionHistory)
+        self.assertIn((bool_B_A, message_bool), monitor.transitionHistory)
+        
+        with self.assertRaises(HaltedException):
+            monitor.verifySend(int_B_A, message_int)   
+        
+        # transition history remains the same
+        self.assertEqual(2, len(monitor.transitionHistory))
+        self.assertIn((str_A_B, message_str), monitor.transitionHistory)
+        self.assertIn((bool_B_A, message_bool), monitor.transitionHistory)
+        
+
+    def testAlternateSendAndReceive(self):
+        specification = r".\test\Test specifications\test_monitor.txt"
+        monitor = Monitor(specification)
+
+        str_A_B = Transition("str", "A", "B")
+        int_B_A = Transition("int", "B", "A")
+        message_str = "hello world"
+        message_int = 42
+
+        try:
+            monitor.verifySend(str_A_B, message_str)
+            monitor.verifyReceive(str_A_B)
+            monitor.verifySend(int_B_A, message_int)
+            monitor.verifyReceive(int_B_A)
+        except IllegalTransitionException:
+            self.fail
+
+
+    def testConsecutiveSendsAndReveices(self):
+        specification = r".\test\Test specifications\test_monitor_two.txt"
+        monitor = Monitor(specification)
+
+        bool_A_C = Transition("bool", "A", "B")
+        bool_B_C = Transition("bool", "B", "A")
+        message_bool = False
+
+        try:
+            monitor.verifySend(bool_A_C, message_bool)
+            monitor.verifySend(bool_B_C, message_bool)
+            monitor.verifyReceive(bool_A_C)
+            monitor.verifyReceive(bool_B_C)
+        except IllegalTransitionException:
+            self.fail
+
+
+    def testIllegalSendUncheckedReceivesEmpty(self):
+        specification = r".\test\Test specifications\test_monitor_two.txt"
+        monitor = Monitor(specification)
+
+        bool_A_C = Transition("bool", "A", "C")
+        bool_C_D = Transition("bool", "C", "D")
+        message_bool = False
+
+        monitor.verifySend(bool_A_C, message_bool)
+        monitor.verifyReceive(bool_A_C)
+
+        # C is not waiting for any messages, but sending a
+        # bool from C to D is not allowed at this point
+        self.assertEqual(0, len(monitor.uncheckedReceives["C"]))
+        with self.assertRaises(IllegalTransitionException):
+            monitor.verifySend(bool_C_D, message_bool)
+
+
+    def testLegalSendUncheckedReceivesEmpty(self):    
+        specification = r".\test\Test specifications\test_monitor_two.txt"
+        monitor = Monitor(specification)
+
+        bool_A_C = Transition("bool", "A", "C")
+        bool_B_C = Transition("bool", "B", "C")
+        message_bool = False
+
+        monitor.verifySend(bool_A_C, message_bool)
+        monitor.verifyReceive(bool_A_C)
+
+        # B is not waiting for any messages, and sending a
+        # bool from B to C is allowed at this point
+        self.assertEqual(0, len(monitor.uncheckedReceives["B"]))
+        try:
+            monitor.verifySend(bool_B_C, message_bool)
+        except IllegalTransitionException:
+            self.fail
+
+
+    def testSendUncheckedReceivesNotEmpty(self):    
+        specification = r".\test\Test specifications\test_monitor.txt"
+        monitor = Monitor(specification)
+
+        str_A_B = Transition("str", "A", "B")
+        int_B_A = Transition("int", "B", "A")
+        message_str = "hello world"
+        message_int = 42
+        
+        monitor.verifySend(str_A_B, message_str)
+
+        # Even though int_B_A is the next send in the fsm, it is 
+        # not allowed because B is waiting for a str from A.
+        self.assertEqual(1, len(monitor.uncheckedReceives["B"]))
+        with self.assertRaises(IllegalTransitionException):
+            monitor.verifySend(int_B_A, message_int)
+
+
+    def testLegalReceiveUncheckedReceivesNotEmpty(self):
+        specification = r".\test\Test specifications\test_monitor.txt"
+        monitor = Monitor(specification)
+
+        str_A_B = Transition("str", "A", "B")
+        int_B_A = Transition("int", "B", "A")
+        message_str = "hello world"
+        message_int = 42
+
+        monitor.verifySend(str_A_B, message_str)
+        monitor.verifyReceive(str_A_B)
+        monitor.verifySend(int_B_A, message_int)
+
+        # A is waiting for an int from B
+        self.assertEqual(1, len(monitor.uncheckedReceives["A"]))
+        try:
+            monitor.verifyReceive(int_B_A)
+        except IllegalTransitionException:
+            self.fail
+
+
+    def testIllegalReceiveUncheckedReceivesNotEmpty(self):
+        specification = r".\test\Test specifications\test_monitor.txt"
+        monitor = Monitor(specification)
+
+        str_A_B = Transition("str", "A", "B")
+        bool_A_B = Transition("bool", "A", "B")
+        message_str = "hello world"
+
+        monitor.verifySend(str_A_B, message_str)
+        self.assertEqual(1, len(monitor.uncheckedReceives["B"]))
+        # B is waiting for a str from A, not a bool
+        with self.assertRaises(IllegalTransitionException):
+            monitor.verifyReceive(bool_A_B)    
+
+
+    def testIllegalReceiveUncheckedReceivesEmpty(self):
+        specification = r".\test\Test specifications\test_monitor.txt"
+        monitor = Monitor(specification)
+
+        str_A_B = Transition("str", "A", "B")
+        message_str = "hello world"
+
+        monitor.verifySend(str_A_B, message_str)
+        monitor.verifyReceive(str_A_B)
+
+        # B is not waiting for any messages
+        self.assertEqual(0, len(monitor.uncheckedReceives["B"]))
+        with self.assertRaises(IllegalTransitionException):
+            monitor.verifyReceive(str_A_B)
+
+
+    def testSendNonDeterminism(self):
+        specification = r".\test\Test specifications\test_monitor_non_determinism.txt"
+        monitor = Monitor(specification)
+
+        t1_A_B = Transition("str", "A", "B")
+        t2_B_A = Transition("bool", "B", "A")
+        message_str = "hello world"
+
+        monitor.verifySend(t1_A_B, message_str)
+        monitor.verifyReceive(t1_A_B)
+
+        # Note that sending True from B to A satisfies two edges in the FSM.
+        # However, only one unchecked receive should be added to the monitor.        
+        self.assertEqual(0, len(monitor.uncheckedReceives["A"]))
+        monitor.verifySend(t2_B_A, True)
+        self.assertEqual(1, len(monitor.uncheckedReceives["A"]))
+
+        monitor.verifyReceive(t2_B_A)
+        monitor.verifySend(t1_A_B, message_str)
+        monitor.verifyReceive(t1_A_B)
+        
+        # Note that sending False from B to A satisfies one edge in the FSM.
+        # Thus, only one unchecked receive should be added to the monitor.
+        self.assertEqual(0, len(monitor.uncheckedReceives["A"]))
+        monitor.verifySend(t2_B_A, False)
+        self.assertEqual(1, len(monitor.uncheckedReceives["A"]))
+
+        monitor.verifyReceive(t2_B_A)

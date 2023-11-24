@@ -1,10 +1,10 @@
-from __future__ import annotations #required to reference Transition class in typing from within the class itself
+from __future__ import annotations
 import typing
 
 '''
-The transition module offers the Transition and PredicateTransition classes that represent a transition between two.
+The transition module offers the Transition and PredicateTransition classes that represent a transition between two
 states in a Finite State Machine. A transition contains a message type, sender and receiver. A PredicateTransition
-in addition contains a comparator and value to check against to allow value checking in a transition.
+also contains a comparator and a value to check against to allow value checking in a transition.
 '''
 class Transition:
 
@@ -12,12 +12,6 @@ class Transition:
         self.type = type
         self.sender = sender
         self.receiver = receiver
-
-    # Function that checks if the type, sender and receiver in a (Predicate)Transition are the same
-    # It is used in the State class to verify if a transition to another state is possible
-    # This is required, because the equality can't be used, as these also check for equality of transition-type
-    def isSimilar(self: Transition, other: Transition) -> bool:
-        return self.type == other.type and self.sender == other.sender and self.receiver == other.receiver
 
     def getSender(self) -> str:
         return self.sender
@@ -28,45 +22,41 @@ class Transition:
     def getType(self) -> any:
         return self.type
     
-    # Function used to check against a predicate in a PredicateTransition. Always returns True for regular Transition
-    def isValid(self, value: any) -> bool:
-        return True
-
-    # Equality comparator, be aware that it also requires the type of transition (Transition / PredicateTransition) to be
-    # identical. This is required to allow both a Transition and PredicateTransition to be available in a state's 
-    # dictionary of transitions
-    def __eq__(self, other: Transition) -> bool:
+    # Determines whether this Transition satisfies the given Transition.
+    # That is to say, it checks whether this Transition's type, sender 
+    # and receiver are equal to those of the given Transition.
+    def satisfies(self, other: Transition, _: any) -> bool:
+        return self.type == other.type and self.sender == other.sender and self.receiver == other.receiver
+    
+    # Checks if the given object is a Transition equal to this Transition. 
+    def __eq__(self, other: any) -> bool:
         return type(self) == type(other) and self.type == other.type and self.sender == other.sender and self.receiver == other.receiver 
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         return hash(self.type) + hash(self.sender) + hash(self.receiver)
     
     def __str__(self) -> str:
         return "send " + str(self.type) + " from " + str(self.sender) + " to " + str(self.receiver) 
     
 '''
-Class that inherits from transition class, but includes a comparator and value, which combine to a predicate that
-can be used to check if a value that's contained in a message is allowed or not
+PredicateTransition is a specialisation of Transition: it is a transition that also features a comparator and value, 
+which combine to a predicate that can be used to check if a value that is contained in a message is allowed or not.
 '''
 class PredicateTransition(Transition):
 
-    def __init__(self, type: any, sender: str, receiver: str, operator: str = None, value: any = None):
+    def __init__(self, type: any, sender: str, receiver: str, comparator: str =None, value: any =None):
         super().__init__(type, sender, receiver)
-        self.operator = operator
+        self.comparator = comparator
         self.value = value
-
-    def __str__(self) -> str:
-        return "send " + str(self.type) + "(" + str(self.operator) + str(self.value) + ") from " + str(self.sender) + " to " + str(self.receiver)
-
-    # def getComparator(self) -> str:
-    #     return self.operator
     
-    # def getValue(self) -> any:
-    #     return self.value
-
-    # Function that checks if the given value is allowed by the predicate in the PredicateTransition or not
-    def isValid(self, value: any) -> bool:
-        match self.operator:
+    # Determines whether this PredicateTransition satisfies the given Transition, value combination. 
+    # That is to say, it checks whether this PredicateTransition's type, sender and receiver are 
+    # equal to those of the given Transition and whether this PredicateTransition's value satisfies
+    # the given value using this PredicateTransition's comparator.
+    def satisfies(self, other: Transition, value: any) -> bool:
+        if not super().satisfies(other, value):
+            return False        
+        match self.comparator:
             case '<':
                 return value < self.value
             case '<=':
@@ -80,13 +70,12 @@ class PredicateTransition(Transition):
             case '==':
                 return value == self.value
 
-    # Equality comparator, be aware that it also requires the type of transition (Transition / PredicateTransition) to be
-    # identical. This is required to allow both a Transition and PredicateTransition to be available in a state's 
-    # dictionary of transitions
-    def __eq__(self, other: Transition) -> bool:
-        return type(self) == type(other) and self.type == other.type and self.sender == other.sender and self.receiver == other.receiver and self.operator == other.comparator and self.value == other.value
+    # Checks if the given object is a PredicateTransition equal to this PredicateTransition. 
+    def __eq__(self, other: any) -> bool:
+        return type(self) == type(other) and self.type == other.type and self.sender == other.sender and self.receiver == other.receiver and self.comparator == other.comparator and self.value == other.value
 
-    def __hash__(self):
-        return hash(self.type) + hash(self.sender) + hash(self.receiver) + hash(self.operator) + hash(self.value)
+    def __hash__(self) -> int:
+        return hash(self.type) + hash(self.sender) + hash(self.receiver) + hash(self.comparator) + hash(self.value)
     
-    
+    def __str__(self) -> str:
+        return "send " + str(self.type) + "(" + str(self.comparator) + str(self.value) + ") from " + str(self.sender) + " to " + str(self.receiver)

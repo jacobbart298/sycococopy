@@ -6,6 +6,6 @@ protocol:
     loop l:
         choice:
             sequence:
-                send t1 from A to B
+                send bool(False) from A to B
                 repeat l
-            send t2 from A to B
+            send bool(True) from A to B

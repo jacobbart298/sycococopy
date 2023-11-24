@@ -4,5 +4,5 @@ roles:
 
 protocol:
     sequence:
-        send Q from A to B
-        send R from B to A
+        send bool from A to B
+        send int(42) from B to A

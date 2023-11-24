@@ -1,6 +1,0 @@
-roles:
-    A
-    B
-
-protocol(singleSend):
-    send U from B to A

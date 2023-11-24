@@ -5,6 +5,6 @@ roles:
 protocol:
     shuffle:
         choice:
-            send V from A to B
-            send W from B to A
-        send U from B to A
+            send int from A to B
+            send float(>13333.7) from B to A
+        send str from B to A
