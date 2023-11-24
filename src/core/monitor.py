@@ -3,12 +3,14 @@ import sys
 from antlr4 import *
 from antlrFiles.PythonicLexer import PythonicLexer
 from antlrFiles.PythonicParser import PythonicParser
-from src.core.FSMbuilder import FSMbuilder
+from src.core.fsmBuilder import FSMbuilder
 from src.core.transition import Transition
 from src.core.roleBuilder import Rolebuilder
 from src.core.exceptions.illegaltransitionexception import IllegalTransitionException
 from src.core.exceptions.rolemismatchexception import RoleMismatchException
 from src.core.exceptions.haltedexception import HaltedException
+from src.core.exceptions.sycococopyexception import SycococopyException
+from src.core.exceptions.pendingmessagesexception import PendingMessagesException
 
 '''
 The monitor module is responsible for verifying that the communication between coroutines
@@ -21,6 +23,7 @@ class Monitor():
 
     def __init__(self, filePath: str):
         self.halted: bool = False
+        self.setExceptionHook()
         self.transitionHistory: list[tuple[Transition, any]] = []
         self.uncheckedReceives: dict[str, Transition] = {}
         tree = self.buildParseTree(filePath)
@@ -29,7 +32,6 @@ class Monitor():
         if not used_roles == defined_roles:
             raise RoleMismatchException(used_roles, defined_roles)
         self.initialiseUncheckedReceives(defined_roles)
-        self.setExceptionHook()
 
     # Destructor method. Note that a destructor does not raise but silences exceptions.
     def __del__(self):
@@ -52,7 +54,7 @@ class Monitor():
         # sending is not allowed if the sender is waiting for any messages
         if self.uncheckedReceives[transition.getSender()]:
             self.halted = True
-            raise IllegalTransitionException(self.transitionHistory)        
+            raise PendingMessagesException(self.transitionHistory, self.uncheckedReceives[transition.getSender()])        
         transitionMade = self.fsm.makeTransition(transition, item)
         if transitionMade:
             self.addToUncheckedReceives(transition)
@@ -112,13 +114,17 @@ class Monitor():
         but the normal stack trace if there was no IllegalTransitionException
         '''
         def exceptionHandler(type, value, traceback):
-            noIllegalTransitionPresent = True
+            noSycocopyExceptionPresent = True
             self.halted = True
-            for exception in value.args[1]:
-                if isinstance(exception, IllegalTransitionException):
-                    print(str(exception))
-                    noIllegalTransitionPresent = False
-            if noIllegalTransitionPresent:
+            if isinstance(value, ExceptionGroup):
+                for exception in value.args[1]:
+                    if isinstance(exception, SycococopyException):
+                        print(str(exception))
+                        noSycocopyExceptionPresent = False
+            elif isinstance(value, RoleMismatchException):
+                print(str(value))
+                noSycocopyExceptionPresent = False
+            if noSycocopyExceptionPresent:
                 legacy_excepthook(type, value, traceback)
             
         # changes standard Python interperter Exception handler to our exception handler

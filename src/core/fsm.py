@@ -23,5 +23,5 @@ class FSM:
         self.states = newStates
         return len(self.states) != 0
         
-    def getStates(self):
+    def getStates(self) -> list[State]:
         return list(self.states)

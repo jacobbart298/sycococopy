@@ -37,7 +37,7 @@ async def buyer2():
     print("Buyer 2 finished")
 
 async def seller():
-    await buy1tosell.receive()
+    # await buy1tosell.receive()
     await selltobuy1.send(60)
     await selltobuy2.send(60)
     response = await buy2tosell.receive()

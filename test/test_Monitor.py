@@ -4,6 +4,7 @@ from src.core.transition import Transition
 from src.core.exceptions.illegaltransitionexception import IllegalTransitionException
 from src.core.exceptions.rolemismatchexception import RoleMismatchException
 from src.core.exceptions.haltedexception import HaltedException
+from src.core.exceptions.pendingmessagesexception import PendingMessagesException
 
 class TestMonitor(unittest.TestCase):
 
@@ -340,7 +341,7 @@ class TestMonitor(unittest.TestCase):
         # Even though int_B_A is the next send in the fsm, it is 
         # not allowed because B is waiting for a str from A.
         self.assertEqual(1, len(monitor.uncheckedReceives["B"]))
-        with self.assertRaises(IllegalTransitionException):
+        with self.assertRaises(PendingMessagesException):
             monitor.verifySend(int_B_A, message_int)
 
 
@@ -424,3 +425,17 @@ class TestMonitor(unittest.TestCase):
         self.assertEqual(1, len(monitor.uncheckedReceives["A"]))
 
         monitor.verifyReceive(t2_B_A)
+
+
+    def testDoubleTest(self):
+        specification = r".\test\Test specifications\test_double_send.txt"
+        monitor = Monitor(specification)
+
+        int_A_B = Transition("int", "A", "B")
+        bool_B_A = Transition("bool", "B", "A")
+        
+        monitor.verifySend(int_A_B, 42)
+        monitor.verifySend(int_A_B, 42)            
+        monitor.verifyReceive(int_A_B)
+        with self.assertRaises(PendingMessagesException):
+            monitor.verifySend(bool_B_A, True)    
