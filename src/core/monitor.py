@@ -20,6 +20,7 @@ The specification must be passed to the monitor as a txt file on creation.
 class Monitor():
 
     def __init__(self, filePath: str):
+        self.halted: bool = False
         self.transitionHistory: list[tuple[Transition, any]] = []
         self.uncheckedReceives: dict[str, Transition] = {}
         tree = self.buildParseTree(filePath)
@@ -28,7 +29,6 @@ class Monitor():
         if not used_roles == defined_roles:
             raise RoleMismatchException(used_roles, defined_roles)
         self.initialiseUncheckedReceives(defined_roles)
-        self.halted: bool = False
         self.setExceptionHook()
 
     # Destructor method. Note that a destructor does not raise but silences exceptions.

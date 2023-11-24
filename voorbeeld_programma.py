@@ -40,11 +40,11 @@ async def seller():
     await buy1tosell.receive()
     await selltobuy1.send(60)
     await selltobuy2.send(60)
-    # response = await buy2tosell.receive()
-    # if response:
-    #     print(f"Seller sold book for {response} Euro")
-    # else:
-    #     print("Seller ended, no deal made")
+    response = await buy2tosell.receive()
+    if response:
+        print(f"Seller sold book for {response} Euro")
+    else:
+        print("Seller ended, no deal made")
 
 async def main():
     async with asyncio.TaskGroup() as task_group:
