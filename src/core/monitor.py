@@ -36,7 +36,7 @@ class Monitor():
     # Destructor method. Note that a destructor does not raise but silences exceptions.
     def __del__(self):
         if not self.halted:
-            fsmInFinalState = self.fsm.inFinalState()
+            fsmInFinalState: bool = self.fsm.inFinalState()
             lostMessages: list[Transition] = []
             for uncheckedReceives in self.uncheckedReceives.values():
                 lostMessages.extend(uncheckedReceives) 
