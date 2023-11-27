@@ -1,4 +1,4 @@
 antlrFiles
+benchmarks
 src
 test
-tests

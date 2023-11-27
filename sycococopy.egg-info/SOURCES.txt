@@ -7,10 +7,12 @@ antlrFiles/PythonicParser.py
 antlrFiles/__init__.py
 antlrFiles/pythonicSyntaxErrorException.py
 antlrFiles/pythonicvisitor.py
+benchmarks/__init__.py
 src/__init__.py
 src/core/FSMbuilder.py
 src/core/__init__.py
 src/core/fsm.py
+src/core/fsmBuilder.py
 src/core/instrumentation.py
 src/core/monitor.py
 src/core/roleBuilder.py
@@ -25,9 +27,4 @@ test/test_FSM.py
 test/test_FSMbuilder.py
 test/test_Monitor.py
 test/test_State.py
-tests/__init__.py
-tests/testFSM.py
-tests/testFSMbuilder.py
-tests/testMonitor.py
-tests/testState.py
-tests/testenDict.py
+test/test_Transition.py
