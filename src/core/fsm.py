@@ -25,3 +25,10 @@ class FSM:
         
     def getStates(self) -> list[State]:
         return list(self.states)
+    
+    
+    def inFinalState(self) -> bool:        
+        for state in self.states:
+            if not state.getTransitions():
+                return True
+        return False
