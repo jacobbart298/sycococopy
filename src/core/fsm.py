@@ -23,5 +23,12 @@ class FSM:
         self.states = newStates
         return len(self.states) != 0
         
-    def getStates(self):
+    def getStates(self) -> list[State]:
         return list(self.states)
+    
+    
+    def inFinalState(self) -> bool:        
+        for state in self.states:
+            if not state.getTransitions():
+                return True
+        return False

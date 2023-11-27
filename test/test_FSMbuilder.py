@@ -3,7 +3,7 @@ import os
 from antlr4 import CommonTokenStream, FileStream
 from antlrFiles.PythonicLexer import PythonicLexer
 from antlrFiles.PythonicParser import PythonicParser
-from src.core.FSMbuilder import FSMbuilder
+from src.core.fsmBuilder import FSMbuilder
 from src.core.transition import Transition, PredicateTransition
 
 class TestFSMBuilder(unittest.TestCase):

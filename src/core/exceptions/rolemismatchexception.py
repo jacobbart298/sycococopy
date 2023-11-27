@@ -1,11 +1,12 @@
 import typing
+from src.core.exceptions.sycococopyexception import SycococopyException
 
 '''
 The RoleMismatchException is raised when the defined roles do not match with the roles used in the
 protocol. Provides clear message to indicate if defined roles were not used and/or if roles in the
 protocol were not declared.
 '''
-class RoleMismatchException(Exception):
+class RoleMismatchException(SycococopyException):
 
     def __init__(self, used_roles: set[str], defined_roles: set[str]):
         self.surplus_defined_roles: set[str] = defined_roles.difference(used_roles)
