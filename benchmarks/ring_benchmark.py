@@ -1,5 +1,7 @@
 import typing
 import pyperf
+import time
+import statistics
 from src.core.instrumentation import Queue
 import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor
@@ -37,6 +39,7 @@ async def initiator(receiveQueue: Queue, sendQueue: Queue) -> None:
     await receiveQueue.get()
 
 async def main(coroutineCount: int):
+    startTime = time.time()
     monitor = Monitor(specification_path)
     async with asyncio.TaskGroup() as tg:
         sender = "coroutine0"
@@ -62,13 +65,26 @@ async def main(coroutineCount: int):
         asyncio.link(sendQueue, sender, receiver, monitor)
         tg.create_task(worker(receiveQueue, sendQueue, coroutineCount-1))
         print("started")
-    print("finished")
+    timeTaken = time.time()-startTime
+    print(f"finished in {timeTaken} seconds")
+    return timeTaken
+
            
-def init(number: int):
+async def init(number: int, repeat: int, warmup: int=2) -> None:
+    times = []
     writeSpecification(number)
-    asyncio.run(main(number))
+    for i in range(repeat):
+        time = await main(number)
+        times.append(time)
+    
+    stdev = statistics.stdev(times[warmup:])
+    average = statistics.mean(times[warmup:])
+    print(f"The timed runs were: {list(map(lambda x: round(x, 8), times[warmup:]))}")
+    print(f"This is an average of {round(average, 8)} with a standard deviation of {round(stdev, 8)}")
 
-# asyncio.run(init(10))
 
-runner = pyperf.Runner()
-runner.bench_func('Bencmark 10000', init(100))
+asyncio.run(init(1000, 40))
+
+# print(timeit.repeat(init(10), repeat=3))
+# runner = pyperf.Runner()
+# runner.bench_time_func('Benchmark 10000', init(10))
