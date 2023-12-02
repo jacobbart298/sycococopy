@@ -8,6 +8,7 @@ antlrFiles/__init__.py
 antlrFiles/pythonicSyntaxErrorException.py
 antlrFiles/pythonicvisitor.py
 benchmarks/__init__.py
+benchmarks/ring_benchmark.py
 src/__init__.py
 src/core/FSMbuilder.py
 src/core/__init__.py

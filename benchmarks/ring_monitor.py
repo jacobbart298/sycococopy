@@ -1,15 +1,20 @@
 import typing
 import pyperf
-import time
-import statistics
+from benchmarks.config import coroutineCount
 from src.core.instrumentation import Queue
 import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor
 
 
+# coroutineCount = 10
+print(f"Starting benchmark for {coroutineCount} coroutines")
 specification_path = r".\var_coroutines_protocol.txt"
 
+aantalSpecs = 0
+
 def writeSpecification(coroutineCount: int) -> None:
+    global aantalSpecs 
+    aantalSpecs += 1
     specification : str = ""
     # write role header
     specification += "roles:\n"
@@ -27,19 +32,20 @@ def writeSpecification(coroutineCount: int) -> None:
 
     with open(r'.\var_coroutines_protocol.txt', 'w') as spec:
         spec.write(specification)
+    
+    print(f"Ik heb nu {aantalSpecs} keer een specificatie geschreven")
 
 async def worker(receiveQueue: Queue, sendQueue: Queue, number: int) -> None:
     await receiveQueue.get()
     await sendQueue.put(True)
-    print(f"Coroutine{number} sent a message")
+    # print(f"Coroutine{number} sent a message")
 
 async def initiator(receiveQueue: Queue, sendQueue: Queue) -> None:
     await sendQueue.put(True)
-    print("Coroutine0 sent a message")
+    # print("Coroutine0 sent a message")
     await receiveQueue.get()
 
 async def main(coroutineCount: int):
-    startTime = time.time()
     monitor = Monitor(specification_path)
     async with asyncio.TaskGroup() as tg:
         sender = "coroutine0"
@@ -65,26 +71,13 @@ async def main(coroutineCount: int):
         asyncio.link(sendQueue, sender, receiver, monitor)
         tg.create_task(worker(receiveQueue, sendQueue, coroutineCount-1))
         print("started")
-    timeTaken = time.time()-startTime
-    print(f"finished in {timeTaken} seconds")
-    return timeTaken
-
-           
-async def init(number: int, repeat: int, warmup: int=2) -> None:
-    times = []
-    writeSpecification(number)
-    for i in range(repeat):
-        time = await main(number)
-        times.append(time)
-    
-    stdev = statistics.stdev(times[warmup:])
-    average = statistics.mean(times[warmup:])
-    print(f"The timed runs were: {list(map(lambda x: round(x, 8), times[warmup:]))}")
-    print(f"This is an average of {round(average, 8)} with a standard deviation of {round(stdev, 8)}")
+    print("finished")
 
 
-asyncio.run(init(1000, 40))
+writeSpecification(coroutineCount)
 
-# print(timeit.repeat(init(10), repeat=3))
-# runner = pyperf.Runner()
-# runner.bench_time_func('Benchmark 10000', init(10))
+async def runBenchmark() -> None:
+    await main(coroutineCount)
+
+runner = pyperf.Runner()
+runner.bench_async_func(f"Benchmark {coroutineCount}", runBenchmark)
