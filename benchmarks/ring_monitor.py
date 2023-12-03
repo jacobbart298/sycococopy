@@ -68,8 +68,10 @@ async def main(coroutineCount: int):
 
 
 writeSpecification(coroutineCount)
+# initialState = list(monitor.fsm.states)[0]
 
 async def runBenchmark() -> None:
+    # monitor.fsm.states = {initialState}
     await main(coroutineCount)
 
 runner = pyperf.Runner()
