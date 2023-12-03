@@ -1,12 +1,8 @@
-import sys
-import traceback as tb
-import logging
 import typing
 import asyncio as asyncio
 from src.core.transition import Transition
 from src.core.monitor import Monitor
 from src.core.exceptions.haltedexception import HaltedException
-from src.core.exceptions.illegaltransitionexception import IllegalTransitionException
 
 '''
 The instrumentation module is responsible for sending all related communication between coroutines
@@ -104,8 +100,3 @@ class Channel():
             return item
         except HaltedException:
             pass
-    
-    def close(self) -> None:
-        pass
-
-

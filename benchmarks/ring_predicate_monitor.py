@@ -5,13 +5,11 @@ import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor
 
 print(f"Starting benchmark for {coroutineCount} coroutines")
-specification_path = r".\ring_monitor_protocol.txt"
+specification_path = r".\ring_predicates.txt"
 
 aantalSpecs = 0
 
 def writeSpecification(coroutineCount: int) -> None:
-    global aantalSpecs 
-    aantalSpecs += 1
     specification : str = ""
     # write role header
     specification += "roles:\n"
@@ -24,20 +22,18 @@ def writeSpecification(coroutineCount: int) -> None:
     specification += "    sequence:\n"
     # write sends
     for i in range(coroutineCount-1):
-        specification += f"        send bool from coroutine{i} to coroutine{i+1}\n"
-    specification += f"        send bool from coroutine{coroutineCount-1} to coroutine{0}"
+        specification += f"        send bool(True) from coroutine{i} to coroutine{i+1}\n"
+    specification += f"        send bool(True) from coroutine{coroutineCount-1} to coroutine{0}"
 
-    with open(r'.\ring_monitor_protocol.txt', 'w') as spec:
+    with open(specification_path, 'w') as spec:
         spec.write(specification)
 
-async def worker(receiveQueue: Queue, sendQueue: Queue, number: int) -> None:
+async def worker(receiveQueue: Queue, sendQueue: Queue) -> None:
     await receiveQueue.get()
     await sendQueue.put(True)
-    # print(f"Coroutine{number} sent a message")
 
 async def initiator(receiveQueue: Queue, sendQueue: Queue) -> None:
     await sendQueue.put(True)
-    # print("Coroutine0 sent a message")
     await receiveQueue.get()
 
 async def main(coroutineCount: int):
@@ -57,14 +53,14 @@ async def main(coroutineCount: int):
             receiveQueue = sendQueue
             sendQueue = Queue()
             asyncio.link(sendQueue, sender, receiver, monitor)            
-            tg.create_task(worker(receiveQueue, sendQueue, i))
+            tg.create_task(worker(receiveQueue, sendQueue))
         # create last worker
         sender = f"coroutine{coroutineCount-1}"
         receiver = "coroutine0"
         receiveQueue = sendQueue
         sendQueue = initialReceiveQueue
         asyncio.link(sendQueue, sender, receiver, monitor)
-        tg.create_task(worker(receiveQueue, sendQueue, coroutineCount-1))
+        tg.create_task(worker(receiveQueue, sendQueue))
 
 
 writeSpecification(coroutineCount)
