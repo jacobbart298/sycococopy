@@ -15,14 +15,14 @@ used as a drop in replacement for the asyncio library (simply import the instrum
 '''
 
 # list of queues that are linked to the monitor
-linked_queues: list[asyncio.Queue] = []
+linked_queues: set[asyncio.Queue] = set()
 
 # Function that links a Queue to a sender, receiver and monitor
 def link(queue: asyncio.Queue, sender: str, receiver: str, monitor: Monitor) -> None:
     queue.sender = sender
     queue.receiver = receiver
     queue.monitor = monitor
-    linked_queues.append(queue)
+    linked_queues.add(queue)
 
 # Function required to pass all non-monitor related asyncio calls through to asyncio   
 def __getattr__(name):
