@@ -1,12 +1,8 @@
-import sys
-import traceback as tb
-import logging
 import typing
 import asyncio as asyncio
 from src.core.transition import Transition
 from src.core.monitor import Monitor
 from src.core.exceptions.haltedexception import HaltedException
-from src.core.exceptions.illegaltransitionexception import IllegalTransitionException
 
 '''
 The instrumentation module is responsible for sending all related communication between coroutines
@@ -19,14 +15,14 @@ used as a drop in replacement for the asyncio library (simply import the instrum
 '''
 
 # list of queues that are linked to the monitor
-linked_queues: list[asyncio.Queue] = []
+linked_queues: set[asyncio.Queue] = set()
 
 # Function that links a Queue to a sender, receiver and monitor
 def link(queue: asyncio.Queue, sender: str, receiver: str, monitor: Monitor) -> None:
     queue.sender = sender
     queue.receiver = receiver
     queue.monitor = monitor
-    linked_queues.append(queue)
+    linked_queues.add(queue)
 
 # Function required to pass all non-monitor related asyncio calls through to asyncio   
 def __getattr__(name):
@@ -104,8 +100,3 @@ class Channel():
             return item
         except HaltedException:
             pass
-    
-    def close(self) -> None:
-        pass
-
-
