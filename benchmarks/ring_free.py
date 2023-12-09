@@ -3,17 +3,12 @@ from benchmarks.config import coroutineCount
 import asyncio
 from asyncio import Queue
 
-
-print(f"Starting benchmark for {coroutineCount} coroutines")
-
 async def worker(receiveQueue: Queue, sendQueue: Queue) -> None:
     await receiveQueue.get()
     await sendQueue.put(True)
-    # print(f"Coroutine{number} sent a message")
 
 async def initiator(receiveQueue: Queue, sendQueue: Queue) -> None:
     await sendQueue.put(True)
-    # print("Coroutine0 sent a message")
     await receiveQueue.get()
 
 async def main(coroutineCount: int):
@@ -23,7 +18,7 @@ async def main(coroutineCount: int):
         # create first worker
         tg.create_task(initiator(initialReceiveQueue, sendQueue))
         # create second worker - penultimate worker
-        for i in range(1, coroutineCount-1):
+        for _ in range(1, coroutineCount-1):
             receiveQueue = sendQueue
             sendQueue = Queue()           
             tg.create_task(worker(receiveQueue, sendQueue))
