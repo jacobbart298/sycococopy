@@ -26,7 +26,7 @@ class FSM:
     def getStates(self) -> list[State]:
         return list(self.states)
     
-    
+    # Checks if at least one of the current states has no transitions and is hence in an end state
     def inFinalState(self) -> bool:        
         for state in self.states:
             if not state.getTransitions():
