@@ -18,9 +18,7 @@ src/core/__init__.py
 src/core/fsm.py
 src/core/fsmBuilder.py
 src/core/instrumentation.py
-src/core/instrumentation_dummy.py
 src/core/monitor.py
-src/core/monitor_dummy.py
 src/core/roleBuilder.py
 src/core/state.py
 src/core/transition.py

@@ -1,5 +1,5 @@
 from __future__ import annotations
-import typing
+import builtins
 
 '''
 The transition module offers the Transition and PredicateTransition classes that represent a transition between two
@@ -25,8 +25,12 @@ class Transition:
     # Determines whether this Transition satisfies the given Transition.
     # That is to say, it checks whether this Transition's type, sender 
     # and receiver are equal to those of the given Transition.
-    def satisfies(self, other: Transition, _: any) -> bool:
-        return self.type == other.type and self.sender == other.sender and self.receiver == other.receiver
+    def satisfies(self, other: Transition, value: any) -> bool:
+        if isinstance(type(value), builtins.type):
+            typeValid = self.type == other.type
+        else:
+            typeValid = isinstance(value, self.type)
+        return typeValid and self.sender == other.sender and self.receiver == other.receiver
     
     # Checks if the given object is a Transition equal to this Transition. 
     def __eq__(self, other: any) -> bool:

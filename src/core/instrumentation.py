@@ -40,7 +40,7 @@ class Queue(asyncio.Queue):
     '''
     async def put(self, item: any) -> None:
         if self in linked_queues:
-            transition: Transition = Transition(type(item).__name__, self.sender, self.receiver)
+            transition: Transition = Transition(type(item), self.sender, self.receiver)
             try:
                 self.monitor.verifySend(transition, item)
                 await super().put(item)
@@ -60,7 +60,7 @@ class Queue(asyncio.Queue):
     async def get(self) -> any:
         if self in linked_queues:
             item: any = await super().get()
-            transition: Transition = Transition(type(item).__name__, self.sender, self.receiver)
+            transition: Transition = Transition(type(item), self.sender, self.receiver)
             try: 
                 self.monitor.verifyReceive(transition)
                 return item
@@ -84,7 +84,7 @@ class Channel():
     
     # Function that checks is send is allowed by the monitor and, if so, adds item to the queue
     async def send(self, item: any) -> None:
-        transition: Transition = Transition(type(item).__name__, self.sender, self.receiver)
+        transition: Transition = Transition(type(item), self.sender, self.receiver)
         try:
             self.monitor.verifySend(transition, item)
             await self.queue.put(item)
@@ -94,7 +94,7 @@ class Channel():
     # Function that checks if receive is allowed by the monitor and, if so, returns the item on the queue
     async def receive(self) -> any:
         item: any = await self.queue.get()
-        transition: Transition = Transition(type(item).__name__, self.sender, self.receiver)
+        transition: Transition = Transition(type(item), self.sender, self.receiver)
         try:
             self.monitor.verifyReceive(transition)
             return item
