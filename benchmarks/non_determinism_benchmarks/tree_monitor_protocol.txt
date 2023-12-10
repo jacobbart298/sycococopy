@@ -13,58 +13,26 @@ protocol:
                         sequence:
                             send bool from A to B
                             choice:
-                                sequence:
-                                    send bool from B to A
-                                    choice:
-                                        send bool from A to B
-                                        send bool from A to B
-                                sequence:
-                                    send bool from B to A
-                                    choice:
-                                        send bool from A to B
-                                        send bool from A to B
+                                send bool from B to A
+                                send bool from B to A
                         sequence:
                             send bool from A to B
                             choice:
-                                sequence:
-                                    send bool from B to A
-                                    choice:
-                                        send bool from A to B
-                                        send bool from A to B
-                                sequence:
-                                    send bool from B to A
-                                    choice:
-                                        send bool from A to B
-                                        send bool from A to B
+                                send bool from B to A
+                                send bool from B to A
                 sequence:
                     send bool from B to A
                     choice:
                         sequence:
                             send bool from A to B
                             choice:
-                                sequence:
-                                    send bool from B to A
-                                    choice:
-                                        send bool from A to B
-                                        send bool from A to B
-                                sequence:
-                                    send bool from B to A
-                                    choice:
-                                        send bool from A to B
-                                        send bool from A to B
+                                send bool from B to A
+                                send bool from B to A
                         sequence:
                             send bool from A to B
                             choice:
-                                sequence:
-                                    send bool from B to A
-                                    choice:
-                                        send bool from A to B
-                                        send bool from A to B
-                                sequence:
-                                    send bool from B to A
-                                    choice:
-                                        send bool from A to B
-                                        send bool from A to B
+                                send bool from B to A
+                                send bool from B to A
         sequence:
             send bool from A to B
             choice:
@@ -74,55 +42,23 @@ protocol:
                         sequence:
                             send bool from A to B
                             choice:
-                                sequence:
-                                    send bool from B to A
-                                    choice:
-                                        send bool from A to B
-                                        send bool from A to B
-                                sequence:
-                                    send bool from B to A
-                                    choice:
-                                        send bool from A to B
-                                        send bool from A to B
+                                send bool from B to A
+                                send bool from B to A
                         sequence:
                             send bool from A to B
                             choice:
-                                sequence:
-                                    send bool from B to A
-                                    choice:
-                                        send bool from A to B
-                                        send bool from A to B
-                                sequence:
-                                    send bool from B to A
-                                    choice:
-                                        send bool from A to B
-                                        send bool from A to B
+                                send bool from B to A
+                                send bool from B to A
                 sequence:
                     send bool from B to A
                     choice:
                         sequence:
                             send bool from A to B
                             choice:
-                                sequence:
-                                    send bool from B to A
-                                    choice:
-                                        send bool from A to B
-                                        send bool from A to B
-                                sequence:
-                                    send bool from B to A
-                                    choice:
-                                        send bool from A to B
-                                        send bool from A to B
+                                send bool from B to A
+                                send bool from B to A
                         sequence:
                             send bool from A to B
                             choice:
-                                sequence:
-                                    send bool from B to A
-                                    choice:
-                                        send bool from A to B
-                                        send bool from A to B
-                                sequence:
-                                    send bool from B to A
-                                    choice:
-                                        send bool from A to B
-                                        send bool from A to B
+                                send bool from B to A
+                                send bool from B to A
