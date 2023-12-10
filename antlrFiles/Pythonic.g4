@@ -36,9 +36,7 @@ shuffle             : SHUFFLE block ;
 choice              : CHOICE block ;
 loop                : LOOP LOOPLABEL block ;
 repeat              : REPEAT WORD NL ;
-send                : ((SEND WORD FROM WORD TO WORD NL) 
-                      | (SEND WORD OPENINGBRACKET COMPARATOR PRIMITIVE CLOSINGBRACKET FROM WORD TO WORD NL) 
-                      | (SEND WORD OPENINGBRACKET (BOOLEAN | PRIMITIVE) CLOSINGBRACKET FROM WORD TO WORD NL)) ;
+send                : SEND WORD ((OPENINGBRACKET COMPARATOR PRIMITIVE CLOSINGBRACKET) | (OPENINGBRACKET (BOOLEAN | PRIMITIVE) CLOSINGBRACKET) | ) FROM WORD TO WORD NL ;
 close               : CLOSE WORD TO WORD NL;
 block               : INDENT expression+ DEDENT ;
 roles               : ROLES roleblock ;

@@ -1,9 +1,9 @@
-# Generated from ./antlrFiles/Pythonic.g4 by ANTLR 4.13.1
+# Generated from ./Pythonic.g4 by ANTLR 4.13.1
 from antlr4 import *
 if "." in __name__:
     from .PythonicParser import PythonicParser
 else:
-    from PythonicParser import PythonicParser
+    from antlrFiles.PythonicParser import PythonicParser
 
 # This class defines a complete generic visitor for a parse tree produced by PythonicParser.
 
