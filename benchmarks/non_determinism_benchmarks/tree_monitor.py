@@ -71,8 +71,11 @@ async def main(depth: int):
 
 
 writeSpecification(level)
+# monitor = Monitor(specification_path)
+# initialState = list(monitor.fsm.states)[0]
 
 async def runBenchmark() -> None:
+    # monitor.fsm.states = {initialState}
     await main(level)
 
 runner = pyperf.Runner()

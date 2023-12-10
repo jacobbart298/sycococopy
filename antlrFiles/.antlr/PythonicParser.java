@@ -113,14 +113,6 @@ public class PythonicParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_specification; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PythonicListener ) ((PythonicListener)listener).enterSpecification(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PythonicListener ) ((PythonicListener)listener).exitSpecification(this);
-		}
 	}
 
 	public final SpecificationContext specification() throws RecognitionException {
@@ -158,14 +150,6 @@ public class PythonicParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_protocol; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PythonicListener ) ((PythonicListener)listener).enterProtocol(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PythonicListener ) ((PythonicListener)listener).exitProtocol(this);
-		}
 	}
 
 	public final ProtocolContext protocol() throws RecognitionException {
@@ -218,14 +202,6 @@ public class PythonicParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_expression; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PythonicListener ) ((PythonicListener)listener).enterExpression(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PythonicListener ) ((PythonicListener)listener).exitExpression(this);
-		}
 	}
 
 	public final ExpressionContext expression() throws RecognitionException {
@@ -305,14 +281,6 @@ public class PythonicParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_sequence; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PythonicListener ) ((PythonicListener)listener).enterSequence(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PythonicListener ) ((PythonicListener)listener).exitSequence(this);
-		}
 	}
 
 	public final SequenceContext sequence() throws RecognitionException {
@@ -348,14 +316,6 @@ public class PythonicParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_shuffle; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PythonicListener ) ((PythonicListener)listener).enterShuffle(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PythonicListener ) ((PythonicListener)listener).exitShuffle(this);
-		}
 	}
 
 	public final ShuffleContext shuffle() throws RecognitionException {
@@ -391,14 +351,6 @@ public class PythonicParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_choice; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PythonicListener ) ((PythonicListener)listener).enterChoice(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PythonicListener ) ((PythonicListener)listener).exitChoice(this);
-		}
 	}
 
 	public final ChoiceContext choice() throws RecognitionException {
@@ -435,14 +387,6 @@ public class PythonicParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_loop; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PythonicListener ) ((PythonicListener)listener).enterLoop(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PythonicListener ) ((PythonicListener)listener).exitLoop(this);
-		}
 	}
 
 	public final LoopContext loop() throws RecognitionException {
@@ -479,14 +423,6 @@ public class PythonicParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_repeat; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PythonicListener ) ((PythonicListener)listener).enterRepeat(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PythonicListener ) ((PythonicListener)listener).exitRepeat(this);
-		}
 	}
 
 	public final RepeatContext repeat() throws RecognitionException {
@@ -533,14 +469,6 @@ public class PythonicParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_send; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PythonicListener ) ((PythonicListener)listener).enterSend(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PythonicListener ) ((PythonicListener)listener).exitSend(this);
-		}
 	}
 
 	public final SendContext send() throws RecognitionException {
@@ -662,14 +590,6 @@ public class PythonicParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_close; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PythonicListener ) ((PythonicListener)listener).enterClose(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PythonicListener ) ((PythonicListener)listener).exitClose(this);
-		}
 	}
 
 	public final CloseContext close() throws RecognitionException {
@@ -715,14 +635,6 @@ public class PythonicParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_block; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PythonicListener ) ((PythonicListener)listener).enterBlock(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PythonicListener ) ((PythonicListener)listener).exitBlock(this);
-		}
 	}
 
 	public final BlockContext block() throws RecognitionException {
@@ -773,14 +685,6 @@ public class PythonicParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_roles; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PythonicListener ) ((PythonicListener)listener).enterRoles(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PythonicListener ) ((PythonicListener)listener).exitRoles(this);
-		}
 	}
 
 	public final RolesContext roles() throws RecognitionException {
@@ -820,14 +724,6 @@ public class PythonicParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_roleblock; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PythonicListener ) ((PythonicListener)listener).enterRoleblock(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PythonicListener ) ((PythonicListener)listener).exitRoleblock(this);
-		}
 	}
 
 	public final RoleblockContext roleblock() throws RecognitionException {
@@ -878,14 +774,6 @@ public class PythonicParser extends Parser {
 			super(parent, invokingState);
 		}
 		@Override public int getRuleIndex() { return RULE_role; }
-		@Override
-		public void enterRule(ParseTreeListener listener) {
-			if ( listener instanceof PythonicListener ) ((PythonicListener)listener).enterRole(this);
-		}
-		@Override
-		public void exitRule(ParseTreeListener listener) {
-			if ( listener instanceof PythonicListener ) ((PythonicListener)listener).exitRole(this);
-		}
 	}
 
 	public final RoleContext role() throws RecognitionException {

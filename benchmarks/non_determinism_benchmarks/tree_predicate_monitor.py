@@ -1,3 +1,13 @@
+import pyperf
+import cProfile
+import re
+from benchmarks.config import level
+from src.core.instrumentation import Queue
+import src.core.instrumentation as asyncio
+from src.core.monitor import Monitor
+
+specification_path = r".\tree_predicate_monitor_protocol.txt"
+
 def writeSpecification(level: int) -> None:
     indent = "    "
     # write role header
@@ -12,7 +22,7 @@ def writeSpecification(level: int) -> None:
     specification += writeProtocol(1, 2, level, True)
     specification += writeProtocol(1, 2, level, False)
 
-    with open(r'.\tree_monitor_protocol.txt', 'w') as spec:
+    with open(specification_path, 'w') as spec:
         spec.write(specification)
 
 def writeProtocol(depth: int, indentLevel: int, maxDepth: int, value: bool) -> str:
@@ -33,4 +43,44 @@ def writeProtocol(depth: int, indentLevel: int, maxDepth: int, value: bool) -> s
         protocol += writeProtocol(depth + 1, indentLevel + 1, maxDepth, not value)
         return protocol
 
-writeSpecification(3)
+async def A(queueBtoA: Queue, queueAtoB: Queue, level: int) -> None:
+    while level > 0:
+        await queueAtoB.put(True)
+        if level > 1:
+            await queueBtoA.get()
+        level -= 2
+
+async def B(queueAtoB: Queue, queueBtoA: Queue, level: int) -> None:
+    while level > 1:
+        await queueAtoB.get()
+        level -= 2
+        await queueBtoA.put(False)
+    if level%2 == 1:
+        await queueAtoB.get()
+
+async def main(depth: int):
+    monitor = Monitor(specification_path)
+    async with asyncio.TaskGroup() as tg:
+        workerA = "A"
+        workerB = "B"
+        queueAtoB = Queue()
+        queueBtoA = Queue()
+        asyncio.link(queueAtoB, workerA, workerB, monitor)
+        asyncio.link(queueBtoA, workerB, workerA, monitor)
+        # create first worker
+        tg.create_task(A(queueBtoA, queueAtoB, depth))
+        tg.create_task(B(queueAtoB, queueBtoA, depth))
+
+
+writeSpecification(level)
+# initialState = list(monitor.fsm.states)[0]
+
+
+async def runBenchmark() -> None:
+    # monitor.fsm.states = {initialState}
+    await main(level)
+
+runner = pyperf.Runner()
+runner.bench_async_func(f"Benchmark {level}", runBenchmark)
+
+# cProfile.run('re.compile("main|100")')
