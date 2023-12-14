@@ -26,7 +26,8 @@ class Transition:
     # That is to say, it checks whether this Transition's type, sender 
     # and receiver are equal to those of the given Transition.
     def satisfies(self, other: Transition, value: any) -> bool:
-        if isinstance(type(value), builtins.type):
+        # check if value is of a built-in type
+        if hasattr(builtins, type(value).__name__):
             typeValid = self.type == other.type
         else:
             typeValid = isinstance(value, self.type)

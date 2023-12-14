@@ -1,4 +1,4 @@
-from auto import Auto
+from auto import Opel
 from src.core.instrumentation import Channel
 import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor
@@ -17,7 +17,7 @@ selltobuy1 = Channel(seller, buyer1, monitor)
 selltobuy2 = Channel(seller, buyer2, monitor)
  
 async def buyer1():
-    auto = Auto("Tesla", 125000)
+    auto = Opel(28573)
     await buy1tosell.send(auto)
     quote = await selltobuy1.receive()
     await buy1tobuy2.send(quote//2)
@@ -39,9 +39,9 @@ async def buyer2():
     print("Buyer 2 finished")
 
 async def seller():
-    auto = await buy1tosell.receive()
-    print(auto.merk)
-    print(auto.kilometerstand)
+    auto1 = await buy1tosell.receive()
+    # print(auto1.merk)
+    # print(auto1.kilometerstand)
     await selltobuy1.send(60)
     await selltobuy2.send(60)
     response = await buy2tosell.receive()

@@ -9,6 +9,7 @@ from antlrFiles.pythonicvisitor import PythonicVisitor
 from src.core.fsm import FSM
 from src.core.transition import Transition, PredicateTransition
 from src.core.state import State
+from src.core.exceptions.illegaltypeexception import IllegalTypeException
 from itertools import permutations
 
 if "." in __name__:
@@ -136,28 +137,28 @@ class FSMbuilder(PythonicVisitor):
 
         # build transition send without predicate
         if (ctx.getChild(2).getText() == 'from'):
-            valueType: any = self.convert_string_to_type(ctx.getChild(1).getText())
+            type: any = self.convert_string_to_type(ctx.getChild(1).getText())
             sender: str = ctx.getChild(3).getText()
             receiver: str = ctx.getChild(5).getText()
-            transition: Transition = Transition(valueType, sender, receiver)
+            transition: Transition = Transition(type, sender, receiver)
         # build transition send with a non-equal predicate
         elif ctx.getChild(3).getText() in [">", "<", ">=", "<=", "!="]:
-            valueType: any = self.convert_string_to_type(ctx.getChild(1).getText())
+            type: any = self.convert_string_to_type(ctx.getChild(1).getText())
             comparator: str = ctx.getChild(3).getText()
             value: str = ctx.getChild(4).getText()
             sender: str = ctx.getChild(7).getText()
             receiver: str = ctx.getChild(9).getText()
             value: any = self.stringToValue(type, value)
-            transition: PredicateTransition = PredicateTransition(valueType, sender, receiver, comparator, value)
+            transition: PredicateTransition = PredicateTransition(type, sender, receiver, comparator, value)
         # build transition send with an equal comparator
         else :
-            valueType: any = self.convert_string_to_type(ctx.getChild(1).getText())
+            type: any = self.convert_string_to_type(ctx.getChild(1).getText())
             comparator: str = "=="
             valueString: str = ctx.getChild(3).getText()
             sender: str = ctx.getChild(6).getText()
             receiver: str = ctx.getChild(8).getText()
             value: any = self.stringToValue(type, valueString)
-            transition: PredicateTransition = PredicateTransition(valueType, sender, receiver, comparator, value)
+            transition: PredicateTransition = PredicateTransition(type, sender, receiver, comparator, value)
         # add transition to state
         ctx.startState.addTransitionToState(transition, ctx.endState)
         self.roles_in_fsm.add(sender)
@@ -168,17 +169,15 @@ class FSMbuilder(PythonicVisitor):
         return self.visitChildren(ctx)
 
     # Transforms a string to a primitive value based on the given type.
-    def stringToValue(self, type: str, string: str) -> any:
-        match type:
-            case "int":
-                return int(string)
-            case "float":
-                return float(string)
+    def stringToValue(self, type_obj: type, string: str) -> any:
+        match type_obj.__name__:
             case "bool":
                 return string == "True"
             case "str":
-                # remove the additional first and last double quotes
+                # remove the additional first and last quotes
                 return string[1:len(string)-1]
+            case _:
+                return type_obj(string)
 
 
     def dump(self, node, depth=0, ruleNames=None):
@@ -194,16 +193,9 @@ class FSMbuilder(PythonicVisitor):
     # Note that this approach assumes that the type string you're trying to convert is a built-in type,
     # and it relies on the name of the type being the same as the string representation of the type.
     def convert_string_to_type(self, type_str):
-        # check if the given type is a builtin type
+        # check if the given type is a built-in type
         if hasattr(builtins, type_str):
-            type_object = getattr(builtins, type_str)
-            print(type_object)
-            if isinstance(type_object, builtins.type):
-                print("gelukt!")
-                return type_object
-            else:
-                print("Type_str error: built-in not a type")
-                # raise exception
+            return getattr(builtins, type_str)
         else:
             modules_path = os.path.abspath('modules.json')
             with open(modules_path) as modules:
@@ -212,9 +204,8 @@ class FSMbuilder(PythonicVisitor):
                 modulePath = classNameToModulePath[type_str]
                 my_module = importlib.import_module(modulePath)
                 return getattr(my_module, type_str)
-            except KeyError as e:
-                print("Key error: module not found!")
-                # module not found exception
+            except KeyError:
+                raise IllegalTypeException(type_str)
 
 
 del PythonicParser

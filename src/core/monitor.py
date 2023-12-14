@@ -119,7 +119,7 @@ class Monitor():
                     if isinstance(exception, SycococopyException):
                         print(str(exception))
                         noSycocopyExceptionPresent = False
-            elif isinstance(value, RoleMismatchException):
+            elif isinstance(value, SycococopyException):
                 print(str(value))
                 noSycocopyExceptionPresent = False
             if noSycocopyExceptionPresent:

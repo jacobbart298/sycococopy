@@ -1,3 +1,5 @@
+import builtins
+
 class Auto:
     
     def __init__(self, merk, kilometerstand):
@@ -9,34 +11,31 @@ class Opel(Auto):
     def __init__(self, kilometerstand):
         super().__init__("Opel", kilometerstand)
 
+# print(dir(builtins))
 
-auto = Auto("Mercedes", 12422)
-opel = Opel(746384)
-# print(isinstance(opel, Auto))
+def testen():
+    pass
 
-stringtype = type(int)
-print(stringtype)
+# type_obj = type(testen)
+# print(type_obj)
+# print(type_obj.__name__)
 
-# Note that this approach assumes that the type string you're trying to convert is a built-in type,
-# and it relies on the name of the type being the same as the string representation of the type.
-def convert_to_type(type_str):
-    try:
-        type_object = getattr(__builtins__, type_str)
-        if type(type_object) is type:
-            print("type found")
-            return type_object
-        else:
-            print("type not found")
-            return None
-    except AttributeError:
-        print("attribute error")
-        return None
-
-str = convert_to_type("onzin")
+# auto = Auto("Tesla", 835)
+# type_obj = type(auto)
+# print(type_obj)
+# auto2 = type_obj("Opel", 3483)
+# print(type(auto2))
 
 
-print(type(list))
-print(type(dict))
-print(type(bool))
-print(type(""))
-print(type(sum))
+trueVal = True
+trueType = type(trueVal)
+print(trueType)
+trueVal2 = trueType(False)
+print(trueVal2)
+
+
+# intVal = -2
+# intType = type(intVal)
+# print(intType)
+# intVal2 = intType("3")
+# print(intVal2)
