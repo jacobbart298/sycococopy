@@ -89,15 +89,6 @@ class PythonicListener(ParseTreeListener):
         pass
 
 
-    # Enter a parse tree produced by PythonicParser#close.
-    def enterClose(self, ctx:PythonicParser.CloseContext):
-        pass
-
-    # Exit a parse tree produced by PythonicParser#close.
-    def exitClose(self, ctx:PythonicParser.CloseContext):
-        pass
-
-
     # Enter a parse tree produced by PythonicParser#block.
     def enterBlock(self, ctx:PythonicParser.BlockContext):
         pass

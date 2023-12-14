@@ -1,2 +1,2 @@
-coroutineCount = 10000
+coroutineCount = 100
 level = 12

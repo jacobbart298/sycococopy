@@ -9,7 +9,7 @@ from src.core.monitor import Monitor
 specification_path = r".\tree_predicate_monitor_protocol.txt"
 
 def writeSpecification(level: int) -> None:
-    indent = "    "
+    indent = "\t"
     # write role header
     specification = "roles:\n"
     # write roles
@@ -26,7 +26,7 @@ def writeSpecification(level: int) -> None:
         spec.write(specification)
 
 def writeProtocol(depth: int, indentLevel: int, maxDepth: int, value: bool) -> str:
-    indent = "    "
+    indent = "\t"
     if depth == maxDepth and depth % 2 == 1:
         return indentLevel*indent + f"send bool({value}) from A to B\n"
     elif depth == maxDepth and depth % 2 == 0:

@@ -12,15 +12,15 @@ def writeSpecification(coroutineCount: int) -> None:
     specification += "roles:\n"
     # write roles
     for i in range(coroutineCount):
-        specification += f"    coroutine{i}\n"
+        specification += f"\tcoroutine{i}\n"
     # write protocol header
     specification += "\nprotocol:\n"
     # write sequence expression
-    specification += "    sequence:\n"
+    specification += "\tsequence:\n"
     # write sends
     for i in range(coroutineCount-1):
-        specification += f"        send bool from coroutine{i} to coroutine{i+1}\n"
-    specification += f"        send bool from coroutine{coroutineCount-1} to coroutine{0}"
+        specification += f"\t\tsend bool from coroutine{i} to coroutine{i+1}\n"
+    specification += f"\t\tsend bool from coroutine{coroutineCount-1} to coroutine{0}"
 
     with open(r'.\ring_monitor_protocol.txt', 'w') as spec:
         spec.write(specification)

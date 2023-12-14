@@ -4,10 +4,7 @@ from src.core.instrumentation import Queue
 import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor
 
-print(f"Starting benchmark for {coroutineCount} coroutines")
 specification_path = r".\ring_predicates.txt"
-
-aantalSpecs = 0
 
 def writeSpecification(coroutineCount: int) -> None:
     specification : str = ""
@@ -15,15 +12,15 @@ def writeSpecification(coroutineCount: int) -> None:
     specification += "roles:\n"
     # write roles
     for i in range(coroutineCount):
-        specification += f"    coroutine{i}\n"
+        specification += f"\tcoroutine{i}\n"
     # write protocol header
     specification += "\nprotocol:\n"
     # write sequence expression
-    specification += "    sequence:\n"
+    specification += "\tsequence:\n"
     # write sends
     for i in range(coroutineCount-1):
-        specification += f"        send bool(True) from coroutine{i} to coroutine{i+1}\n"
-    specification += f"        send bool(True) from coroutine{coroutineCount-1} to coroutine{0}"
+        specification += f"\t\tsend bool(True) from coroutine{i} to coroutine{i+1}\n"
+    specification += f"\t\tsend bool(True) from coroutine{coroutineCount-1} to coroutine{0}"
 
     with open(specification_path, 'w') as spec:
         spec.write(specification)

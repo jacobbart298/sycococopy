@@ -3,7 +3,7 @@ from antlr4 import *
 if "." in __name__:
     from .PythonicParser import PythonicParser
 else:
-    from antlrFiles.PythonicParser import PythonicParser
+    from PythonicParser import PythonicParser
 
 # This class defines a complete generic visitor for a parse tree produced by PythonicParser.
 
@@ -51,11 +51,6 @@ class PythonicVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by PythonicParser#send.
     def visitSend(self, ctx:PythonicParser.SendContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by PythonicParser#close.
-    def visitClose(self, ctx:PythonicParser.CloseContext):
         return self.visitChildren(ctx)
 
 

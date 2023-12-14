@@ -30,17 +30,16 @@ def nextToken(self):
 
 specification       : roles protocol EOF;
 protocol            : PROTOCOL block ;
-expression          : (send | sequence | shuffle | choice | close | loop | repeat) ;
+expression          : (send | sequence | shuffle | choice | loop | repeat) ;
 sequence            : SEQUENCE block ;
 shuffle             : SHUFFLE block ;
 choice              : CHOICE block ;
 loop                : LOOP LOOPLABEL block ;
 repeat              : REPEAT WORD NL ;
 send                : SEND WORD ((OPENINGBRACKET COMPARATOR PRIMITIVE CLOSINGBRACKET) | (OPENINGBRACKET (BOOLEAN | PRIMITIVE) CLOSINGBRACKET) | ) FROM WORD TO WORD NL ;
-close               : CLOSE WORD TO WORD NL;
 block               : INDENT expression+ DEDENT ;
 roles               : ROLES roleblock ;
-roleblock           : INDENT role role+ DEDENT;
+roleblock           : INDENT role+ DEDENT;
 role                : WORD NL;
 
 /*
@@ -57,7 +56,6 @@ SHUFFLE             : 'shuffle:' ;
 CHOICE              : 'choice:' ;
 REPEAT              : 'repeat' ;
 LOOP                : 'loop' ;
-CLOSE               : 'close' ;
 LOOPLABEL           :  WORD ':';
 OPENINGBRACKET      : '(' ;
 CLOSINGBRACKET      : ')' ;
@@ -67,6 +65,6 @@ INTEGER             : [-]?[1-9][0-9]* | [0] ;
 STRING              : '"' ( '\\"' | . )*? '"' ;
 FLOAT               : [-]?[1-9]+ '.' [0-9]+ | [-]?[0] '.' [0-9]+ ;
 COMPARATOR          : ('>' | '<' | '<=' | '>=' | '!=' | '==') ;
-WORD                : ([a-z] | [A-Z] | [0-9] | '_' )+ ;
+WORD                : ([a-zA-Z_])([a-zA-Z0-9_])* ; 
 WS                  : (' ') -> skip;
-NL                  : ('\r'? '\n' ' '*); 
+NL                  : ('\r'? '\n' '\t'*); 
