@@ -1,14 +1,13 @@
 import pyperf
 from benchmarks.config import level
-from antlr4 import *
-from antlrFiles.PythonicLexer import PythonicLexer
-from antlrFiles.PythonicParser import PythonicParser
-from src.core.fsmBuilder import FSMbuilder
+from src.core.instrumentation import Queue
+import src.core.instrumentation as asyncio
+from src.core.monitor import Monitor
 
 specification_path = r".\tree_monitor_protocol.txt"
 
 def writeSpecification(level: int) -> None:
-    indent = "    "
+    indent = "\t"
     # write role header
     specification = "roles:\n"
     # write roles
@@ -25,7 +24,7 @@ def writeSpecification(level: int) -> None:
         spec.write(specification)
 
 def writeProtocol(depth: int, indentLevel: int, maxDepth: int) -> str:
-    indent = "    "
+    indent = "\t"
     if depth == maxDepth and depth % 2 == 1:
         return indentLevel*indent + "send bool from A to B\n"
     elif depth == maxDepth and depth % 2 == 0:
@@ -42,18 +41,42 @@ def writeProtocol(depth: int, indentLevel: int, maxDepth: int) -> str:
         protocol += writeProtocol(depth + 1, indentLevel + 1, maxDepth)
         return protocol
 
-def buildParseTree():
-    input = FileStream(specification_path)
-    lexer = PythonicLexer(input)
-    stream = CommonTokenStream(lexer)
-    parser = PythonicParser(stream)
-    return parser.specification() 
+async def A(queueBtoA: Queue, queueAtoB: Queue, level: int) -> None:
+    while level > 0:
+        await queueAtoB.put(True)
+        if level > 1:
+            await queueBtoA.get()
+        level -= 2
+
+async def B(queueAtoB: Queue, queueBtoA: Queue, level: int) -> None:
+    while level > 1:
+        await queueAtoB.get()
+        level -= 2
+        await queueBtoA.put(False)
+    if level%2 == 1:
+        await queueAtoB.get()
+
+async def main(depth: int):
+    # monitor = Monitor(specification_path)
+    async with asyncio.TaskGroup() as tg:
+        workerA = "A"
+        workerB = "B"
+        queueAtoB = Queue()
+        queueBtoA = Queue()
+        asyncio.link(queueAtoB, workerA, workerB, monitor)
+        asyncio.link(queueBtoA, workerB, workerA, monitor)
+        # create first worker
+        tg.create_task(A(queueBtoA, queueAtoB, depth))
+        tg.create_task(B(queueAtoB, queueBtoA, depth))
+
 
 writeSpecification(level)
-parseTree = buildParseTree()
+monitor = Monitor(specification_path)
+initialState = list(monitor.fsm.states)[0]
 
-def runBenchmark():
-    FSMbuilder().visitSpecification(parseTree)  
+async def runBenchmark() -> None:
+    monitor.fsm.states = {initialState}
+    await main(level)
 
 runner = pyperf.Runner()
-runner.bench_func(f"Benchmark {level}", runBenchmark)
+runner.bench_async_func(f"Benchmark {level}", runBenchmark)
