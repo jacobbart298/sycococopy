@@ -1,4 +1,4 @@
-from auto import Opel
+from auto import Auto, Opel
 from src.core.instrumentation import Channel
 import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor
@@ -17,8 +17,10 @@ selltobuy1 = Channel(seller, buyer1, monitor)
 selltobuy2 = Channel(seller, buyer2, monitor)
  
 async def buyer1():
-    auto = Opel(28573)
-    await buy1tosell.send(auto)
+    auto_opel = Opel(28573)
+    auto_mercedes = Auto("Mercedes", 348734)
+    await buy1tosell.send(auto_opel)
+    await buy1tosell.send(auto_mercedes)
     quote = await selltobuy1.receive()
     await buy1tobuy2.send(quote//2)
     buys_book = await buy2tobuy1.receive()
@@ -40,8 +42,9 @@ async def buyer2():
 
 async def seller():
     auto1 = await buy1tosell.receive()
-    # print(auto1.merk)
-    # print(auto1.kilometerstand)
+    auto2 = await buy1tosell.receive()
+    print(f"Auto1 is een {auto1.merk} en heeft kmstand {auto1.kilometerstand}")
+    print(f"Auto2 is een {auto2.merk} en heeft kmstand {auto2.kilometerstand}")
     await selltobuy1.send(60)
     await selltobuy2.send(60)
     response = await buy2tosell.receive()

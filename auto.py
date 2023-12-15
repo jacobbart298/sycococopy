@@ -27,11 +27,11 @@ def testen():
 # print(type(auto2))
 
 
-trueVal = True
-trueType = type(trueVal)
-print(trueType)
-trueVal2 = trueType(False)
-print(trueVal2)
+# trueVal = True
+# trueType = type(trueVal)
+# print(trueType)
+# trueVal2 = trueType(False)
+# print(trueVal2)
 
 
 # intVal = -2
