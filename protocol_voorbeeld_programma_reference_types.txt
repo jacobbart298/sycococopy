@@ -7,6 +7,7 @@ protocol:
     sequence:
         send Auto from buyer1 to seller
         send Auto from buyer1 to seller
+        send random from buyer1 to seller
         shuffle:
             send int from seller to buyer1
             send int from seller to buyer2

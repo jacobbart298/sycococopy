@@ -1,8 +1,7 @@
 from antlr4 import *
-import importlib
 import builtins
-import json
-import os
+import customtypes
+from inspect import isroutine
 from antlr4.tree.Trees import Trees
 from antlr4.tree.Tree import TerminalNodeImpl
 from antlrFiles.pythonicvisitor import PythonicVisitor
@@ -179,6 +178,28 @@ class FSMbuilder(PythonicVisitor):
             case _:
                 return type_obj(string)
 
+    # Transforms the given string to the corresponding type. If the string does not match with the string 
+    # representation of either a built-in type or a user-defined type, an IllegalTypeException is raised.
+    def convert_string_to_type(self, type_str):
+        # check if the given type is a built-in type
+        if hasattr(builtins, type_str):
+            type_obj = getattr(builtins, type_str)
+            # check if type_obj is a function
+            if isroutine(type_obj):
+                return type(type_obj)
+            else:
+                return type_obj
+        # check if the given type is a user-defined type
+        elif hasattr(customtypes, type_str):
+            type_obj = getattr(customtypes, type_str)
+            # check if type_obj is a function
+            if isroutine(type_obj):
+                return type(type_obj)
+            else:
+                return type_obj
+        # type not found: raise exception
+        else:
+            raise IllegalTypeException(type_str)
 
     def dump(self, node, depth=0, ruleNames=None):
         depthStr = '. ' * depth
@@ -189,24 +210,4 @@ class FSMbuilder(PythonicVisitor):
             for child in node.children:
                 self.dump(child, depth + 1, ruleNames)
 
-
-    # Note that this approach assumes that the type string you're trying to convert is a built-in type,
-    # and it relies on the name of the type being the same as the string representation of the type.
-    def convert_string_to_type(self, type_str):
-        # check if the given type is a built-in type
-        if hasattr(builtins, type_str):
-            return getattr(builtins, type_str)
-        else:
-            modules_path = os.path.abspath('modules.json')
-            with open(modules_path) as modules:
-                classNameToModulePath = json.load(modules)    
-            try:
-                modulePath = classNameToModulePath[type_str]
-                my_module = importlib.import_module(modulePath)
-                return getattr(my_module, type_str)
-            except KeyError:
-                raise IllegalTypeException(type_str)
-
-
 del PythonicParser
-

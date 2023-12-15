@@ -13,9 +13,9 @@ class IllegalTransitionException(SycococopyException):
         
     def __str__(self) -> str:
         failedTransition, itemFailedTransition = self.transitionHistory[len(self.transitionHistory)-1]
-        message: str = f"\nILLEGAL SEND: send {str(failedTransition.getType())}({str(itemFailedTransition)}) from {str(failedTransition.getSender())} to {str(failedTransition.getReceiver())} is not allowed at this point!\n"
+        message: str = f"\nILLEGAL SEND: send {str(failedTransition.getType().__name__)}({str(itemFailedTransition)}) from {str(failedTransition.getSender())} to {str(failedTransition.getReceiver())} is not allowed at this point!\n"
         count: int = 1
         for transition, item in self.transitionHistory:
-            message += f"\t{str(count)}: send {str(transition.getType())}({str(item)}) from {str(transition.getSender())} to {str(transition.getReceiver())}\n"
+            message += f"\t{str(count)}: send {str(transition.getType().__name__)}({str(item)}) from {str(transition.getSender())} to {str(transition.getReceiver())}\n"
             count += 1
         return message

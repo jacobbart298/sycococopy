@@ -1,7 +1,8 @@
-from auto import Auto, Opel
+from auto import Auto, Opel, testfunctie
 from src.core.instrumentation import Channel
 import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor
+from random import random
 
 buyer1 = "buyer1"
 buyer2 = "buyer2"
@@ -17,16 +18,14 @@ selltobuy1 = Channel(seller, buyer1, monitor)
 selltobuy2 = Channel(seller, buyer2, monitor)
  
 async def buyer1():
-    auto_opel = Opel(28573)
-    auto_mercedes = Auto("Mercedes", 348734)
-    await buy1tosell.send(auto_opel)
-    await buy1tosell.send(auto_mercedes)
+    await buy1tosell.send(Opel(28573))
+    await buy1tosell.send(Auto("Mercedes", 348734))
+    await buy1tosell.send(random)
     quote = await selltobuy1.receive()
     await buy1tobuy2.send(quote//2)
     buys_book = await buy2tobuy1.receive()
     if buys_book:
         await buy1tobuy2.send(quote//2)
-    print(f"Buyer1 finished, buys_book = {buys_book}")
 
 async def buyer2():
     cost = await selltobuy2.receive()
@@ -38,20 +37,17 @@ async def buyer2():
     else:
         await buy2tobuy1.send(False)
         await buy2tosell.send(False)
-    print("Buyer 2 finished")
 
 async def seller():
     auto1 = await buy1tosell.receive()
     auto2 = await buy1tosell.receive()
     print(f"Auto1 is een {auto1.merk} en heeft kmstand {auto1.kilometerstand}")
     print(f"Auto2 is een {auto2.merk} en heeft kmstand {auto2.kilometerstand}")
+    func = await buy1tosell.receive()
+    print(func())
     await selltobuy1.send(60)
     await selltobuy2.send(60)
-    response = await buy2tosell.receive()
-    if response:
-        print(f"Seller sold book for {response} Euro")
-    else:
-        print("Seller ended, no deal made")
+    await buy2tosell.receive()
 
 async def main():
     async with asyncio.TaskGroup() as task_group:
