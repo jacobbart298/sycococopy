@@ -173,7 +173,7 @@ class FSMbuilder(PythonicVisitor):
         # if the value is of a custom type, try to evaluate it
         if hasattr(customtypes, type_obj.__name__):
             try:
-                return eval(string, {}, customtypes.__dict__)
+                return eval(string, {}, {type_obj.__name__: type_obj})
             except TypeError:
                 raise IllegalValueException(string, type_obj.__name__)    
         # value is not of a custom type
