@@ -9,6 +9,7 @@ from src.core.fsm import FSM
 from src.core.transition import Transition, PredicateTransition
 from src.core.state import State
 from src.core.exceptions.illegaltypeexception import IllegalTypeException
+from src.core.exceptions.illegalvalueexception import IllegalValueException
 from itertools import permutations
 
 if "." in __name__:
@@ -169,34 +170,33 @@ class FSMbuilder(PythonicVisitor):
 
     # Transforms a string to a primitive value based on the given type.
     def stringToValue(self, type_obj: type, string: str) -> any:
-        match type_obj.__name__:
-            case "bool":
-                return string == "True"
-            case "str":
-                # remove the additional first and last quotes
-                return string[1:len(string)-1]
-            case _:
-                return type_obj(string)
+        # if the value is of a custom type, try to evaluate it
+        if hasattr(customtypes, type_obj.__name__):
+            try:
+                return eval(string, {}, customtypes.__dict__)
+            except TypeError:
+                raise IllegalValueException(string, type_obj.__name__)    
+        # value is not of a custom type
+        else:
+            match type_obj.__name__:
+                case "bool":
+                    return string == "True"
+                case "str":
+                    # remove the additional first and last quotes
+                    return string[1:len(string)-1]
+                case _:
+                    return type_obj(string)
+            
 
     # Transforms the given string to the corresponding type. If the string does not match with the string 
     # representation of either a built-in type or a user-defined type, an IllegalTypeException is raised.
     def convert_string_to_type(self, type_str):
         # check if the given type is a built-in type
         if hasattr(builtins, type_str):
-            type_obj = getattr(builtins, type_str)
-            # check if type_obj is a function
-            if isroutine(type_obj):
-                return type(type_obj)
-            else:
-                return type_obj
+            return getattr(builtins, type_str)
         # check if the given type is a user-defined type
         elif hasattr(customtypes, type_str):
-            type_obj = getattr(customtypes, type_str)
-            # check if type_obj is a function
-            if isroutine(type_obj):
-                return type(type_obj)
-            else:
-                return type_obj
+            return getattr(customtypes, type_str)
         # type not found: raise exception
         else:
             raise IllegalTypeException(type_str)

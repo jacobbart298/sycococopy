@@ -37,8 +37,8 @@ choice              : CHOICE block ;
 loop                : LOOP LOOPLABEL block ;
 repeat              : REPEAT WORD NL ;
 send                : ((SEND WORD FROM WORD TO WORD NL) 
-                      | (SEND WORD OPENINGBRACKET COMPARATOR PRIMITIVE CLOSINGBRACKET FROM WORD TO WORD NL) 
-                      | (SEND WORD OPENINGBRACKET (BOOLEAN | PRIMITIVE) CLOSINGBRACKET FROM WORD TO WORD NL)) ;
+                      | (SEND WORD OPENINGBRACKET COMPARATOR (PRIMITIVE | CONSTRUCTORSTRING) CLOSINGBRACKET FROM WORD TO WORD NL) 
+                      | (SEND WORD OPENINGBRACKET (BOOLEAN | PRIMITIVE | CONSTRUCTORSTRING) CLOSINGBRACKET FROM WORD TO WORD NL)) ;
 close               : CLOSE WORD TO WORD NL;
 block               : INDENT expression+ DEDENT ;
 roles               : ROLES roleblock ;
@@ -63,6 +63,7 @@ CLOSE               : 'close' ;
 LOOPLABEL           :  WORD ':';
 OPENINGBRACKET      : '(' ;
 CLOSINGBRACKET      : ')' ;
+COMMA               : ',' ;
 BOOLEAN             : ('True' | 'False' ) ;
 PRIMITIVE           : (STRING | INTEGER | FLOAT);
 INTEGER             : [-]?[1-9][0-9]* | [0] ;
@@ -70,5 +71,6 @@ STRING              : '"' ( '\\"' | . )*? '"' ;
 FLOAT               : [-]?[1-9]+ '.' [0-9]+ | [-]?[0] '.' [0-9]+ ;
 COMPARATOR          : ('>' | '<' | '<=' | '>=' | '!=' | '==') ;
 WORD                : ([a-z] | [A-Z] | [0-9] | '_' )+ ;
+CONSTRUCTORSTRING   : WORD OPENINGBRACKET (((PRIMITIVE | BOOLEAN) (COMMA (PRIMITIVE | BOOLEAN))*) | ) CLOSINGBRACKET ;
 WS                  : (' ') -> skip;
 NL                  : ('\r'? '\n' ' '*); 
