@@ -4,7 +4,7 @@ from src.core.instrumentation import Queue
 import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor
 
-specification_path = r".\tree_monitor_protocol.txt"
+specification_path = r".\protocol_tree_no_predicates.txt"
 
 def writeSpecification(level: int) -> None:
     indent = "\t"
