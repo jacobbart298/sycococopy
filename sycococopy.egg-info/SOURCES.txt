@@ -8,11 +8,13 @@ antlrFiles/__init__.py
 antlrFiles/pythonicSyntaxErrorException.py
 antlrFiles/pythonicvisitor.py
 benchmarks/__init__.py
+benchmarks/benchmark_monitor.py
 benchmarks/config.py
+benchmarks/parser_benchmark.py
 benchmarks/ring_benchmarks/__init__.py
 benchmarks/ring_benchmarks/ring_free.py
-benchmarks/ring_benchmarks/ring_monitor.py
-benchmarks/ring_benchmarks/ring_predicate_monitor.py
+benchmarks/ring_benchmarks/ring_no_predicates.py
+benchmarks/ring_benchmarks/ring_with_predicates.py
 src/__init__.py
 src/core/FSMbuilder.py
 src/core/__init__.py

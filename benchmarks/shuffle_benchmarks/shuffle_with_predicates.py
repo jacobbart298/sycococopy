@@ -4,7 +4,7 @@ from src.core.instrumentation import Queue
 import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor
 
-specification_path = r".\ring_predicates.txt"
+specification_path = r".\protocol_ring_with_predicates.txt"
 
 def writeSpecification(coroutineCount: int) -> None:
     specification : str = ""
@@ -59,11 +59,10 @@ async def main(coroutineCount: int):
         asyncio.link(sendQueue, sender, receiver, monitor)
         tg.create_task(worker(receiveQueue, sendQueue))
 
-
-writeSpecification(coroutineCount)
-
 async def runBenchmark() -> None:
     await main(coroutineCount)
 
-runner = pyperf.Runner()
-runner.bench_async_func(f"Benchmark {coroutineCount}", runBenchmark)
+if __name__ == '__main__':
+    writeSpecification(coroutineCount)
+    runner = pyperf.Runner()
+    runner.bench_async_func(f"Coroutine count: {coroutineCount}", runBenchmark)

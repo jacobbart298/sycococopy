@@ -4,7 +4,7 @@ from src.core.instrumentation import Queue
 import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor
 
-specification_path = r".\ring_monitor_protocol.txt"
+specification_path = r".\protocol_ring_with_predicates.txt"
 
 def writeSpecification(coroutineCount: int) -> None:
     specification : str = ""
@@ -19,10 +19,10 @@ def writeSpecification(coroutineCount: int) -> None:
     specification += "\tsequence:\n"
     # write sends
     for i in range(coroutineCount-1):
-        specification += f"\t\tsend bool from coroutine{i} to coroutine{i+1}\n"
-    specification += f"\t\tsend bool from coroutine{coroutineCount-1} to coroutine{0}"
+        specification += f"\t\tsend bool(True) from coroutine{i} to coroutine{i+1}\n"
+    specification += f"\t\tsend bool(True) from coroutine{coroutineCount-1} to coroutine{0}"
 
-    with open(r'.\ring_monitor_protocol.txt', 'w') as spec:
+    with open(specification_path, 'w') as spec:
         spec.write(specification)
 
 async def worker(receiveQueue: Queue, sendQueue: Queue) -> None:
@@ -59,13 +59,10 @@ async def main(coroutineCount: int):
         asyncio.link(sendQueue, sender, receiver, monitor)
         tg.create_task(worker(receiveQueue, sendQueue))
 
-
-writeSpecification(coroutineCount)
-# initialState = list(monitor.fsm.states)[0]
-
 async def runBenchmark() -> None:
-    # monitor.fsm.states = {initialState}
     await main(coroutineCount)
 
-runner = pyperf.Runner()
-runner.bench_async_func(f"Benchmark {coroutineCount}", runBenchmark)
+if __name__ == '__main__':
+    writeSpecification(coroutineCount)
+    runner = pyperf.Runner()
+    runner.bench_async_func(f"Coroutine count: {coroutineCount}", runBenchmark)

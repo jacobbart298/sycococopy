@@ -31,4 +31,4 @@ async def runBenchmark() -> None:
     await main(coroutineCount)
 
 runner = pyperf.Runner()
-runner.bench_async_func(f"Benchmark {coroutineCount}", runBenchmark)
+runner.bench_async_func(f"Coroutine count: {coroutineCount}", runBenchmark)
