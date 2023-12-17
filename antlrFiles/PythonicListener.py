@@ -1,4 +1,4 @@
-# Generated from Pythonic.g4 by ANTLR 4.13.1
+# Generated from ./Pythonic.g4 by ANTLR 4.13.1
 from antlr4 import *
 if "." in __name__:
     from .PythonicParser import PythonicParser

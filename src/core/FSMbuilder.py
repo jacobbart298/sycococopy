@@ -1,7 +1,6 @@
 from antlr4 import *
 import builtins
 import customtypes
-from inspect import isroutine
 from antlr4.tree.Trees import Trees
 from antlr4.tree.Tree import TerminalNodeImpl
 from antlrFiles.pythonicvisitor import PythonicVisitor

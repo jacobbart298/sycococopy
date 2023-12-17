@@ -1,4 +1,5 @@
 import unittest
+import builtins
 from src.core.fsm import FSM
 from src.core.state import State
 from src.core.transition import Transition, PredicateTransition
@@ -20,7 +21,7 @@ class TestFSM(unittest.TestCase):
 
         fsm = FSM()
 
-        float_A_B = Transition("float", "A", "B")
+        float_A_B = Transition(float, "A", "B")
 
         transitionMade = fsm.makeTransition(float_A_B, -42.1337)
         self.assertFalse(transitionMade)
@@ -34,8 +35,8 @@ class TestFSM(unittest.TestCase):
         q0 = fsm.getStates()[0]
         q1 = State()
 
-        bool_A_B = Transition("bool", "A", "B")
-        p_bool_A_B_True = PredicateTransition("bool", "A", "B", "==", True)
+        bool_A_B = Transition(bool, "A", "B")
+        p_bool_A_B_True = PredicateTransition(bool, "A", "B", "==", True)
 
         q0.addTransitionToState(p_bool_A_B_True, q1)
 
@@ -52,9 +53,9 @@ class TestFSM(unittest.TestCase):
         q1 = State()
         q2 = State()
 
-        int_A_B = Transition("int", "A", "B")
-        p_bool_A_B_True = PredicateTransition("bool", "A", "B", "==", True)
-        p_bool_A_B_False = PredicateTransition("bool", "A", "B", "==", False)
+        int_A_B = Transition(int, "A", "B")
+        p_bool_A_B_True = PredicateTransition(bool, "A", "B", "==", True)
+        p_bool_A_B_False = PredicateTransition(bool, "A", "B", "==", False)
 
         q0.addTransitionToState(p_bool_A_B_True, q1)
         q0.addTransitionToState(p_bool_A_B_False, q2)
@@ -70,8 +71,8 @@ class TestFSM(unittest.TestCase):
 
         q0 = fsm.getStates()[0]
 
-        str_A_B = Transition("str", "A", "B")
-        p_str_A_B = PredicateTransition("str", "A", "B", "==", "hello world")
+        str_A_B = Transition(str, "A", "B")
+        p_str_A_B = PredicateTransition(str, "A", "B", "==", "hello world")
 
         q0.addTransitionToState(p_str_A_B, q0)
 
@@ -88,8 +89,8 @@ class TestFSM(unittest.TestCase):
         q0 = fsm.getStates()[0]
         q1 = State()
 
-        bool_A_B = Transition("bool", "A", "B")
-        p_bool_A_B = PredicateTransition("bool", "A", "B", "==", False)
+        bool_A_B = Transition(bool, "A", "B")
+        p_bool_A_B = PredicateTransition(bool, "A", "B", "==", False)
 
         q0.addTransitionToState(p_bool_A_B, q1)
 
@@ -107,9 +108,9 @@ class TestFSM(unittest.TestCase):
         q1 = State()
         q2 = State()
 
-        int_A_B = Transition("int", "A", "B")
-        p_int_A_B_1024 = PredicateTransition("int", "A", "B", ">=", 1024)
-        p_int_A_B_2048 = PredicateTransition("int", "A", "B", ">=", 2048)
+        int_A_B = Transition(int, "A", "B")
+        p_int_A_B_1024 = PredicateTransition(int, "A", "B", ">=", 1024)
+        p_int_A_B_2048 = PredicateTransition(int, "A", "B", ">=", 2048)
 
         q0.addTransitionToState(p_int_A_B_1024, q1)
         q0.addTransitionToState(p_int_A_B_2048, q2)
@@ -128,9 +129,9 @@ class TestFSM(unittest.TestCase):
         q1 = State()
         q2 = State()
 
-        int_A_B = Transition("int", "A", "B")
-        p_int_A_B_1024 = PredicateTransition("int", "A", "B", ">", 1024)
-        p_int_A_B_2048 = PredicateTransition("int", "A", "B", ">", 2048)
+        int_A_B = Transition(int, "A", "B")
+        p_int_A_B_1024 = PredicateTransition(int, "A", "B", ">", 1024)
+        p_int_A_B_2048 = PredicateTransition(int, "A", "B", ">", 2048)
 
         q0.addTransitionToState(p_int_A_B_1024, q1)
         q0.addTransitionToState(p_int_A_B_2048, q2)
@@ -150,10 +151,10 @@ class TestFSM(unittest.TestCase):
         q1 = State()
         q2 = State()
 
-        bool_B_C = Transition("bool", "B", "C")
-        int_A_B = Transition("int", "A", "B")
-        p_int_A_B_169 = PredicateTransition("int", "A", "B", "<", 169)
-        p_int_A_B_42 = PredicateTransition("int", "A", "B", ">", 42)
+        bool_B_C = Transition(bool, "B", "C")
+        int_A_B = Transition(int, "A", "B")
+        p_int_A_B_169 = PredicateTransition(int, "A", "B", "<", 169)
+        p_int_A_B_42 = PredicateTransition(int, "A", "B", ">", 42)
 
         q0.addTransitionToState(p_int_A_B_169, q1)
         q0.addTransitionToState(p_int_A_B_42, q2)
@@ -179,12 +180,12 @@ class TestFSM(unittest.TestCase):
         q3 = State()
         q4 = State()
 
-        str_C_D = Transition("str", "C", "D")
-        int_A_B = Transition("int", "A", "B")
-        p_int_A_B_169 = PredicateTransition("int", "A", "B", "<", 169)
-        p_int_A_B_42 = PredicateTransition("int", "A", "B", ">", 42)
-        p_bool_B_C_True = PredicateTransition("bool", "B", "C", "==", True)
-        p_bool_B_C_False= PredicateTransition("bool", "B", "C", "==", True)
+        str_C_D = Transition(str, "C", "D")
+        int_A_B = Transition(int, "A", "B")
+        p_int_A_B_169 = PredicateTransition(int, "A", "B", "<", 169)
+        p_int_A_B_42 = PredicateTransition(int, "A", "B", ">", 42)
+        p_bool_B_C_True = PredicateTransition(bool, "B", "C", "==", True)
+        p_bool_B_C_False= PredicateTransition(bool, "B", "C", "==", True)
 
         q0.addTransitionToState(p_int_A_B_169, q1)
         q0.addTransitionToState(p_int_A_B_42, q2)
@@ -212,14 +213,14 @@ class TestFSM(unittest.TestCase):
         q3 = State()
         q4 = State()
 
-        str_C_D = Transition("str", "C", "D")
-        int_A_B = Transition("int", "A", "B")
-        p_int_A_B_169 = PredicateTransition("int", "A", "B", "<", 169)
-        p_int_A_B_42 = PredicateTransition("int", "A", "B", ">", 42)
-        p_bool_B_C_True = PredicateTransition("bool", "B", "C", "==", True)
-        p_bool_B_C_False= PredicateTransition("bool", "B", "C", "==", True)
-        p_str_B_C_hello = PredicateTransition("str", "B", "C", "==", "hello")
-        p_str_B_C_world = PredicateTransition("str", "B", "C", "==", "world")
+        str_C_D = Transition(str, "C", "D")
+        int_A_B = Transition(int, "A", "B")
+        p_int_A_B_169 = PredicateTransition(int, "A", "B", "<", 169)
+        p_int_A_B_42 = PredicateTransition(int, "A", "B", ">", 42)
+        p_bool_B_C_True = PredicateTransition(bool, "B", "C", "==", True)
+        p_bool_B_C_False= PredicateTransition(bool, "B", "C", "==", True)
+        p_str_B_C_hello = PredicateTransition(str, "B", "C", "==", "hello")
+        p_str_B_C_world = PredicateTransition(str, "B", "C", "==", "world")
 
         q0.addTransitionToState(p_int_A_B_169, q1)
         q0.addTransitionToState(p_int_A_B_42, q2)
@@ -250,14 +251,14 @@ class TestFSM(unittest.TestCase):
         q4 = State()
         q5 = State()
 
-        int_A_B = Transition("int", "A", "B")
-        p_int_A_B_10 = PredicateTransition("int", "A", "B", ">", 10)
-        p_int_A_B_20 = PredicateTransition("int", "A", "B", ">", 20)
-        p_int_A_B_30 = PredicateTransition("int", "A", "B", ">", 30)
+        int_A_B = Transition(int, "A", "B")
+        p_int_A_B_10 = PredicateTransition(int, "A", "B", ">", 10)
+        p_int_A_B_20 = PredicateTransition(int, "A", "B", ">", 20)
+        p_int_A_B_30 = PredicateTransition(int, "A", "B", ">", 30)
 
-        int_B_C = Transition("int", "B", "C")
-        p_int_B_C = PredicateTransition("int", "B", "C", "==", 42)
-        p_float_B_C = PredicateTransition("float", "B", "C", "<", 13.37)
+        int_B_C = Transition(int, "B", "C")
+        p_int_B_C = PredicateTransition(int, "B", "C", "==", 42)
+        p_float_B_C = PredicateTransition(float, "B", "C", "<", 13.37)
 
         q0.addTransitionToState(p_int_A_B_10, q1)
         q0.addTransitionToState(p_int_A_B_20, q2)
@@ -288,13 +289,13 @@ class TestFSM(unittest.TestCase):
         q3 = State()
         q4 = State()
 
-        int_A_B = Transition("int", "A", "B")
-        p_int_A_B_10 = PredicateTransition("int", "A", "B", ">", 10)
-        p_int_A_B_20 = PredicateTransition("int", "A", "B", ">", 20)
-        p_int_A_B_30 = PredicateTransition("int", "A", "B", ">", 30)
+        int_A_B = Transition(int, "A", "B")
+        p_int_A_B_10 = PredicateTransition(int, "A", "B", ">", 10)
+        p_int_A_B_20 = PredicateTransition(int, "A", "B", ">", 20)
+        p_int_A_B_30 = PredicateTransition(int, "A", "B", ">", 30)
 
-        bool_B_C = Transition("bool", "B", "C")
-        p_bool_B_C = PredicateTransition("bool", "B", "C", "==", True)
+        bool_B_C = Transition(bool, "B", "C")
+        p_bool_B_C = PredicateTransition(bool, "B", "C", "==", True)
 
         q0.addTransitionToState(p_int_A_B_10, q1)
         q0.addTransitionToState(p_int_A_B_20, q2)
@@ -325,10 +326,10 @@ class TestFSM(unittest.TestCase):
         q3 = State()
         q4 = State()
 
-        bool_A_B = Transition("bool", "A", "B")
-        p_bool_A_B_True = PredicateTransition("bool", "A", "B", "==", True)
-        int_B_C = Transition("int", "B", "C")
-        p_int_B_C_42 = PredicateTransition("int", "B", "C", "==", 42)
+        bool_A_B = Transition(bool, "A", "B")
+        p_bool_A_B_True = PredicateTransition(bool, "A", "B", "==", True)
+        int_B_C = Transition(int, "B", "C")
+        p_int_B_C_42 = PredicateTransition(int, "B", "C", "==", 42)
 
         q0.addTransitionToState(bool_A_B, q1)
         q0.addTransitionToState(p_bool_A_B_True, q2)
@@ -361,13 +362,13 @@ class TestFSM(unittest.TestCase):
         q6 = State()
         q7 = State()
 
-        int_B_C = Transition("int", "B", "C")
-        bool_A_B = Transition("bool", "A", "B")
-        bool_B_C = Transition("bool", "B", "C")
-        p_int_B_C_42 = PredicateTransition("int", "B", "C", "==", 42)
-        p_bool_A_B_True = PredicateTransition("bool", "A", "B", "==", True)
-        p_bool_B_C_False = PredicateTransition("bool", "B", "C", "==", False)
-        p_bool_B_C_True = PredicateTransition("bool", "B", "C", "==", True)
+        int_B_C = Transition(int, "B", "C")
+        bool_A_B = Transition(bool, "A", "B")
+        bool_B_C = Transition(bool, "B", "C")
+        p_int_B_C_42 = PredicateTransition(int, "B", "C", "==", 42)
+        p_bool_A_B_True = PredicateTransition(bool, "A", "B", "==", True)
+        p_bool_B_C_False = PredicateTransition(bool, "B", "C", "==", False)
+        p_bool_B_C_True = PredicateTransition(bool, "B", "C", "==", True)
 
         q0.addTransitionToState(bool_A_B, q1)
         q0.addTransitionToState(p_bool_A_B_True, q2)
@@ -402,12 +403,12 @@ class TestFSM(unittest.TestCase):
         q6 = State()
         q7 = State()
 
-        bool_A_B = Transition("bool", "A", "B")
-        p_bool_A_B_True = PredicateTransition("bool", "A", "B", "==", True)
-        int_B_C = Transition("int", "B", "C")
-        p_int_B_C_42 = PredicateTransition("int", "B", "C", "==", 42)
-        p_bool_B_C_False = PredicateTransition("bool", "B", "C", "==", False)
-        p_bool_B_C_True = PredicateTransition("bool", "B", "C", "==", True)
+        bool_A_B = Transition(bool, "A", "B")
+        p_bool_A_B_True = PredicateTransition(bool, "A", "B", "==", True)
+        int_B_C = Transition(int, "B", "C")
+        p_int_B_C_42 = PredicateTransition(int, "B", "C", "==", 42)
+        p_bool_B_C_False = PredicateTransition(bool, "B", "C", "==", False)
+        p_bool_B_C_True = PredicateTransition(bool, "B", "C", "==", True)
 
         q0.addTransitionToState(bool_A_B, q1)
         q0.addTransitionToState(p_bool_A_B_True, q2)
@@ -438,8 +439,8 @@ class TestFSM(unittest.TestCase):
         q0 = fsm.getStates()[0]
         q1 = State()
 
-        bool_A_B = Transition("bool", "A", "B")
-        p_bool_A_B = PredicateTransition("bool", "A", "B", "==", True)
+        bool_A_B = Transition(bool, "A", "B")
+        p_bool_A_B = PredicateTransition(bool, "A", "B", "==", True)
 
         q0.addTransitionToState(p_bool_A_B, q1)
 
