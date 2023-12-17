@@ -1,4 +1,4 @@
-coroutineCount = 2
+coroutineCount = 1000
 level = 12
-shuffleCount = 10
+starWorkers = 9
 loopCount = 8192

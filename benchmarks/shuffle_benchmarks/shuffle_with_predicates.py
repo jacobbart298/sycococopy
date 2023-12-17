@@ -1,68 +1,67 @@
 import pyperf
-from benchmarks.config import coroutineCount
+from benchmarks.config import starWorkers
 from src.core.instrumentation import Queue
 import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor
 
-specification_path = r".\protocol_ring_with_predicates.txt"
+'''
+A benchmark that performs one-to-many send operations (star send).
+The order predetermined to ensure repeatability of the benchmark.
+This tests the sycococopy shuffle operator with predicates. 
+'''
 
-def writeSpecification(coroutineCount: int) -> None:
+specification_path = r".\protocol_shuffle_with_predicates.txt"
+
+def writeSpecification(workerCount: int) -> None:
+    indent = "\t"
     specification : str = ""
     # write role header
     specification += "roles:\n"
+    specification += indent + "main\n"
     # write roles
-    for i in range(coroutineCount):
-        specification += f"\tcoroutine{i}\n"
+    for i in range(1, workerCount+1):
+        specification += indent + f"worker{i}\n"
+        # print(f"Worker {i} created")
     # write protocol header
     specification += "\nprotocol:\n"
     # write sequence expression
-    specification += "\tsequence:\n"
+    specification += indent + "shuffle:\n"
     # write sends
-    for i in range(coroutineCount-1):
-        specification += f"\t\tsend bool(True) from coroutine{i} to coroutine{i+1}\n"
-    specification += f"\t\tsend bool(True) from coroutine{coroutineCount-1} to coroutine{0}"
+    for i in range(1, workerCount+1):
+        # print(f"send from main to worker {i} in protocol")
+        specification += 2*indent + f'send str(>"C") from main to worker{i}\n'
 
     with open(specification_path, 'w') as spec:
         spec.write(specification)
+        spec.close()
 
-async def worker(receiveQueue: Queue, sendQueue: Queue) -> None:
-    await receiveQueue.get()
-    await sendQueue.put(True)
-
-async def initiator(receiveQueue: Queue, sendQueue: Queue) -> None:
-    await sendQueue.put(True)
+async def worker(receiveQueue: Queue) -> None:
     await receiveQueue.get()
 
-async def main(coroutineCount: int):
+async def center(sendQueues: list[Queue], workerCount: int) -> None:
+    for i in range(workerCount-1, -1, -1):
+        await sendQueues[i].put("Check this out!")
+
+async def main(workerCount: int) -> None:
     monitor = Monitor(specification_path)
     async with asyncio.TaskGroup() as tg:
-        sender = "coroutine0"
-        receiver = "coroutine1"
-        sendQueue = Queue()
-        initialReceiveQueue = Queue()
-        asyncio.link(sendQueue, sender, receiver, monitor)
-        # create first worker
-        tg.create_task(initiator(initialReceiveQueue, sendQueue))
-        # create second worker - penultimate worker
-        for i in range(1, coroutineCount-1):
-            sender = f"coroutine{i}"
-            receiver = f"coroutine{i + 1}"
-            receiveQueue = sendQueue
-            sendQueue = Queue()
-            asyncio.link(sendQueue, sender, receiver, monitor)            
-            tg.create_task(worker(receiveQueue, sendQueue))
-        # create last worker
-        sender = f"coroutine{coroutineCount-1}"
-        receiver = "coroutine0"
-        receiveQueue = sendQueue
-        sendQueue = initialReceiveQueue
-        asyncio.link(sendQueue, sender, receiver, monitor)
-        tg.create_task(worker(receiveQueue, sendQueue))
+        sender: str = "main"
+        queueList: list[Queue] = []
+        for i in range(1, workerCount+1):
+            receiver = f"worker{i}"
+            queue = Queue()
+            queueList.append(queue)
+            asyncio.link(queue, sender, receiver, monitor)           
+            tg.create_task(worker(queue))
+        tg.create_task(center(queueList, workerCount))
+
+# initialState = list(monitor.fsm.states)[0]
 
 async def runBenchmark() -> None:
-    await main(coroutineCount)
+    # monitor.fsm.states = {initialState}
+    await main(starWorkers)
 
 if __name__ == '__main__':
-    writeSpecification(coroutineCount)
+    writeSpecification(starWorkers)
     runner = pyperf.Runner()
-    runner.bench_async_func(f"Coroutine count: {coroutineCount}", runBenchmark)
+    runner.bench_async_func(f"Worker count: {starWorkers}", runBenchmark)

@@ -1,0 +1,23 @@
+roles:
+	main
+	worker1
+	worker2
+	worker3
+	worker4
+	worker5
+	worker6
+	worker7
+	worker8
+	worker9
+
+protocol:
+	sequence:
+		send str from main to worker1
+		send str from main to worker2
+		send str from main to worker3
+		send str from main to worker4
+		send str from main to worker5
+		send str from main to worker6
+		send str from main to worker7
+		send str from main to worker8
+		send str from main to worker9
