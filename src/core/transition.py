@@ -1,5 +1,6 @@
 from __future__ import annotations
 import builtins
+from src.core.exceptions.comparatornotimplementedexception import ComparatorNotImplementedException
 
 '''
 The transition module offers the Transition and PredicateTransition classes that represent a transition between two
@@ -63,17 +64,41 @@ class PredicateTransition(Transition):
             return False        
         match self.comparator:
             case '<':
-                return value < self.value
+                verdict = value.__lt__(self.value)
+                if verdict == NotImplemented:
+                    raise ComparatorNotImplementedException('<', type(value))
+                else:
+                    return verdict
             case '<=':
-                return value <= self.value
+                verdict = value.__le__(self.value)
+                if verdict == NotImplemented:
+                    raise ComparatorNotImplementedException('<=', type(value))
+                else:
+                    return verdict
             case '>':
-                return value > self.value
+                verdict = value.__gt__(self.value)
+                if verdict == NotImplemented:
+                    raise ComparatorNotImplementedException('>', type(value))
+                else:
+                    return verdict
             case '>=':
-                return value >= self.value
+                verdict = value.__ge__(self.value)
+                if verdict == NotImplemented:
+                    raise ComparatorNotImplementedException('>=', type(value))
+                else:
+                    return verdict
             case '!=':
-                return value != self.value
+                verdict = value.__ne__(self.value)
+                if verdict == NotImplemented:
+                    raise ComparatorNotImplementedException('!=', type(value))
+                else:
+                    return verdict
             case '==':
-                return value == self.value
+                verdict = value.__eq__(self.value)
+                if verdict == NotImplemented:
+                    raise ComparatorNotImplementedException('==', type(value))
+                else:
+                    return verdict
 
     # Checks if the given object is a PredicateTransition equal to this PredicateTransition. 
     def __eq__(self, other: any) -> bool:
