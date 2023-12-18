@@ -63,7 +63,6 @@ async def main(depth: int):
         queueBtoA = Queue()
         asyncio.link(queueAtoB, workerA, workerB, monitor)
         asyncio.link(queueBtoA, workerB, workerA, monitor)
-        # create first worker
         tg.create_task(A(queueBtoA, queueAtoB, depth))
         tg.create_task(B(queueAtoB, queueBtoA, depth))
 

@@ -1,8 +1,9 @@
 import pyperf
 from benchmarks.config import coroutineCount
-from src.core.instrumentation import Queue
-import src.core.instrumentation as asyncio
-from src.core.monitor import Monitor
+from src.core.instrumentation import Channel
+import asyncio
+from benchmarks.benchmarkmethods import buildParseTree
+from benchmarks.benchmark_monitor import BenchmarkMonitor
 
 specification_path = r".\protocol_ring_with_predicates.txt"
 
@@ -25,47 +26,41 @@ def writeSpecification(coroutineCount: int) -> None:
     with open(specification_path, 'w') as spec:
         spec.write(specification)
 
-async def worker(receiveQueue: Queue, sendQueue: Queue) -> None:
-    await receiveQueue.get()
-    await sendQueue.put(True)
+async def worker(receiveChannel: Channel, sendChannel: Channel) -> None:
+    await receiveChannel.receive()
+    await sendChannel.send(True)
 
-async def initiator(receiveQueue: Queue, sendQueue: Queue) -> None:
-    await sendQueue.put(True)
-    await receiveQueue.get()
+async def initiator(receiveChannel: Channel, sendChannel: Channel) -> None:
+    await sendChannel.send(True)
+    await receiveChannel.receive()
 
 async def main(coroutineCount: int):
+    monitor = BenchmarkMonitor(parseTree)
     async with asyncio.TaskGroup() as tg:
-        sender = "coroutine0"
+        initialSender = "coroutine0"
         receiver = "coroutine1"
-        sendQueue = Queue()
-        initialReceiveQueue = Queue()
-        asyncio.link(sendQueue, sender, receiver, monitor)
-        # create first worker
-        tg.create_task(initiator(initialReceiveQueue, sendQueue))
-        # create second worker - penultimate worker
+        finalSender = f"coroutine{coroutineCount-1}"
+        sendChannel = Channel(initialSender, receiver, monitor)
+        initialReceiveChannel = Channel(finalSender, initialSender, monitor)
+        tg.create_task(initiator(initialReceiveChannel, sendChannel))
         for i in range(1, coroutineCount-1):
             sender = f"coroutine{i}"
             receiver = f"coroutine{i + 1}"
-            receiveQueue = sendQueue
-            sendQueue = Queue()
-            asyncio.link(sendQueue, sender, receiver, monitor)            
-            tg.create_task(worker(receiveQueue, sendQueue))
+            receiveChannel = sendChannel
+            sendChannel = Channel(sender, receiver, monitor)          
+            tg.create_task(worker(receiveChannel, sendChannel))
         # create last worker
         sender = f"coroutine{coroutineCount-1}"
         receiver = "coroutine0"
-        receiveQueue = sendQueue
-        sendQueue = initialReceiveQueue
-        asyncio.link(sendQueue, sender, receiver, monitor)
-        tg.create_task(worker(receiveQueue, sendQueue))
-
-monitor = Monitor(specification_path)
-initialState = list(monitor.fsm.states)[0]
+        receiveChannel = sendChannel
+        sendChannel = initialReceiveChannel
+        tg.create_task(worker(receiveChannel, sendChannel))
 
 async def runBenchmark() -> None:
-    monitor.fsm.states = {initialState}
     await main(coroutineCount)
 
 if __name__ == '__main__':
     writeSpecification(coroutineCount)
+    parseTree = buildParseTree(specification_path)
     runner = pyperf.Runner()
     runner.bench_async_func(f"Coroutine count: {coroutineCount}", runBenchmark)

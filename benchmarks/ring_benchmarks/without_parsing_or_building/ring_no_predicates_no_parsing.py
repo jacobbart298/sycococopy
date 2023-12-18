@@ -35,7 +35,6 @@ async def initiator(receiveQueue: Queue, sendQueue: Queue) -> None:
     await receiveQueue.get()
 
 async def main(coroutineCount: int):
-    monitor = Monitor(specification_path)
     async with asyncio.TaskGroup() as tg:
         sender = "coroutine0"
         receiver = "coroutine1"
@@ -60,14 +59,13 @@ async def main(coroutineCount: int):
         asyncio.link(sendQueue, sender, receiver, monitor)
         tg.create_task(worker(receiveQueue, sendQueue))
 
-
-# initialState = list(monitor.fsm.states)[0]
-
 async def runBenchmark() -> None:
-    # monitor.fsm.states = {initialState}
+    monitor.fsm.states = {initialState}
     await main(coroutineCount)
 
 if __name__ == '__main__':
     writeSpecification(coroutineCount)
+    monitor = Monitor(specification_path)
+    initialState = list(monitor.fsm.states)[0]
     runner = pyperf.Runner()
     runner.bench_async_func(f"Coroutine count: {coroutineCount}", runBenchmark)

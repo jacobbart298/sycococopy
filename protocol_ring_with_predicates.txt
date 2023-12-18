@@ -1,0 +1,8 @@
+roles:
+	coroutine0
+	coroutine1
+
+protocol:
+	sequence:
+		send bool(True) from coroutine0 to coroutine1
+		send bool(True) from coroutine1 to coroutine0
