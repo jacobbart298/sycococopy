@@ -1,4 +1,4 @@
-coroutineCount = 20000
-level = 12
-starWorkers = 9
-loopCount = 8192
+coroutineCount = 2
+level = 2
+starWorkers = 2
+loopCount = 2

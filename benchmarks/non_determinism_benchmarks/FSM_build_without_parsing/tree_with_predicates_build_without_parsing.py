@@ -1,23 +1,18 @@
 import pyperf
-import cProfile
-import re
+from benchmarks.benchmarkmethods import buildParseTree
 from benchmarks.config import level
 from src.core.instrumentation import Queue
 import src.core.instrumentation as asyncio
-from src.core.monitor import Monitor
+from benchmarks.benchmark_monitor import BenchmarkMonitor
 
-specification_path = r".\tree_predicate_monitor_protocol.txt"
+specification_path = r".\protocol_tree_with_predicates.txt"
 
 def writeSpecification(level: int) -> None:
     indent = "\t"
-    # write role header
     specification = "roles:\n"
-    # write roles
     specification += indent + "A\n"
     specification += indent + "B\n"
-    # write protocol header
     specification += "\nprotocol:\n"
-    # write sequence expression
     specification += indent + "choice:\n"
     specification += writeProtocol(1, 2, level, True)
     specification += writeProtocol(1, 2, level, False)
@@ -25,6 +20,7 @@ def writeSpecification(level: int) -> None:
     with open(specification_path, 'w') as spec:
         spec.write(specification)
 
+# recursive method to write increasingly deep choice protocol with binary tree result
 def writeProtocol(depth: int, indentLevel: int, maxDepth: int, value: bool) -> str:
     indent = "\t"
     if depth == maxDepth and depth % 2 == 1:
@@ -59,7 +55,7 @@ async def B(queueAtoB: Queue, queueBtoA: Queue, level: int) -> None:
         await queueAtoB.get()
 
 async def main(depth: int):
-    # monitor = Monitor(specification_path)
+    monitor = BenchmarkMonitor(parseTree)
     async with asyncio.TaskGroup() as tg:
         workerA = "A"
         workerB = "B"
@@ -67,21 +63,13 @@ async def main(depth: int):
         queueBtoA = Queue()
         asyncio.link(queueAtoB, workerA, workerB, monitor)
         asyncio.link(queueBtoA, workerB, workerA, monitor)
-        # create first worker
         tg.create_task(A(queueBtoA, queueAtoB, depth))
         tg.create_task(B(queueAtoB, queueBtoA, depth))
 
-
-writeSpecification(level)
-monitor = Monitor(specification_path)
-initialState = list(monitor.fsm.states)[0]
-
-
 async def runBenchmark() -> None:
-    monitor.fsm.states = {initialState}
     await main(level)
 
+writeSpecification(level)
+parseTree = buildParseTree(specification_path)
 runner = pyperf.Runner()
 runner.bench_async_func(f"Benchmark {level}", runBenchmark)
-
-# cProfile.run('re.compile("main|100")')

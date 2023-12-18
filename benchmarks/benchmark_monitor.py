@@ -1,4 +1,3 @@
-from antlr4 import SpecificationContext
 from src.core.monitor import Monitor
 from src.core.transition import Transition
 from src.core.fsmBuilder import FSMbuilder
@@ -7,7 +6,7 @@ from src.core.exceptions.rolemismatchexception import RoleMismatchException
 
 class BenchmarkMonitor(Monitor):
     
-    def __init__(self, tree: SpecificationContext):
+    def __init__(self, tree):
         self.halted: bool = False
         self.setExceptionHook()
         self.transitionHistory: list[tuple[Transition, any]] = []
