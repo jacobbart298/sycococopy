@@ -17,7 +17,7 @@ selltobuy1 = Channel(seller, buyer1, monitor)
 selltobuy2 = Channel(seller, buyer2, monitor)
  
 async def buyer1():
-    await buy1tosell.send(Auto("Tesla", 1000))
+    await buy1tosell.send(Auto("Tesla", 2000))
     await buy1tosell.send(Auto("Mercedes", 348734))
     quote = await selltobuy1.receive()
     await buy1tobuy2.send(quote//2)

@@ -134,23 +134,45 @@ class FSMbuilder(PythonicVisitor):
     # with or without a comparator. Adds the sender and receiver to the used roles set.
     def visitSend(self, ctx: PythonicParser.SendContext) -> None:
 
-        # build transition send without predicate
+        # build regular transition send without predicate
         if (ctx.getChild(2).getText() == 'from'):
             type: any = self.convert_string_to_type(ctx.getChild(1).getText())
             sender: str = ctx.getChild(3).getText()
             receiver: str = ctx.getChild(5).getText()
             transition: Transition = Transition(type, sender, receiver)
-        # build transition send with a non-equal predicate
-        elif ctx.getChild(3).getText() in [">", "<", ">=", "<=", "!="]:
+        # build predicate transition send with a non-equal predicate
+        elif ctx.getChild(3).getText() in [">", "<", ">=", "<=", "!=", "=="]:
+            if ctx.getChild(ctx.getChildCount() - 6).getText() == ")" and ctx.getChild(ctx.getChildCount() - 7).getText() == ")":
+                type: any = self.convert_string_to_type(ctx.getChild(1).getText())
+                comparator: str = ctx.getChild(3).getText()
+                valueString: str = ""
+                for i in range(4, ctx.getChildCount() - 6):
+                    valueString += ctx.getChild(i).getText()
+                sender: str = ctx.getChild(ctx.getChildCount() - 4).getText()
+                receiver: str = ctx.getChild(ctx.getChildCount() - 2).getText()
+                value: any = self.stringToValue(type, valueString)
+                transition: PredicateTransition = PredicateTransition(type, sender, receiver, comparator, value)
+            else:
+                type: any = self.convert_string_to_type(ctx.getChild(1).getText())
+                comparator: str = ctx.getChild(3).getText()
+                value: str = ctx.getChild(4).getText()
+                sender: str = ctx.getChild(7).getText()
+                receiver: str = ctx.getChild(9).getText()
+                value: any = self.stringToValue(type, value)
+                transition: PredicateTransition = PredicateTransition(type, sender, receiver, comparator, value)  
+        # build predicate transition for reference type with an equal comparator
+        elif ctx.getChild(ctx.getChildCount() - 6).getText() == ")" and ctx.getChild(ctx.getChildCount() - 7).getText() == ")":
             type: any = self.convert_string_to_type(ctx.getChild(1).getText())
-            comparator: str = ctx.getChild(3).getText()
-            value: str = ctx.getChild(4).getText()
-            sender: str = ctx.getChild(7).getText()
-            receiver: str = ctx.getChild(9).getText()
-            value: any = self.stringToValue(type, value)
+            comparator: str = "=="
+            valueString: str = ""
+            for i in range(3, ctx.getChildCount() - 6):
+                valueString += ctx.getChild(i).getText()
+            sender: str = ctx.getChild(ctx.getChildCount() - 4).getText()
+            receiver: str = ctx.getChild(ctx.getChildCount() - 2).getText()
+            value: any = self.stringToValue(type, valueString)
             transition: PredicateTransition = PredicateTransition(type, sender, receiver, comparator, value)
-        # build transition send with an equal comparator
-        else :
+        # build predicate transition for primitive type with an equal comparator
+        else: 
             type: any = self.convert_string_to_type(ctx.getChild(1).getText())
             comparator: str = "=="
             valueString: str = ctx.getChild(3).getText()

@@ -9,6 +9,15 @@ class Auto:
     
     def __hash__(self) -> int:
         return hash(self.merk) + hash(self.kilometerstand)
+    
+    def __str__(self):
+        return f"{self.merk},{self.kilometerstand}"
+    
+    def __gt__(self, other):
+        return self.kilometerstand > other.kilometerstand
+    
+    def __lt__(self, other):
+        return self.__gt__(other, self)
         
 class Opel(Auto):
     
