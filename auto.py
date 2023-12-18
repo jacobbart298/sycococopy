@@ -17,7 +17,7 @@ class Auto:
         return self.kilometerstand > other.kilometerstand
     
     def __lt__(self, other):
-        return self.__gt__(other, self)
+        return other.__gt__(self)
         
 class Opel(Auto):
     

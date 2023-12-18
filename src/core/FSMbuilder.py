@@ -172,7 +172,7 @@ class FSMbuilder(PythonicVisitor):
             value: any = self.stringToValue(type, valueString)
             transition: PredicateTransition = PredicateTransition(type, sender, receiver, comparator, value)
         # build predicate transition for primitive type with an equal comparator
-        else: 
+        else:
             type: any = self.convert_string_to_type(ctx.getChild(1).getText())
             comparator: str = "=="
             valueString: str = ctx.getChild(3).getText()
