@@ -70,8 +70,9 @@ async def runBenchmark() -> None:
     monitor.fsm.states = {initialState}
     await main(level)
 
-writeSpecification(level)
-monitor = Monitor(specification_path)
-initialState = list(monitor.fsm.states)[0]
-runner = pyperf.Runner()
-runner.bench_async_func(f"Benchmark {level}", runBenchmark)
+if __name__ == '__main__':
+    writeSpecification(level)
+    monitor = Monitor(specification_path)
+    initialState = list(monitor.fsm.states)[0]
+    runner = pyperf.Runner()
+    runner.bench_async_func(f"Benchmark {level}", runBenchmark)

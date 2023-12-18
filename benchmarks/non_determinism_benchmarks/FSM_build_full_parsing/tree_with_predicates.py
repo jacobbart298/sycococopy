@@ -71,16 +71,10 @@ async def main(depth: int):
         tg.create_task(A(queueBtoA, queueAtoB, depth))
         tg.create_task(B(queueAtoB, queueBtoA, depth))
 
-
-writeSpecification(level)
-# initialState = list(monitor.fsm.states)[0]
-
-
 async def runBenchmark() -> None:
-    # monitor.fsm.states = {initialState}
     await main(level)
 
-runner = pyperf.Runner()
-runner.bench_async_func(f"Benchmark {level}", runBenchmark)
-
-# cProfile.run('re.compile("main|100")')
+if __name__ == '__main__':
+    writeSpecification(level)
+    runner = pyperf.Runner()
+    runner.bench_async_func(f"Benchmark {level}", runBenchmark)

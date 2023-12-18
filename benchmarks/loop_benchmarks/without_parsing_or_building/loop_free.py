@@ -27,5 +27,6 @@ async def main(loopCount: int):
 async def runBenchmark() -> None:
     await main(loopCount)
 
-runner = pyperf.Runner()
-runner.bench_async_func(f"Loopcount: {loopCount}", runBenchmark)
+if __name__ == '__main__':
+    runner = pyperf.Runner()
+    runner.bench_async_func(f"Loopcount: {loopCount}", runBenchmark)

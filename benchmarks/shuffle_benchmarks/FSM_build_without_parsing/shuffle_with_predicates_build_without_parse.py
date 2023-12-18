@@ -1,10 +1,8 @@
 import pyperf
-from antlr4 import FileStream, CommonTokenStream
-from antlrFiles.PythonicLexer import PythonicLexer
-from antlrFiles.PythonicParser import PythonicParser
 from benchmarks.config import starWorkers
 from src.core.instrumentation import Queue
 import src.core.instrumentation as asyncio
+from benchmarks.benchmarkmethods import buildParseTree
 from benchmarks.benchmark_monitor import BenchmarkMonitor
 
 '''
@@ -57,14 +55,6 @@ async def main(workerCount: int) -> None:
             asyncio.link(queue, sender, receiver, monitor)           
             tg.create_task(worker(queue))
         tg.create_task(center(queueList, workerCount))
-
-# Parses the given specification in the filePath to a parse tree.
-def buildParseTree(filePath: str):
-    input = FileStream(filePath)
-    lexer = PythonicLexer(input)
-    stream = CommonTokenStream(lexer)
-    parser = PythonicParser(stream)
-    return parser.specification() 
 
 async def runBenchmark() -> None:
     await main(starWorkers)

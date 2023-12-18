@@ -52,13 +52,10 @@ async def main(loopCount: int):
         tg.create_task(A(queueBtoA, queueAtoB, loopCount))
         tg.create_task(B(queueAtoB, queueBtoA, loopCount))
 
-
-# writeSpecification()
-# initialState = list(monitor.fsm.states)[0]
-
 async def runBenchmark() -> None:
-    # monitor.fsm.states = {initialState}
     await main(loopCount)
 
-runner = pyperf.Runner()
-runner.bench_async_func(f"Loopcount: {loopCount}", runBenchmark)
+if __name__ == '__main__':
+    # writeSpecification()
+    runner = pyperf.Runner()
+    runner.bench_async_func(f"Loopcount: {loopCount}", runBenchmark)

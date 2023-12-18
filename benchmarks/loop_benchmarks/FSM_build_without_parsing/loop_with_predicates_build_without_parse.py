@@ -66,6 +66,7 @@ def buildParseTree(filePath: str):
 async def runBenchmark() -> None:
     await main(loopCount)
 
-parseTree = buildParseTree(specification_path)
-runner = pyperf.Runner()
-runner.bench_async_func(f"Loopcount: {loopCount}", runBenchmark)
+if __name__ == '__main__':
+    parseTree = buildParseTree(specification_path)
+    runner = pyperf.Runner()
+    runner.bench_async_func(f"Loopcount: {loopCount}", runBenchmark)

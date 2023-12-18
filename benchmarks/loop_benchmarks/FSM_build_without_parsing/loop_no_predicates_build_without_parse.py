@@ -5,6 +5,7 @@ from antlrFiles.PythonicParser import PythonicParser
 from benchmarks.config import loopCount
 from src.core.instrumentation import Queue
 import src.core.instrumentation as asyncio
+from benchmarks.benchmarkmethods import buildParseTree
 from benchmarks.benchmark_monitor import BenchmarkMonitor
 
 specification_path = r".\protocol_loop_no_predicates.txt"
@@ -55,17 +56,10 @@ async def main(loopCount: int):
         tg.create_task(A(queueBtoA, queueAtoB, loopCount))
         tg.create_task(B(queueAtoB, queueBtoA, loopCount))
 
-# Parses the given specification in the filePath to a parse tree.
-def buildParseTree(filePath: str):
-    input = FileStream(filePath)
-    lexer = PythonicLexer(input)
-    stream = CommonTokenStream(lexer)
-    parser = PythonicParser(stream)
-    return parser.specification()
-
 async def runBenchmark() -> None:
     await main(loopCount)
 
-parseTree = buildParseTree(specification_path)
-runner = pyperf.Runner()
-runner.bench_async_func(f"Loopcount: {loopCount}", runBenchmark)
+if __name__ == '__main__':
+    parseTree = buildParseTree(specification_path)
+    runner = pyperf.Runner()
+    runner.bench_async_func(f"Loopcount: {loopCount}", runBenchmark)
