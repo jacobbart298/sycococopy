@@ -136,7 +136,7 @@ class TestTransition(unittest.TestCase):
         
         transition_1 = Transition(float, "A", "B")
         transition_2 = PredicateTransition(float, "A", "B", "<", 420.69)
-        value = 420        
+        value = 420.0        
         self.assertTrue(transition_2.satisfies(transition_1, value))
 
 

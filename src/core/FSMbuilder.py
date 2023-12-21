@@ -1,9 +1,9 @@
 from antlr4 import *
 import builtins
-import customtypes
 from antlr4.tree.Trees import Trees
 from antlr4.tree.Tree import TerminalNodeImpl
 from antlrFiles.pythonicvisitor import PythonicVisitor
+from src import customtypes
 from src.core.fsm import FSM
 from src.core.transition import Transition, PredicateTransition
 from src.core.state import State
@@ -54,8 +54,6 @@ class FSMbuilder(PythonicVisitor):
                 self.visitShuffle(expression)
             case "send":
                 self.visitSend(ctx)
-            case "close":
-                self.visitClose(ctx)
             case "loop":
                 self.visitLoop(ctx)
 
@@ -150,7 +148,7 @@ class FSMbuilder(PythonicVisitor):
                     valueString += ctx.getChild(i).getText()
                 sender: str = ctx.getChild(ctx.getChildCount() - 4).getText()
                 receiver: str = ctx.getChild(ctx.getChildCount() - 2).getText()
-                value: any = self.stringToValue(type, valueString)
+                value: any = self.convert_string_to_value(type, valueString)
                 transition: PredicateTransition = PredicateTransition(type, sender, receiver, comparator, value)
             else:
                 type: any = self.convert_string_to_type(ctx.getChild(1).getText())
@@ -158,7 +156,7 @@ class FSMbuilder(PythonicVisitor):
                 value: str = ctx.getChild(4).getText()
                 sender: str = ctx.getChild(7).getText()
                 receiver: str = ctx.getChild(9).getText()
-                value: any = self.stringToValue(type, value)
+                value: any = self.convert_string_to_value(type, value)
                 transition: PredicateTransition = PredicateTransition(type, sender, receiver, comparator, value)  
         # build predicate transition for reference type with an equal comparator
         elif ctx.getChild(ctx.getChildCount() - 6).getText() == ")" and ctx.getChild(ctx.getChildCount() - 7).getText() == ")":
@@ -169,7 +167,7 @@ class FSMbuilder(PythonicVisitor):
                 valueString += ctx.getChild(i).getText()
             sender: str = ctx.getChild(ctx.getChildCount() - 4).getText()
             receiver: str = ctx.getChild(ctx.getChildCount() - 2).getText()
-            value: any = self.stringToValue(type, valueString)
+            value: any = self.convert_string_to_value(type, valueString)
             transition: PredicateTransition = PredicateTransition(type, sender, receiver, comparator, value)
         # build predicate transition for primitive type with an equal comparator
         else:
@@ -178,7 +176,7 @@ class FSMbuilder(PythonicVisitor):
             valueString: str = ctx.getChild(3).getText()
             sender: str = ctx.getChild(6).getText()
             receiver: str = ctx.getChild(8).getText()
-            value: any = self.stringToValue(type, valueString)
+            value: any = self.convert_string_to_value(type, valueString)
             transition: PredicateTransition = PredicateTransition(type, sender, receiver, comparator, value)
         # add transition to state
         ctx.startState.addTransitionToState(transition, ctx.endState)
@@ -186,7 +184,7 @@ class FSMbuilder(PythonicVisitor):
         self.roles_in_fsm.add(receiver)
 
     # Transforms a string to a primitive value based on the given type.
-    def stringToValue(self, type_obj: type, string: str) -> any:
+    def convert_string_to_value(self, type_obj: type, string: str) -> any:
         # if the value is of a custom type, try to evaluate it
         if hasattr(customtypes, type_obj.__name__):
             try:

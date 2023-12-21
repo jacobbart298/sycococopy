@@ -204,7 +204,7 @@ class TestFSMBuilder(unittest.TestCase):
     def test_sequenceInShuffle(self):
 
         send = Transition(str, "B", "A")
-        sequence_a = PredicateTransition(int, "A", "B", "==", 5234904798238)
+        sequence_a = PredicateTransition(int, "A", "B", "==", 1)
         sequence_b = PredicateTransition(bool, "B", "A", "==", True)
 
         fsm = self.buildFSM("sequenceInShuffle.txt")
