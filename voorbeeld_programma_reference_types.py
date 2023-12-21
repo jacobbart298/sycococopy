@@ -1,4 +1,4 @@
-from auto import Auto
+from src.auto import Auto
 from src.core.instrumentation import Channel
 import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor

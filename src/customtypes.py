@@ -3,3 +3,5 @@
 # For instance:
 # from [user-module] import *
 # from [user-module] import X, Y, Z
+
+from src.auto import *

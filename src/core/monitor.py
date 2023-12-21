@@ -3,7 +3,7 @@ import sys
 from antlr4 import FileStream, CommonTokenStream
 from antlrFiles.PythonicLexer import PythonicLexer
 from antlrFiles.PythonicParser import PythonicParser
-from src.core.fsmBuilder import FSMbuilder
+from src.core.fsmBuilder import FsmBuilder
 from src.core.transition import Transition
 from src.core.roleBuilder import Rolebuilder
 from src.core.exceptions.illegaltransitionexception import IllegalTransitionException
@@ -27,7 +27,7 @@ class Monitor():
         self.transitionHistory: list[tuple[Transition, any]] = []
         self.uncheckedReceives: dict[str, Transition] = {}
         tree = self.buildParseTree(filePath)
-        self.fsm, used_roles = FSMbuilder().visitSpecification(tree)
+        self.fsm, used_roles = FsmBuilder().visitSpecification(tree)
         defined_roles: set[str] = Rolebuilder().visitSpecification(tree)         
         if not used_roles == defined_roles:
             raise RoleMismatchException(used_roles, defined_roles)
