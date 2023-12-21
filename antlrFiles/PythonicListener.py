@@ -1,4 +1,4 @@
-# Generated from ./antlrFiles/Pythonic.g4 by ANTLR 4.13.1
+# Generated from ./Pythonic.g4 by ANTLR 4.13.1
 from antlr4 import *
 if "." in __name__:
     from .PythonicParser import PythonicParser
@@ -86,15 +86,6 @@ class PythonicListener(ParseTreeListener):
 
     # Exit a parse tree produced by PythonicParser#send.
     def exitSend(self, ctx:PythonicParser.SendContext):
-        pass
-
-
-    # Enter a parse tree produced by PythonicParser#close.
-    def enterClose(self, ctx:PythonicParser.CloseContext):
-        pass
-
-    # Exit a parse tree produced by PythonicParser#close.
-    def exitClose(self, ctx:PythonicParser.CloseContext):
         pass
 
 

@@ -1,4 +1,4 @@
-# Generated from ./antlrFiles/Pythonic.g4 by ANTLR 4.13.1
+# Generated from ./Pythonic.g4 by ANTLR 4.13.1
 # encoding: utf-8
 from antlr4 import *
 from io import StringIO
@@ -10,43 +10,35 @@ else:
 
 def serializedATN():
     return [
-        4,1,25,121,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,
-        6,2,7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,2,13,7,13,
-        1,0,1,0,1,0,1,0,1,1,1,1,1,1,1,2,1,2,1,2,1,2,1,2,1,2,1,2,3,2,43,8,
-        2,1,3,1,3,1,3,1,4,1,4,1,4,1,5,1,5,1,5,1,6,1,6,1,6,1,6,1,7,1,7,1,
-        7,1,7,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,
-        8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,3,8,90,8,8,
-        1,9,1,9,1,9,1,9,1,9,1,9,1,10,1,10,4,10,100,8,10,11,10,12,10,101,
-        1,10,1,10,1,11,1,11,1,11,1,12,1,12,1,12,4,12,112,8,12,11,12,12,12,
-        113,1,12,1,12,1,13,1,13,1,13,1,13,0,0,14,0,2,4,6,8,10,12,14,16,18,
-        20,22,24,26,0,1,1,0,15,16,116,0,28,1,0,0,0,2,32,1,0,0,0,4,42,1,0,
-        0,0,6,44,1,0,0,0,8,47,1,0,0,0,10,50,1,0,0,0,12,53,1,0,0,0,14,57,
-        1,0,0,0,16,89,1,0,0,0,18,91,1,0,0,0,20,97,1,0,0,0,22,105,1,0,0,0,
-        24,108,1,0,0,0,26,117,1,0,0,0,28,29,3,22,11,0,29,30,3,2,1,0,30,31,
-        5,0,0,1,31,1,1,0,0,0,32,33,5,1,0,0,33,34,3,20,10,0,34,3,1,0,0,0,
-        35,43,3,16,8,0,36,43,3,6,3,0,37,43,3,8,4,0,38,43,3,10,5,0,39,43,
-        3,18,9,0,40,43,3,12,6,0,41,43,3,14,7,0,42,35,1,0,0,0,42,36,1,0,0,
-        0,42,37,1,0,0,0,42,38,1,0,0,0,42,39,1,0,0,0,42,40,1,0,0,0,42,41,
-        1,0,0,0,43,5,1,0,0,0,44,45,5,6,0,0,45,46,3,20,10,0,46,7,1,0,0,0,
-        47,48,5,7,0,0,48,49,3,20,10,0,49,9,1,0,0,0,50,51,5,8,0,0,51,52,3,
-        20,10,0,52,11,1,0,0,0,53,54,5,10,0,0,54,55,5,12,0,0,55,56,3,20,10,
-        0,56,13,1,0,0,0,57,58,5,9,0,0,58,59,5,21,0,0,59,60,5,23,0,0,60,15,
-        1,0,0,0,61,62,5,5,0,0,62,63,5,21,0,0,63,64,5,4,0,0,64,65,5,21,0,
-        0,65,66,5,3,0,0,66,67,5,21,0,0,67,90,5,23,0,0,68,69,5,5,0,0,69,70,
-        5,21,0,0,70,71,5,13,0,0,71,72,5,20,0,0,72,73,5,16,0,0,73,74,5,14,
-        0,0,74,75,5,4,0,0,75,76,5,21,0,0,76,77,5,3,0,0,77,78,5,21,0,0,78,
-        90,5,23,0,0,79,80,5,5,0,0,80,81,5,21,0,0,81,82,5,13,0,0,82,83,7,
-        0,0,0,83,84,5,14,0,0,84,85,5,4,0,0,85,86,5,21,0,0,86,87,5,3,0,0,
-        87,88,5,21,0,0,88,90,5,23,0,0,89,61,1,0,0,0,89,68,1,0,0,0,89,79,
-        1,0,0,0,90,17,1,0,0,0,91,92,5,11,0,0,92,93,5,21,0,0,93,94,5,3,0,
-        0,94,95,5,21,0,0,95,96,5,23,0,0,96,19,1,0,0,0,97,99,5,24,0,0,98,
-        100,3,4,2,0,99,98,1,0,0,0,100,101,1,0,0,0,101,99,1,0,0,0,101,102,
-        1,0,0,0,102,103,1,0,0,0,103,104,5,25,0,0,104,21,1,0,0,0,105,106,
-        5,2,0,0,106,107,3,24,12,0,107,23,1,0,0,0,108,109,5,24,0,0,109,111,
-        3,26,13,0,110,112,3,26,13,0,111,110,1,0,0,0,112,113,1,0,0,0,113,
-        111,1,0,0,0,113,114,1,0,0,0,114,115,1,0,0,0,115,116,5,25,0,0,116,
-        25,1,0,0,0,117,118,5,21,0,0,118,119,5,23,0,0,119,27,1,0,0,0,4,42,
-        89,101,113
+        4,1,24,99,2,0,7,0,2,1,7,1,2,2,7,2,2,3,7,3,2,4,7,4,2,5,7,5,2,6,7,
+        6,2,7,7,7,2,8,7,8,2,9,7,9,2,10,7,10,2,11,7,11,2,12,7,12,1,0,1,0,
+        1,0,1,0,1,1,1,1,1,1,1,2,1,2,1,2,1,2,1,2,1,2,3,2,40,8,2,1,3,1,3,1,
+        3,1,4,1,4,1,4,1,5,1,5,1,5,1,6,1,6,1,6,1,6,1,7,1,7,1,7,1,7,1,8,1,
+        8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,1,8,3,8,69,8,8,1,8,1,8,1,8,1,8,1,8,
+        1,8,1,9,1,9,4,9,79,8,9,11,9,12,9,80,1,9,1,9,1,10,1,10,1,10,1,11,
+        1,11,4,11,90,8,11,11,11,12,11,91,1,11,1,11,1,12,1,12,1,12,1,12,0,
+        0,13,0,2,4,6,8,10,12,14,16,18,20,22,24,0,1,1,0,14,15,94,0,26,1,0,
+        0,0,2,30,1,0,0,0,4,39,1,0,0,0,6,41,1,0,0,0,8,44,1,0,0,0,10,47,1,
+        0,0,0,12,50,1,0,0,0,14,54,1,0,0,0,16,58,1,0,0,0,18,76,1,0,0,0,20,
+        84,1,0,0,0,22,87,1,0,0,0,24,95,1,0,0,0,26,27,3,20,10,0,27,28,3,2,
+        1,0,28,29,5,0,0,1,29,1,1,0,0,0,30,31,5,1,0,0,31,32,3,18,9,0,32,3,
+        1,0,0,0,33,40,3,16,8,0,34,40,3,6,3,0,35,40,3,8,4,0,36,40,3,10,5,
+        0,37,40,3,12,6,0,38,40,3,14,7,0,39,33,1,0,0,0,39,34,1,0,0,0,39,35,
+        1,0,0,0,39,36,1,0,0,0,39,37,1,0,0,0,39,38,1,0,0,0,40,5,1,0,0,0,41,
+        42,5,6,0,0,42,43,3,18,9,0,43,7,1,0,0,0,44,45,5,7,0,0,45,46,3,18,
+        9,0,46,9,1,0,0,0,47,48,5,8,0,0,48,49,3,18,9,0,49,11,1,0,0,0,50,51,
+        5,10,0,0,51,52,5,11,0,0,52,53,3,18,9,0,53,13,1,0,0,0,54,55,5,9,0,
+        0,55,56,5,20,0,0,56,57,5,22,0,0,57,15,1,0,0,0,58,59,5,5,0,0,59,68,
+        5,20,0,0,60,61,5,12,0,0,61,62,5,19,0,0,62,63,5,15,0,0,63,69,5,13,
+        0,0,64,65,5,12,0,0,65,66,7,0,0,0,66,69,5,13,0,0,67,69,1,0,0,0,68,
+        60,1,0,0,0,68,64,1,0,0,0,68,67,1,0,0,0,69,70,1,0,0,0,70,71,5,4,0,
+        0,71,72,5,20,0,0,72,73,5,3,0,0,73,74,5,20,0,0,74,75,5,22,0,0,75,
+        17,1,0,0,0,76,78,5,23,0,0,77,79,3,4,2,0,78,77,1,0,0,0,79,80,1,0,
+        0,0,80,78,1,0,0,0,80,81,1,0,0,0,81,82,1,0,0,0,82,83,5,24,0,0,83,
+        19,1,0,0,0,84,85,5,2,0,0,85,86,3,22,11,0,86,21,1,0,0,0,87,89,5,23,
+        0,0,88,90,3,24,12,0,89,88,1,0,0,0,90,91,1,0,0,0,91,89,1,0,0,0,91,
+        92,1,0,0,0,92,93,1,0,0,0,93,94,5,24,0,0,94,23,1,0,0,0,95,96,5,20,
+        0,0,96,97,5,22,0,0,97,25,1,0,0,0,4,39,68,80,91
     ]
 
 class PythonicParser ( Parser ):
@@ -61,14 +53,13 @@ class PythonicParser ( Parser ):
 
     literalNames = [ "<INVALID>", "'protocol:'", "'roles:'", "'to'", "'from'", 
                      "'send'", "'sequence:'", "'shuffle:'", "'choice:'", 
-                     "'repeat'", "'loop'", "'close'", "<INVALID>", "'('", 
-                     "')'" ]
+                     "'repeat'", "'loop'", "<INVALID>", "'('", "')'" ]
 
     symbolicNames = [ "<INVALID>", "PROTOCOL", "ROLES", "TO", "FROM", "SEND", 
                       "SEQUENCE", "SHUFFLE", "CHOICE", "REPEAT", "LOOP", 
-                      "CLOSE", "LOOPLABEL", "OPENINGBRACKET", "CLOSINGBRACKET", 
-                      "BOOLEAN", "PRIMITIVE", "INTEGER", "STRING", "FLOAT", 
-                      "COMPARATOR", "WORD", "WS", "NL", "INDENT", "DEDENT" ]
+                      "LOOPLABEL", "OPENINGBRACKET", "CLOSINGBRACKET", "BOOLEAN", 
+                      "PRIMITIVE", "INTEGER", "STRING", "FLOAT", "COMPARATOR", 
+                      "WORD", "WS", "NL", "INDENT", "DEDENT" ]
 
     RULE_specification = 0
     RULE_protocol = 1
@@ -79,15 +70,14 @@ class PythonicParser ( Parser ):
     RULE_loop = 6
     RULE_repeat = 7
     RULE_send = 8
-    RULE_close = 9
-    RULE_block = 10
-    RULE_roles = 11
-    RULE_roleblock = 12
-    RULE_role = 13
+    RULE_block = 9
+    RULE_roles = 10
+    RULE_roleblock = 11
+    RULE_role = 12
 
     ruleNames =  [ "specification", "protocol", "expression", "sequence", 
-                   "shuffle", "choice", "loop", "repeat", "send", "close", 
-                   "block", "roles", "roleblock", "role" ]
+                   "shuffle", "choice", "loop", "repeat", "send", "block", 
+                   "roles", "roleblock", "role" ]
 
     EOF = Token.EOF
     PROTOCOL=1
@@ -100,21 +90,20 @@ class PythonicParser ( Parser ):
     CHOICE=8
     REPEAT=9
     LOOP=10
-    CLOSE=11
-    LOOPLABEL=12
-    OPENINGBRACKET=13
-    CLOSINGBRACKET=14
-    BOOLEAN=15
-    PRIMITIVE=16
-    INTEGER=17
-    STRING=18
-    FLOAT=19
-    COMPARATOR=20
-    WORD=21
-    WS=22
-    NL=23
-    INDENT=24
-    DEDENT=25
+    LOOPLABEL=11
+    OPENINGBRACKET=12
+    CLOSINGBRACKET=13
+    BOOLEAN=14
+    PRIMITIVE=15
+    INTEGER=16
+    STRING=17
+    FLOAT=18
+    COMPARATOR=19
+    WORD=20
+    WS=21
+    NL=22
+    INDENT=23
+    DEDENT=24
 
     def __init__(self, input:TokenStream, output:TextIO = sys.stdout):
         super().__init__(input, output)
@@ -169,11 +158,11 @@ class PythonicParser ( Parser ):
         self.enterRule(localctx, 0, self.RULE_specification)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 28
+            self.state = 26
             self.roles()
-            self.state = 29
+            self.state = 27
             self.protocol()
-            self.state = 30
+            self.state = 28
             self.match(PythonicParser.EOF)
         except RecognitionException as re:
             localctx.exception = re
@@ -224,9 +213,9 @@ class PythonicParser ( Parser ):
         self.enterRule(localctx, 2, self.RULE_protocol)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 32
+            self.state = 30
             self.match(PythonicParser.PROTOCOL)
-            self.state = 33
+            self.state = 31
             self.block()
         except RecognitionException as re:
             localctx.exception = re
@@ -258,10 +247,6 @@ class PythonicParser ( Parser ):
 
         def choice(self):
             return self.getTypedRuleContext(PythonicParser.ChoiceContext,0)
-
-
-        def close(self):
-            return self.getTypedRuleContext(PythonicParser.CloseContext,0)
 
 
         def loop(self):
@@ -298,35 +283,31 @@ class PythonicParser ( Parser ):
         self.enterRule(localctx, 4, self.RULE_expression)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 42
+            self.state = 39
             self._errHandler.sync(self)
             token = self._input.LA(1)
             if token in [5]:
-                self.state = 35
+                self.state = 33
                 self.send()
                 pass
             elif token in [6]:
-                self.state = 36
+                self.state = 34
                 self.sequence()
                 pass
             elif token in [7]:
-                self.state = 37
+                self.state = 35
                 self.shuffle()
                 pass
             elif token in [8]:
-                self.state = 38
+                self.state = 36
                 self.choice()
                 pass
-            elif token in [11]:
-                self.state = 39
-                self.close()
-                pass
             elif token in [10]:
-                self.state = 40
+                self.state = 37
                 self.loop()
                 pass
             elif token in [9]:
-                self.state = 41
+                self.state = 38
                 self.repeat()
                 pass
             else:
@@ -381,9 +362,9 @@ class PythonicParser ( Parser ):
         self.enterRule(localctx, 6, self.RULE_sequence)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 44
+            self.state = 41
             self.match(PythonicParser.SEQUENCE)
-            self.state = 45
+            self.state = 42
             self.block()
         except RecognitionException as re:
             localctx.exception = re
@@ -434,9 +415,9 @@ class PythonicParser ( Parser ):
         self.enterRule(localctx, 8, self.RULE_shuffle)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 47
+            self.state = 44
             self.match(PythonicParser.SHUFFLE)
-            self.state = 48
+            self.state = 45
             self.block()
         except RecognitionException as re:
             localctx.exception = re
@@ -487,9 +468,9 @@ class PythonicParser ( Parser ):
         self.enterRule(localctx, 10, self.RULE_choice)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 50
+            self.state = 47
             self.match(PythonicParser.CHOICE)
-            self.state = 51
+            self.state = 48
             self.block()
         except RecognitionException as re:
             localctx.exception = re
@@ -543,11 +524,11 @@ class PythonicParser ( Parser ):
         self.enterRule(localctx, 12, self.RULE_loop)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 53
+            self.state = 50
             self.match(PythonicParser.LOOP)
-            self.state = 54
+            self.state = 51
             self.match(PythonicParser.LOOPLABEL)
-            self.state = 55
+            self.state = 52
             self.block()
         except RecognitionException as re:
             localctx.exception = re
@@ -600,11 +581,11 @@ class PythonicParser ( Parser ):
         self.enterRule(localctx, 14, self.RULE_repeat)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 57
+            self.state = 54
             self.match(PythonicParser.REPEAT)
-            self.state = 58
+            self.state = 55
             self.match(PythonicParser.WORD)
-            self.state = 59
+            self.state = 56
             self.match(PythonicParser.NL)
         except RecognitionException as re:
             localctx.exception = re
@@ -682,146 +663,51 @@ class PythonicParser ( Parser ):
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 89
+            self.state = 58
+            self.match(PythonicParser.SEND)
+            self.state = 59
+            self.match(PythonicParser.WORD)
+            self.state = 68
             self._errHandler.sync(self)
             la_ = self._interp.adaptivePredict(self._input,1,self._ctx)
             if la_ == 1:
+                self.state = 60
+                self.match(PythonicParser.OPENINGBRACKET)
                 self.state = 61
-                self.match(PythonicParser.SEND)
+                self.match(PythonicParser.COMPARATOR)
                 self.state = 62
-                self.match(PythonicParser.WORD)
+                self.match(PythonicParser.PRIMITIVE)
                 self.state = 63
-                self.match(PythonicParser.FROM)
-                self.state = 64
-                self.match(PythonicParser.WORD)
-                self.state = 65
-                self.match(PythonicParser.TO)
-                self.state = 66
-                self.match(PythonicParser.WORD)
-                self.state = 67
-                self.match(PythonicParser.NL)
+                self.match(PythonicParser.CLOSINGBRACKET)
                 pass
 
             elif la_ == 2:
-                self.state = 68
-                self.match(PythonicParser.SEND)
-                self.state = 69
-                self.match(PythonicParser.WORD)
-                self.state = 70
+                self.state = 64
                 self.match(PythonicParser.OPENINGBRACKET)
-                self.state = 71
-                self.match(PythonicParser.COMPARATOR)
-                self.state = 72
-                self.match(PythonicParser.PRIMITIVE)
-                self.state = 73
-                self.match(PythonicParser.CLOSINGBRACKET)
-                self.state = 74
-                self.match(PythonicParser.FROM)
-                self.state = 75
-                self.match(PythonicParser.WORD)
-                self.state = 76
-                self.match(PythonicParser.TO)
-                self.state = 77
-                self.match(PythonicParser.WORD)
-                self.state = 78
-                self.match(PythonicParser.NL)
-                pass
-
-            elif la_ == 3:
-                self.state = 79
-                self.match(PythonicParser.SEND)
-                self.state = 80
-                self.match(PythonicParser.WORD)
-                self.state = 81
-                self.match(PythonicParser.OPENINGBRACKET)
-                self.state = 82
+                self.state = 65
                 _la = self._input.LA(1)
-                if not(_la==15 or _la==16):
+                if not(_la==14 or _la==15):
                     self._errHandler.recoverInline(self)
                 else:
                     self._errHandler.reportMatch(self)
                     self.consume()
-                self.state = 83
+                self.state = 66
                 self.match(PythonicParser.CLOSINGBRACKET)
-                self.state = 84
-                self.match(PythonicParser.FROM)
-                self.state = 85
-                self.match(PythonicParser.WORD)
-                self.state = 86
-                self.match(PythonicParser.TO)
-                self.state = 87
-                self.match(PythonicParser.WORD)
-                self.state = 88
-                self.match(PythonicParser.NL)
+                pass
+
+            elif la_ == 3:
                 pass
 
 
-        except RecognitionException as re:
-            localctx.exception = re
-            self._errHandler.reportError(self, re)
-            self._errHandler.recover(self, re)
-        finally:
-            self.exitRule()
-        return localctx
-
-
-    class CloseContext(ParserRuleContext):
-        __slots__ = 'parser'
-
-        def __init__(self, parser, parent:ParserRuleContext=None, invokingState:int=-1):
-            super().__init__(parent, invokingState)
-            self.parser = parser
-
-        def CLOSE(self):
-            return self.getToken(PythonicParser.CLOSE, 0)
-
-        def WORD(self, i:int=None):
-            if i is None:
-                return self.getTokens(PythonicParser.WORD)
-            else:
-                return self.getToken(PythonicParser.WORD, i)
-
-        def TO(self):
-            return self.getToken(PythonicParser.TO, 0)
-
-        def NL(self):
-            return self.getToken(PythonicParser.NL, 0)
-
-        def getRuleIndex(self):
-            return PythonicParser.RULE_close
-
-        def enterRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "enterClose" ):
-                listener.enterClose(self)
-
-        def exitRule(self, listener:ParseTreeListener):
-            if hasattr( listener, "exitClose" ):
-                listener.exitClose(self)
-
-        def accept(self, visitor:ParseTreeVisitor):
-            if hasattr( visitor, "visitClose" ):
-                return visitor.visitClose(self)
-            else:
-                return visitor.visitChildren(self)
-
-
-
-
-    def close(self):
-
-        localctx = PythonicParser.CloseContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 18, self.RULE_close)
-        try:
-            self.enterOuterAlt(localctx, 1)
-            self.state = 91
-            self.match(PythonicParser.CLOSE)
-            self.state = 92
+            self.state = 70
+            self.match(PythonicParser.FROM)
+            self.state = 71
             self.match(PythonicParser.WORD)
-            self.state = 93
+            self.state = 72
             self.match(PythonicParser.TO)
-            self.state = 94
+            self.state = 73
             self.match(PythonicParser.WORD)
-            self.state = 95
+            self.state = 74
             self.match(PythonicParser.NL)
         except RecognitionException as re:
             localctx.exception = re
@@ -875,25 +761,25 @@ class PythonicParser ( Parser ):
     def block(self):
 
         localctx = PythonicParser.BlockContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 20, self.RULE_block)
+        self.enterRule(localctx, 18, self.RULE_block)
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 97
+            self.state = 76
             self.match(PythonicParser.INDENT)
-            self.state = 99 
+            self.state = 78 
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             while True:
-                self.state = 98
+                self.state = 77
                 self.expression()
-                self.state = 101 
+                self.state = 80 
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if not ((((_la) & ~0x3f) == 0 and ((1 << _la) & 4064) != 0)):
+                if not ((((_la) & ~0x3f) == 0 and ((1 << _la) & 2016) != 0)):
                     break
 
-            self.state = 103
+            self.state = 82
             self.match(PythonicParser.DEDENT)
         except RecognitionException as re:
             localctx.exception = re
@@ -941,12 +827,12 @@ class PythonicParser ( Parser ):
     def roles(self):
 
         localctx = PythonicParser.RolesContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 22, self.RULE_roles)
+        self.enterRule(localctx, 20, self.RULE_roles)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 105
+            self.state = 84
             self.match(PythonicParser.ROLES)
-            self.state = 106
+            self.state = 85
             self.roleblock()
         except RecognitionException as re:
             localctx.exception = re
@@ -967,15 +853,15 @@ class PythonicParser ( Parser ):
         def INDENT(self):
             return self.getToken(PythonicParser.INDENT, 0)
 
+        def DEDENT(self):
+            return self.getToken(PythonicParser.DEDENT, 0)
+
         def role(self, i:int=None):
             if i is None:
                 return self.getTypedRuleContexts(PythonicParser.RoleContext)
             else:
                 return self.getTypedRuleContext(PythonicParser.RoleContext,i)
 
-
-        def DEDENT(self):
-            return self.getToken(PythonicParser.DEDENT, 0)
 
         def getRuleIndex(self):
             return PythonicParser.RULE_roleblock
@@ -1000,27 +886,25 @@ class PythonicParser ( Parser ):
     def roleblock(self):
 
         localctx = PythonicParser.RoleblockContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 24, self.RULE_roleblock)
+        self.enterRule(localctx, 22, self.RULE_roleblock)
         self._la = 0 # Token type
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 108
+            self.state = 87
             self.match(PythonicParser.INDENT)
-            self.state = 109
-            self.role()
-            self.state = 111 
+            self.state = 89 
             self._errHandler.sync(self)
             _la = self._input.LA(1)
             while True:
-                self.state = 110
+                self.state = 88
                 self.role()
-                self.state = 113 
+                self.state = 91 
                 self._errHandler.sync(self)
                 _la = self._input.LA(1)
-                if not (_la==21):
+                if not (_la==20):
                     break
 
-            self.state = 115
+            self.state = 93
             self.match(PythonicParser.DEDENT)
         except RecognitionException as re:
             localctx.exception = re
@@ -1067,12 +951,12 @@ class PythonicParser ( Parser ):
     def role(self):
 
         localctx = PythonicParser.RoleContext(self, self._ctx, self.state)
-        self.enterRule(localctx, 26, self.RULE_role)
+        self.enterRule(localctx, 24, self.RULE_role)
         try:
             self.enterOuterAlt(localctx, 1)
-            self.state = 117
+            self.state = 95
             self.match(PythonicParser.WORD)
-            self.state = 118
+            self.state = 96
             self.match(PythonicParser.NL)
         except RecognitionException as re:
             localctx.exception = re

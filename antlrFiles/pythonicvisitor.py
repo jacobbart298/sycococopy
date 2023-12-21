@@ -1,4 +1,4 @@
-# Generated from ./antlrFiles/Pythonic.g4 by ANTLR 4.13.1
+# Generated from ./Pythonic.g4 by ANTLR 4.13.1
 from antlr4 import *
 if "." in __name__:
     from .PythonicParser import PythonicParser
@@ -51,11 +51,6 @@ class PythonicVisitor(ParseTreeVisitor):
 
     # Visit a parse tree produced by PythonicParser#send.
     def visitSend(self, ctx:PythonicParser.SendContext):
-        return self.visitChildren(ctx)
-
-
-    # Visit a parse tree produced by PythonicParser#close.
-    def visitClose(self, ctx:PythonicParser.CloseContext):
         return self.visitChildren(ctx)
 
 
