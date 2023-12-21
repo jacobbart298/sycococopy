@@ -1,20 +1,20 @@
 roles:
-    buyer1
-    buyer2
-    seller
+	buyer1
+	buyer2
+	seller
 
 protocol:
-    sequence:
-        send str from buyer1 to seller
-        shuffle:
-            send int from seller to buyer1
-            send int from seller to buyer2
-        send int from buyer1 to buyer2
-        choice:
-            sequence:
-                send bool from buyer2 to buyer1
-                send int from buyer1 to buyer2
-                send int from buyer2 to seller
-            sequence:
-                send bool from buyer2 to buyer1
-                send bool from buyer2 to seller
+	sequence:
+		send str from buyer1 to seller
+		shuffle:
+			send int from seller to buyer1
+			send int from seller to buyer2
+		send int from buyer1 to buyer2
+		choice:
+			sequence:
+				send bool from buyer2 to buyer1
+				send int from buyer1 to buyer2
+				send int from buyer2 to seller
+			sequence:
+				send bool from buyer2 to buyer1
+				send bool from buyer2 to seller
