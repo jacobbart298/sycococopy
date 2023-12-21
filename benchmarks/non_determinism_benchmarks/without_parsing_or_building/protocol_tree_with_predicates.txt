@@ -1,0 +1,16 @@
+roles:
+	A
+	B
+
+protocol:
+	choice:
+		sequence:
+			send bool(True) from A to B
+			choice:
+				send bool(True) from B to A
+				send bool(False) from B to A
+		sequence:
+			send bool(False) from A to B
+			choice:
+				send bool(False) from B to A
+				send bool(True) from B to A

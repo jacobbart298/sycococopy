@@ -1,6 +1,6 @@
 import typing
 import sys
-from antlr4 import *
+from antlr4 import FileStream, CommonTokenStream
 from antlrFiles.PythonicLexer import PythonicLexer
 from antlrFiles.PythonicParser import PythonicParser
 from src.core.fsmBuilder import FSMbuilder

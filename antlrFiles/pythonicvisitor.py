@@ -54,11 +54,6 @@ class PythonicVisitor(ParseTreeVisitor):
         return self.visitChildren(ctx)
 
 
-    # Visit a parse tree produced by PythonicParser#close.
-    def visitClose(self, ctx:PythonicParser.CloseContext):
-        return self.visitChildren(ctx)
-
-
     # Visit a parse tree produced by PythonicParser#block.
     def visitBlock(self, ctx:PythonicParser.BlockContext):
         return self.visitChildren(ctx)

@@ -185,10 +185,6 @@ class FSMbuilder(PythonicVisitor):
         self.roles_in_fsm.add(sender)
         self.roles_in_fsm.add(receiver)
 
-    # Visit a parse tree produced by PythonicParser#close.
-    def visitClose(self, ctx:PythonicParser.CloseContext):
-        return self.visitChildren(ctx)
-
     # Transforms a string to a primitive value based on the given type.
     def stringToValue(self, type_obj: type, string: str) -> any:
         # if the value is of a custom type, try to evaluate it

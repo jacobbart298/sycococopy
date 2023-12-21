@@ -8,6 +8,7 @@ SHUFFLE=7
 CHOICE=8
 REPEAT=9
 LOOP=10
+<<<<<<< HEAD
 CLOSE=11
 LOOPLABEL=12
 OPENINGBRACKET=13
@@ -22,6 +23,21 @@ COMPARATOR=21
 WORD=22
 WS=23
 NL=24
+=======
+LOOPLABEL=11
+OPENINGBRACKET=12
+CLOSINGBRACKET=13
+BOOLEAN=14
+COMPARABLE=15
+PRIMITIVE=16
+INTEGER=17
+STRING=18
+FLOAT=19
+COMPARATOR=20
+WORD=21
+WS=22
+NL=23
+>>>>>>> main
 'protocol:'=1
 'roles:'=2
 'to'=3
@@ -32,7 +48,12 @@ NL=24
 'choice:'=8
 'repeat'=9
 'loop'=10
+<<<<<<< HEAD
 'close'=11
 '('=13
 ')'=14
 ','=15
+=======
+'('=12
+')'=13
+>>>>>>> main

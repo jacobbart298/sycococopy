@@ -30,7 +30,7 @@ def nextToken(self):
 
 specification       : roles protocol EOF;
 protocol            : PROTOCOL block ;
-expression          : (send | sequence | shuffle | choice | close | loop | repeat) ;
+expression          : (send | sequence | shuffle | choice | loop | repeat) ;
 sequence            : SEQUENCE block ;
 shuffle             : SHUFFLE block ;
 choice              : CHOICE block ;
@@ -39,10 +39,9 @@ repeat              : REPEAT WORD NL ;
 send                : ((SEND WORD FROM WORD TO WORD NL) 
                       | (SEND WORD OPENINGBRACKET COMPARATOR (PRIMITIVE | (WORD OPENINGBRACKET (((PRIMITIVE | BOOLEAN) (COMMA (PRIMITIVE | BOOLEAN))*) | ) CLOSINGBRACKET)) CLOSINGBRACKET FROM WORD TO WORD NL) 
                       | (SEND WORD OPENINGBRACKET (BOOLEAN | PRIMITIVE | (WORD OPENINGBRACKET (((PRIMITIVE | BOOLEAN) (COMMA (PRIMITIVE | BOOLEAN))*) | ) CLOSINGBRACKET)) CLOSINGBRACKET FROM WORD TO WORD NL)) ;
-close               : CLOSE WORD TO WORD NL;
 block               : INDENT expression+ DEDENT ;
 roles               : ROLES roleblock ;
-roleblock           : INDENT role role+ DEDENT;
+roleblock           : INDENT role+ DEDENT;
 role                : WORD NL;
 
 /*
@@ -59,7 +58,6 @@ SHUFFLE             : 'shuffle:' ;
 CHOICE              : 'choice:' ;
 REPEAT              : 'repeat' ;
 LOOP                : 'loop' ;
-CLOSE               : 'close' ;
 LOOPLABEL           :  WORD ':';
 OPENINGBRACKET      : '(' ;
 CLOSINGBRACKET      : ')' ;
