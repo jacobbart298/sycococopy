@@ -34,7 +34,7 @@ class Queue(asyncio.Queue):
     '''
     If the Queue is linked to the monitor, the put function forwards the message to the
     monitor to verify that is is allowed by the protocol before adding the item on the
-    Queue. The monitor throws an IllegalTransitionException if the put operation is not allowed.
+    Queue. The monitor raises a HaltedException if the put operation is not allowed.
 
     If the Queue is not linked, the put operation is handled by the asyncio library.
     '''
@@ -53,7 +53,7 @@ class Queue(asyncio.Queue):
     '''
     If the Queue is linked to the monitor, the get function forwards the message to the
     monitor to verify that the message is allowed to be received by the protocol before taking the item 
-    from the Queue. The monitor throws an IllegalTransitionException if the get operation is not allowed.
+    from the Queue. The monitor raises a HaltedException if the get operation is not allowed.
 
     If the Queue is not linked, the get operation is handled by the asyncio library.
     '''
