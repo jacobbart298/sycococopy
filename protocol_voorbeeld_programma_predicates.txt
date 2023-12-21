@@ -8,7 +8,7 @@ protocol:
 		choice:
 			send int(>4) from B to A
 			sequence:
-				send bool(True) from B to A 
+				send bool(False) from B to A 
 				choice:
 					sequence:
 						send int from A to B

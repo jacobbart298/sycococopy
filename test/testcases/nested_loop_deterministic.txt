@@ -1,21 +1,21 @@
 roles:
-    A
-    B
+	A
+	B
 
 protocol:
-    sequence:
-        send int from A to B
-        loop outer:
-            sequence:
-                send str from A to B
-                loop inner:
-                    sequence:
-                        send float from A to B
-                        choice:
-                            sequence:
-                                send bool(True) from B to A
-                                repeat inner
-                            sequence:
-                                send bool(False) from B to A
-                                repeat outer
-                            send str("hello world") from B to A
+	sequence:
+		send int from A to B
+		loop outer:
+			sequence:
+				send str from A to B
+				loop inner:
+					sequence:
+						send float from A to B
+						choice:
+							sequence:
+								send bool(True) from B to A
+								repeat inner
+							sequence:
+								send bool(False) from B to A
+								repeat outer
+							send str("hello world") from B to A

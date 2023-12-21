@@ -46,8 +46,8 @@ class TestMonitor(unittest.TestCase):
         specification = r".\test\Test specifications\test_monitor.txt"
         monitor = Monitor(specification)
 
-        str_A_B = Transition("str", "A", "B")
-        int_B_A = Transition("int", "B", "A")
+        str_A_B = Transition(str, "A", "B")
+        int_B_A = Transition(int, "B", "A")
         message_str = "hello world"
         message_int = 42
 
@@ -81,8 +81,8 @@ class TestMonitor(unittest.TestCase):
         specification = r".\test\Test specifications\test_monitor.txt"
         monitor = Monitor(specification)
 
-        str_A_B = Transition("str", "A", "B")
-        bool_B_A = Transition("bool", "B", "A")
+        str_A_B = Transition(str, "A", "B")
+        bool_B_A = Transition(bool, "B", "A")
         message_str = "hello world"
         message_bool = True
 
@@ -108,8 +108,8 @@ class TestMonitor(unittest.TestCase):
         specification = r".\test\Test specifications\test_monitor.txt"
         monitor = Monitor(specification)
 
-        str_A_B = Transition("str", "A", "B")
-        bool_B_A = Transition("bool", "B", "A")
+        str_A_B = Transition(str, "A", "B")
+        bool_B_A = Transition(bool, "B", "A")
         message_str = "hello world"
 
         # initally, transition history is empty
@@ -153,7 +153,7 @@ class TestMonitor(unittest.TestCase):
         specification = r".\test\Test specifications\test_monitor.txt"
         monitor = Monitor(specification)
         
-        str_A_B = Transition("str", "A", "B")
+        str_A_B = Transition(str, "A", "B")
         message_str = "hello world"
 
         # A is allowed to send a str to B
@@ -166,7 +166,7 @@ class TestMonitor(unittest.TestCase):
         specification = r".\test\Test specifications\test_monitor.txt"
         monitor = Monitor(specification)
         
-        str_A_B = Transition("str", "A", "B")
+        str_A_B = Transition(str, "A", "B")
         message_str = "hello world"
 
         monitor.verifySend(str_A_B, message_str)       
@@ -180,7 +180,7 @@ class TestMonitor(unittest.TestCase):
         specification = r".\test\Test specifications\test_monitor.txt"
         monitor = Monitor(specification)
         
-        int_B_A = Transition("int", "B", "A")
+        int_B_A = Transition(int, "B", "A")
         message_bool = 42
 
         # B is not allowed to send a int to A
@@ -194,7 +194,7 @@ class TestMonitor(unittest.TestCase):
         specification = r".\test\Test specifications\test_monitor.txt"
         monitor = Monitor(specification)
         
-        str_A_B = Transition("str", "A", "B")
+        str_A_B = Transition(str, "A", "B")
 
         # A is not allowed to receive any messages that have not been sent
         self.assertFalse(monitor.halted)
@@ -207,7 +207,7 @@ class TestMonitor(unittest.TestCase):
         specification = r".\test\Test specifications\test_monitor.txt"
         monitor = Monitor(specification)
         
-        str_A_B = Transition("str", "A", "B")
+        str_A_B = Transition(str, "A", "B")
         message_str = "hello world"
 
         # A is not allowed to receive any messages that have not been sent
@@ -225,9 +225,9 @@ class TestMonitor(unittest.TestCase):
         specification = r".\test\Test specifications\test_monitor.txt"
         monitor = Monitor(specification)
         
-        str_A_B = Transition("str", "A", "B")
-        bool_B_A = Transition("bool", "A", "B")
-        int_B_A = Transition("int", "A", "B")
+        str_A_B = Transition(str, "A", "B")
+        bool_B_A = Transition(bool, "A", "B")
+        int_B_A = Transition(int, "A", "B")
         message_str = "hello world"
         message_bool = True
         message_int = 42
@@ -258,8 +258,8 @@ class TestMonitor(unittest.TestCase):
         specification = r".\test\Test specifications\test_monitor.txt"
         monitor = Monitor(specification)
 
-        str_A_B = Transition("str", "A", "B")
-        int_B_A = Transition("int", "B", "A")
+        str_A_B = Transition(str, "A", "B")
+        int_B_A = Transition(int, "B", "A")
         message_str = "hello world"
         message_int = 42
 
@@ -276,8 +276,8 @@ class TestMonitor(unittest.TestCase):
         specification = r".\test\Test specifications\test_monitor_two.txt"
         monitor = Monitor(specification)
 
-        bool_A_C = Transition("bool", "A", "B")
-        bool_B_C = Transition("bool", "B", "A")
+        bool_A_C = Transition(bool, "A", "B")
+        bool_B_C = Transition(bool, "B", "A")
         message_bool = False
 
         try:
@@ -293,8 +293,8 @@ class TestMonitor(unittest.TestCase):
         specification = r".\test\Test specifications\test_monitor_two.txt"
         monitor = Monitor(specification)
 
-        bool_A_C = Transition("bool", "A", "C")
-        bool_C_D = Transition("bool", "C", "D")
+        bool_A_C = Transition(bool, "A", "C")
+        bool_C_D = Transition(bool, "C", "D")
         message_bool = False
 
         monitor.verifySend(bool_A_C, message_bool)
@@ -311,8 +311,8 @@ class TestMonitor(unittest.TestCase):
         specification = r".\test\Test specifications\test_monitor_two.txt"
         monitor = Monitor(specification)
 
-        bool_A_C = Transition("bool", "A", "C")
-        bool_B_C = Transition("bool", "B", "C")
+        bool_A_C = Transition(bool, "A", "C")
+        bool_B_C = Transition(bool, "B", "C")
         message_bool = False
 
         monitor.verifySend(bool_A_C, message_bool)
@@ -331,8 +331,8 @@ class TestMonitor(unittest.TestCase):
         specification = r".\test\Test specifications\test_monitor.txt"
         monitor = Monitor(specification)
 
-        str_A_B = Transition("str", "A", "B")
-        int_B_A = Transition("int", "B", "A")
+        str_A_B = Transition(str, "A", "B")
+        int_B_A = Transition(int, "B", "A")
         message_str = "hello world"
         message_int = 42
         
@@ -349,8 +349,8 @@ class TestMonitor(unittest.TestCase):
         specification = r".\test\Test specifications\test_monitor.txt"
         monitor = Monitor(specification)
 
-        str_A_B = Transition("str", "A", "B")
-        int_B_A = Transition("int", "B", "A")
+        str_A_B = Transition(str, "A", "B")
+        int_B_A = Transition(int, "B", "A")
         message_str = "hello world"
         message_int = 42
 
@@ -370,8 +370,8 @@ class TestMonitor(unittest.TestCase):
         specification = r".\test\Test specifications\test_monitor.txt"
         monitor = Monitor(specification)
 
-        str_A_B = Transition("str", "A", "B")
-        bool_A_B = Transition("bool", "A", "B")
+        str_A_B = Transition(str, "A", "B")
+        bool_A_B = Transition(bool, "A", "B")
         message_str = "hello world"
 
         monitor.verifySend(str_A_B, message_str)
@@ -385,7 +385,7 @@ class TestMonitor(unittest.TestCase):
         specification = r".\test\Test specifications\test_monitor.txt"
         monitor = Monitor(specification)
 
-        str_A_B = Transition("str", "A", "B")
+        str_A_B = Transition(str, "A", "B")
         message_str = "hello world"
 
         monitor.verifySend(str_A_B, message_str)
@@ -401,8 +401,8 @@ class TestMonitor(unittest.TestCase):
         specification = r".\test\Test specifications\test_monitor_non_determinism.txt"
         monitor = Monitor(specification)
 
-        t1_A_B = Transition("str", "A", "B")
-        t2_B_A = Transition("bool", "B", "A")
+        t1_A_B = Transition(str, "A", "B")
+        t2_B_A = Transition(bool, "B", "A")
         message_str = "hello world"
 
         monitor.verifySend(t1_A_B, message_str)
@@ -431,8 +431,8 @@ class TestMonitor(unittest.TestCase):
         specification = r".\test\Test specifications\test_double_send.txt"
         monitor = Monitor(specification)
 
-        int_A_B = Transition("int", "A", "B")
-        bool_B_A = Transition("bool", "B", "A")
+        int_A_B = Transition(int, "A", "B")
+        bool_B_A = Transition(bool, "B", "A")
         
         monitor.verifySend(int_A_B, 42)
         monitor.verifySend(int_A_B, 42)            

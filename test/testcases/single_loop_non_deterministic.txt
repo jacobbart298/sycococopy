@@ -1,13 +1,13 @@
 roles:
-    A
-    B
+	A
+	B
 
 protocol:
-    loop l:
-        sequence:
-            send bool(True) from A to B
-            choice:
-                sequence:
-                    send int(>=-422390482308423) from B to A
-                    repeat l
-                send int(>=-422390482308423) from B to A
+	loop l:
+		sequence:
+			send bool(True) from A to B
+			choice:
+				sequence:
+					send int(>=-422390482308423) from B to A
+					repeat l
+				send int(>=-422390482308423) from B to A

@@ -9,11 +9,12 @@ antlrFiles/pythonicSyntaxErrorException.py
 antlrFiles/pythonicvisitor.py
 benchmarks/__init__.py
 benchmarks/benchmark_monitor.py
-benchmarks/commonmethods.py
+benchmarks/benchmarkmethods.py
 benchmarks/config.py
 benchmarks/ring_benchmarks/__init__.py
 src/__init__.py
-src/core/FSMbuilder.py
+src/auto.py
+src/customtypes.py
 src/core/__init__.py
 src/core/fsm.py
 src/core/fsmBuilder.py

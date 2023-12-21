@@ -1,6 +1,6 @@
 roles:
-    A
-    B
+	A
+	B
 
 protocol:
-    send int from B to A
+	send int from B to A

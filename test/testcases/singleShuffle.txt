@@ -1,8 +1,8 @@
 roles:
-    A
-    B
+	A
+	B
 
 protocol:
-    shuffle:
-        send float(<=-44.29) from A to B
-        send int from B to A
+	shuffle:
+		send float(<=-44.29) from A to B
+		send int from B to A

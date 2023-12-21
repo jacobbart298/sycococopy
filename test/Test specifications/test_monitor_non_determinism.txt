@@ -1,13 +1,13 @@
 roles:
-    A
-    B
+	A
+	B
 
 protocol:
-    loop l1:
-        sequence:
-            send str from A to B
-            choice:
-                send bool from B to A
-                sequence:
-                    send bool(True) from B to A
-                    repeat l1
+	loop l1:
+		sequence:
+			send str from A to B
+			choice:
+				send bool from B to A
+				sequence:
+					send bool(True) from B to A
+					repeat l1

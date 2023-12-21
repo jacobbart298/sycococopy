@@ -36,7 +36,9 @@ shuffle             : SHUFFLE block ;
 choice              : CHOICE block ;
 loop                : LOOP LOOPLABEL block ;
 repeat              : REPEAT WORD NL ;
-send                : SEND ((COMPARABLE ((OPENINGBRACKET COMPARATOR PRIMITIVE CLOSINGBRACKET) | (OPENINGBRACKET (BOOLEAN | PRIMITIVE) CLOSINGBRACKET))) | WORD) FROM WORD TO WORD NL ;
+send                : ((SEND WORD FROM WORD TO WORD NL) 
+                      | (SEND WORD OPENINGBRACKET COMPARATOR (PRIMITIVE | (WORD OPENINGBRACKET (((PRIMITIVE | BOOLEAN) (COMMA (PRIMITIVE | BOOLEAN))*) | ) CLOSINGBRACKET)) CLOSINGBRACKET FROM WORD TO WORD NL) 
+                      | (SEND WORD OPENINGBRACKET (BOOLEAN | PRIMITIVE | (WORD OPENINGBRACKET (((PRIMITIVE | BOOLEAN) (COMMA (PRIMITIVE | BOOLEAN))*) | ) CLOSINGBRACKET)) CLOSINGBRACKET FROM WORD TO WORD NL)) ;
 block               : INDENT expression+ DEDENT ;
 roles               : ROLES roleblock ;
 roleblock           : INDENT role+ DEDENT;
@@ -59,13 +61,13 @@ LOOP                : 'loop' ;
 LOOPLABEL           :  WORD ':';
 OPENINGBRACKET      : '(' ;
 CLOSINGBRACKET      : ')' ;
+COMMA               : ',' ;
 BOOLEAN             : ('True' | 'False' ) ;
-COMPARABLE          : ('int' | 'str' | 'bool' | 'float') ;
 PRIMITIVE           : (STRING | INTEGER | FLOAT);
 INTEGER             : [-]?[1-9][0-9]* | [0] ;
 STRING              : '"' ( '\\"' | . )*? '"' ;
 FLOAT               : [-]?[1-9]+ '.' [0-9]+ | [-]?[0] '.' [0-9]+ ;
 COMPARATOR          : ('>' | '<' | '<=' | '>=' | '!=' | '==') ;
-WORD                : ([a-zA-Z_])([a-zA-Z0-9_])* ; 
+WORD                : ([a-z] | [A-Z] | [0-9] | '_' )+ ;
 WS                  : (' ') -> skip;
 NL                  : ('\r'? '\n' '\t'*); 

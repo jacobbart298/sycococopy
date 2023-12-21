@@ -1,8 +1,8 @@
 roles:
-    A
-    B
+	A
+	B
 
 protocol:
-    sequence:
-        send str from A to B
-        send bool from B to C
+	sequence:
+		send str from A to B
+		send bool from B to C

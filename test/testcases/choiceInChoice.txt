@@ -1,10 +1,10 @@
 roles:
-    A
-    B
+	A
+	B
 
 protocol:
-    choice:
-        choice:
-            send float(<=-1.000000000) from A to B
-            send float(>=1.000000000) from B to A
-        send bool from B to A
+	choice:
+		choice:
+			send float(<=-1.000000000) from A to B
+			send float(>=1.000000000) from B to A
+		send bool from B to A
