@@ -2,6 +2,7 @@ import unittest
 import os
 from src.core.fsmBuilder import FsmBuilder
 from src.core.transition import Transition, PredicateTransition
+from src.core.exceptions.rolemismatchexception import RoleMismatchException
 
 class TestFsmBuilder(unittest.TestCase):
 
@@ -1136,6 +1137,23 @@ class TestFsmBuilder(unittest.TestCase):
         # in q1 there is no transition
         self.assertEqual(0, len(q1.getTransitions()))
 
+    def testRoleNotUsed(self):        
+
+        specificationPath = getSpecificationPath("test_role_not_used")    
+        with self.assertRaises(RoleMismatchException):
+            FsmBuilder().buildFsm(specificationPath)
+        
+    def testRoleNotDefined(self):
+
+        specificationPath = getSpecificationPath("test_role_not_defined")    
+        with self.assertRaises(RoleMismatchException):
+            FsmBuilder().buildFsm(specificationPath)
+
+    def testRoleNotDefinedNotUsed(self):
+                
+        specificationPath = getSpecificationPath("test_role_not_defined_not_used")    
+        with self.assertRaises(RoleMismatchException):
+            FsmBuilder().buildFsm(specificationPath)
 
 if __name__ == '__main__':
     unittest.main()
