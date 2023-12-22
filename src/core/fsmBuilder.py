@@ -113,7 +113,7 @@ class FsmBuilder(PythonicVisitor):
                 if counter == expressionCount:
                     nextState: State = endState
                 else:
-                    nextState = State()
+                    nextState: State = State()
                 expression: str = ctx.getChild(index).getChild(0)
                 self.visitExpression(expression, currentState, nextState)
                 currentState = nextState
