@@ -54,7 +54,7 @@ class Monitor():
     def verifyReceive(self, transition: Transition) -> any:
         if self.halted:
             raise HaltedException()
-        if transition in self.uncheckedReceives[transition.getReceiver()]:
+        if transition.getReceiver() in self.uncheckedReceives and transition in self.uncheckedReceives[transition.getReceiver()]:
             self.uncheckedReceives[transition.getReceiver()].remove(transition)
         else:
             self.halted = True
