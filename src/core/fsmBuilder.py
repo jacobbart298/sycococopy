@@ -25,12 +25,15 @@ else:
 
 class FsmBuilder(PythonicVisitor):
 
+
     def __init__(self):
         self.fsm: FSM = FSM()
         self.loop_dictionary: dict[str, State] = {}
         self.used_roles: set(str) = set()
         self.defined_roles: set(str) = set()
 
+
+    # Builds an FSM based on the parse tree generated from the specification at the given file path.
     def buildFsm(self, filePath: str) -> tuple[FSM, set[str]]:
         ast = self.buildParseTree(filePath)
         self.visitSpecification(ast)
@@ -38,18 +41,21 @@ class FsmBuilder(PythonicVisitor):
             raise RoleMismatchException(self.used_roles, self.defined_roles)
         return self.fsm     
         
+
     # Visits the protocol in the specification and returns the created FSM and all roles
     # that were used in the specification
     def visitSpecification(self, ctx: PythonicParser.SpecificationContext):
         self.visitRoles(ctx.getChild(0))
         self.visitProtocol(ctx.getChild(1))
         
+
     # Gets the state of the FSM and visits the first expression found in the protocol
     def visitProtocol(self, ctx: PythonicParser.ProtocolContext) -> None:
         expression: str = ctx.getChild(1).getChild(1).getChild(0)
         expression.startState: State = self.fsm.getStates()[0]
         expression.endState: State = State()
         self.visitExpression(expression) 
+
 
     # Checks what expression is offered and continues in the respective visitor
     def visitExpression(self, ctx: PythonicParser.ExpressionContext) -> None:
@@ -118,7 +124,7 @@ class FsmBuilder(PythonicVisitor):
                 self.visitExpression(expression)
                 currentState = nextState
 
-    # Builds a choice part of an FSM, where one of two or more options is allowed
+    # Builds a choice part of an FSM, where one of multiple options is allowed.
     def visitChoice(self, ctx:PythonicParser.ChoiceContext) -> None:
         expressionCount: int = ctx.getChildCount() - 2
         expressionIndices: range =  range(1, expressionCount + 1)
@@ -128,8 +134,7 @@ class FsmBuilder(PythonicVisitor):
             expression.endState: State = ctx.endState
             self.visitExpression(expression)
     
-     # Builds the start of a loop in an FSM and adds the loop tag to the loop_dictionary,
-     # so it can be found when the repeat tag is found in a sequence
+    # Builds the start of a loop in an FSM and adds the loop tag to the loop_dictionary.
     def visitLoop(self, ctx:PythonicParser.LoopContext) -> None:
         tag_with_semi_colon: str = ctx.getChild(1).getText()
         tag: str = tag_with_semi_colon[0:len(tag_with_semi_colon) - 1]
@@ -139,38 +144,75 @@ class FsmBuilder(PythonicVisitor):
         expression.endState: State = ctx.endState
         self.visitExpression(expression)
 
-    # Builds the send part of an FSM, with three options: regular send, and predicate send 
-    # with or without a comparator. Adds the sender and receiver to the used roles set.
+    # Builds a transition from the given SendContext and adds it to the FSM.
     def visitSend(self, ctx: PythonicParser.SendContext) -> None:
 
-        # build regular transition send without predicate
-        if (ctx.getChild(2).getText() == 'from'):
+        if self.isNonPredicateSend(ctx):
+            transition = self.buildNonPredicateTransition(ctx)
+        elif self.containsNonEqualPredicate(ctx):
+            if self.containsCustomType:
+                transition = self.buildCustomTypeNonEqualPredicateTransition(ctx)
+            else:
+                transition = self.buildNonCustomTypeNonEqualPredicateTransition(ctx)
+        elif self.containsCustomType(ctx):
+            transition = self.buildCustomTypeEqualPredicateTransition(ctx)
+        else:
+            transition = self.buildNonCustomTypeEqualPredicateTransition(ctx)
+
+        ctx.startState.addTransitionToState(transition, ctx.endState)
+        self.used_roles.add(transition.getSender())
+        self.used_roles.add(transition.getReceiver())
+
+
+    # Checks whether the given SendContext concerns a non-predicate send.
+    def isNonPredicateSend(self, ctx: PythonicParser.SendContext):
+        return ctx.getChild(2).getText() == 'from'
+
+
+    # Checks whether the given SendContext contains a custom type.
+    def containsCustomType(self, ctx: PythonicParser.SendContext):
+        return ctx.getChild(ctx.getChildCount() - 6).getText() == ")" and ctx.getChild(ctx.getChildCount() - 7).getText() == ")"
+    
+
+    # Checks whether the given SendContext contains a non-equal predicate.
+    def containsNonEqualPredicate(self, ctx: PythonicParser.SendContext):
+        return ctx.getChild(3).getText() in [">", "<", ">=", "<=", "!="]
+
+
+    # Builds a non-predicate transition from the given SendContext.
+    def buildNonPredicateTransition(self, ctx: PythonicParser.SendContext):
             type: any = self.convert_string_to_type(ctx.getChild(1).getText())
             sender: str = ctx.getChild(3).getText()
             receiver: str = ctx.getChild(5).getText()
-            transition: Transition = Transition(type, sender, receiver)
-        # build predicate transition send with a non-equal predicate
-        elif ctx.getChild(3).getText() in [">", "<", ">=", "<=", "!=", "=="]:
-            if ctx.getChild(ctx.getChildCount() - 6).getText() == ")" and ctx.getChild(ctx.getChildCount() - 7).getText() == ")":
-                type: any = self.convert_string_to_type(ctx.getChild(1).getText())
-                comparator: str = ctx.getChild(3).getText()
-                valueString: str = ""
-                for i in range(4, ctx.getChildCount() - 6):
-                    valueString += ctx.getChild(i).getText()
-                sender: str = ctx.getChild(ctx.getChildCount() - 4).getText()
-                receiver: str = ctx.getChild(ctx.getChildCount() - 2).getText()
-                value: any = self.convert_string_to_value(type, valueString)
-                transition: PredicateTransition = PredicateTransition(type, sender, receiver, comparator, value)
-            else:
-                type: any = self.convert_string_to_type(ctx.getChild(1).getText())
-                comparator: str = ctx.getChild(3).getText()
-                value: str = ctx.getChild(4).getText()
-                sender: str = ctx.getChild(7).getText()
-                receiver: str = ctx.getChild(9).getText()
-                value: any = self.convert_string_to_value(type, value)
-                transition: PredicateTransition = PredicateTransition(type, sender, receiver, comparator, value)  
-        # build predicate transition for reference type with an equal comparator
-        elif ctx.getChild(ctx.getChildCount() - 6).getText() == ")" and ctx.getChild(ctx.getChildCount() - 7).getText() == ")":
+            return Transition(type, sender, receiver)
+
+
+    # Builds a predicate transition with a custom type and a non-equal comparator from the given SendContext.
+    def buildCustomTypeNonEqualPredicateTransition(self, ctx: PythonicParser.SendContext):
+            type: any = self.convert_string_to_type(ctx.getChild(1).getText())
+            comparator: str = ctx.getChild(3).getText()
+            valueString: str = ""
+            for i in range(4, ctx.getChildCount() - 6):
+                valueString += ctx.getChild(i).getText()
+            sender: str = ctx.getChild(ctx.getChildCount() - 4).getText()
+            receiver: str = ctx.getChild(ctx.getChildCount() - 2).getText()
+            value: any = self.convert_string_to_value(type, valueString)
+            return PredicateTransition(type, sender, receiver, comparator, value)
+    
+
+    # Builds a predicate transition with a non-custom type and a non-equal comparator from the given SendContext.
+    def buildNonCustomTypeNonEqualPredicateTransition(self, ctx: PythonicParser.SendContext):
+            type: any = self.convert_string_to_type(ctx.getChild(1).getText())
+            comparator: str = ctx.getChild(3).getText()
+            value: str = ctx.getChild(4).getText()
+            sender: str = ctx.getChild(7).getText()
+            receiver: str = ctx.getChild(9).getText()
+            value: any = self.convert_string_to_value(type, value)
+            return PredicateTransition(type, sender, receiver, comparator, value)  
+    
+
+    # Builds a predicate transition with a custom type and the "==" comparator from the given SendContext.
+    def buildCustomTypeEqualPredicateTransition(self, ctx: PythonicParser.SendContext):
             type: any = self.convert_string_to_type(ctx.getChild(1).getText())
             comparator: str = "=="
             valueString: str = ""
@@ -179,20 +221,19 @@ class FsmBuilder(PythonicVisitor):
             sender: str = ctx.getChild(ctx.getChildCount() - 4).getText()
             receiver: str = ctx.getChild(ctx.getChildCount() - 2).getText()
             value: any = self.convert_string_to_value(type, valueString)
-            transition: PredicateTransition = PredicateTransition(type, sender, receiver, comparator, value)
-        # build predicate transition for primitive type with an equal comparator
-        else:
+            return PredicateTransition(type, sender, receiver, comparator, value)
+    
+    
+    # Builds a predicate transition with a non-custom type and the "==" comparator from the given SendContext.
+    def buildNonCustomTypeEqualPredicateTransition(self, ctx: PythonicParser.SendContext):
             type: any = self.convert_string_to_type(ctx.getChild(1).getText())
             comparator: str = "=="
             valueString: str = ctx.getChild(3).getText()
             sender: str = ctx.getChild(6).getText()
             receiver: str = ctx.getChild(8).getText()
             value: any = self.convert_string_to_value(type, valueString)
-            transition: PredicateTransition = PredicateTransition(type, sender, receiver, comparator, value)
-        # add transition to state
-        ctx.startState.addTransitionToState(transition, ctx.endState)
-        self.used_roles.add(sender)
-        self.used_roles.add(receiver)
+            return PredicateTransition(type, sender, receiver, comparator, value)
+
 
     # Transforms a string to a primitive value based on the given type.
     def convert_string_to_value(self, type_obj: type, string: str) -> any:
@@ -251,6 +292,7 @@ class FsmBuilder(PythonicVisitor):
         return parser.specification() 
 
 
+    # Prints the given node. Method used for troubleshooting.
     def dump(self, node, depth=0, ruleNames=None):
         depthStr = '. ' * depth
         if isinstance(node, TerminalNodeImpl):
@@ -259,5 +301,6 @@ class FsmBuilder(PythonicVisitor):
             print(f'{depthStr}{Trees.getNodeText(node, ruleNames)}')
             for child in node.children:
                 self.dump(child, depth + 1, ruleNames)
+
 
 del PythonicParser
