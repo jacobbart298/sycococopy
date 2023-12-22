@@ -1137,6 +1137,13 @@ class TestFsmBuilder(unittest.TestCase):
         # in q1 there is no transition
         self.assertEqual(0, len(q1.getTransitions()))
 
+    def testCorrectRoles(self):     
+        specificationPath = getSpecificationPath("travelAgency")    
+        try:
+            FsmBuilder().buildFsm(specificationPath)   
+        except RoleMismatchException:
+            self.fail
+
     def testRoleNotUsed(self):        
 
         specificationPath = getSpecificationPath("test_role_not_used")    
