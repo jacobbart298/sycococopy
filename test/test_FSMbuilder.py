@@ -8,7 +8,7 @@ class TestFsmBuilder(unittest.TestCase):
     # see singleSend.png in tests/testcases/fsms for fsm
     def test_singlePredicateSend(self):
 
-        specificationPath = os.path.abspath("singlePredicateSend.txt")    
+        specificationPath = getSpecificationPath("singlePredicateSend")    
         fsm = FsmBuilder().buildFsm(specificationPath)
 
         send = PredicateTransition(int, "B", "A", ">", 4)
@@ -30,7 +30,7 @@ class TestFsmBuilder(unittest.TestCase):
     # see singleSend.png in tests/testcases/fsms for fsm
     def test_singleRegularSend(self):
     
-        specificationPath = os.path.abspath("singleRegularSend.txt")    
+        specificationPath = getSpecificationPath("singleRegularSend")    
         fsm = FsmBuilder().buildFsm(specificationPath)
 
         send = Transition(int, "B", "A")
@@ -52,10 +52,11 @@ class TestFsmBuilder(unittest.TestCase):
     # see singleChoice.png in tests/testcases/fsms for fsm
     def test_singleChoice(self):
 
+        specificationPath = getSpecificationPath("singleChoice")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
         choice_a = Transition(int, "A", "B")
         choice_b = PredicateTransition(bool, "B", "A", "==", True)
-
-        fsm = FsmBuilder().buildFsm("singleChoice.txt")
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -80,10 +81,11 @@ class TestFsmBuilder(unittest.TestCase):
     # see singleSequence.png in tests/testcases/fsms for fsm
     def test_singleSequence(self):
 
+        specificationPath = getSpecificationPath("singleSequence")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
         sequence_a = Transition(bool, "A", "B")
         sequence_b = PredicateTransition(int, "B", "A", "==", 42)
-
-        fsm = FsmBuilder().buildFsm("singleSequence.txt")
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -111,10 +113,11 @@ class TestFsmBuilder(unittest.TestCase):
     # see singleShuffle.png in tests/testcases/fsms for fsm 
     def test_singleShuffle(self):
 
+        specificationPath = getSpecificationPath("singleShuffle")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
         shuffle_a = PredicateTransition(float, "A", "B", "<=", -44.29)
         shuffle_b = Transition(int, "B", "A")
-
-        fsm = FsmBuilder().buildFsm("singleShuffle.txt")
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -151,12 +154,13 @@ class TestFsmBuilder(unittest.TestCase):
     # see choiceInShuffle.png in tests/testcases/fsms for fsm
     def test_choiceInShuffle(self):
 
+        specificationPath = getSpecificationPath("choiceInShuffle")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
         choice_a = Transition(int, "A", "B")
         choice_b = PredicateTransition(float, "B", "A", ">", 13333.7)
 
         send = Transition(str, "B", "A")        
-
-        fsm = FsmBuilder().buildFsm("choiceInShuffle.txt")
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -201,11 +205,12 @@ class TestFsmBuilder(unittest.TestCase):
     # see sequenceInShuffle.png in tests/testcases/fsms for fsm
     def test_sequenceInShuffle(self):
 
+        specificationPath = getSpecificationPath("sequenceInShuffle")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
         send = Transition(str, "B", "A")
         sequence_a = PredicateTransition(int, "A", "B", "==", 1)
         sequence_b = PredicateTransition(bool, "B", "A", "==", True)
-
-        fsm = FsmBuilder().buildFsm("sequenceInShuffle.txt")
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -254,11 +259,12 @@ class TestFsmBuilder(unittest.TestCase):
     # see shuffleInShuffle.png in tests/testcases/fsms for fsm
     def test_shuffleInShuffle(self):
 
+        specificationPath = getSpecificationPath("shuffleInShuffle")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
         shuffle_a = Transition(str, "A", "B")
         shuffle_b = PredicateTransition(bool, "B", "A", "==", True)
         send = Transition(int, "B", "A")
-
-        fsm = FsmBuilder().buildFsm("shuffleInShuffle.txt")
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -322,11 +328,12 @@ class TestFsmBuilder(unittest.TestCase):
     # see choiceInSequence.png in tests/testcases/fsms for fsm
     def test_choiceInSequence(self):
 
+        specificationPath = getSpecificationPath("choiceInSequence")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
         choice_a = PredicateTransition(int, "A", "B", "<", 1024)
         choice_b = Transition(bool, "B", "A")
         send = Transition(int, "B", "A")
-
-        fsm = FsmBuilder().buildFsm("choiceInSequence.txt")
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -354,11 +361,12 @@ class TestFsmBuilder(unittest.TestCase):
     # see sequenceInSequence.png in tests/testcases/fsms for fsm
     def test_sequenceInSequence(self):
 
+        specificationPath = getSpecificationPath("sequenceInSequence")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
         sequence_a = PredicateTransition(float, "A", "B", "<", -438923.34832488394834)
         sequence_b = PredicateTransition(bool, "B", "A", "==", True)
         send = Transition(str, "B", "A")
-
-        fsm = FsmBuilder().buildFsm("sequenceInSequence.txt")
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -388,12 +396,13 @@ class TestFsmBuilder(unittest.TestCase):
     # see shuffleInSequence.png in tests/testcases/fsms for fsm
     def test_shuffleInSequence(self):
 
+        specificationPath = getSpecificationPath("shuffleInSequence")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
         shuffle_a = PredicateTransition(bool, "A", "B", "==", True)
         shuffle_b = Transition(bool, "B", "A")
         send = PredicateTransition(str, "B", "A", "==", "")
-
-        fsm = FsmBuilder().buildFsm("shuffleInSequence.txt")
-        
+      
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
 
@@ -433,11 +442,12 @@ class TestFsmBuilder(unittest.TestCase):
     # see choiceInChoice.png in tests/testcases/fsms for fsm
     def test_choiceInChoice(self):
 
+        specificationPath = getSpecificationPath("choiceInChoice")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
         choice_a = PredicateTransition(float, "A", "B", "<=", -1.000000000)
         choice_b = PredicateTransition(float, "B", "A", ">=", 1.000000000)
         send = Transition(bool, "B", "A")
-
-        fsm = FsmBuilder().buildFsm("choiceInChoice.txt")
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -464,11 +474,12 @@ class TestFsmBuilder(unittest.TestCase):
     # see sequenceInChoice.png in tests/testcases/fsms for fsm
     def test_sequenceInChoice(self):
 
+        specificationPath = getSpecificationPath("sequenceInChoice")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+        
         sequence_a = PredicateTransition(bool, "A", "B", "==", True)
         sequence_b = PredicateTransition(bool, "B", "A", "==", True)
         send = Transition(str, "B", "A")
-
-        fsm = FsmBuilder().buildFsm("sequenceInChoice.txt")
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -497,11 +508,12 @@ class TestFsmBuilder(unittest.TestCase):
     # see shuffleInChoice.png in tests/testcases/fsms for fsm
     def test_shuffleInChoice(self):
 
+        specificationPath = getSpecificationPath("shuffleInChoice")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
         shuffle_a = Transition(int, "A", "B")
         shuffle_b = Transition(bool, "B", "A")
         send = PredicateTransition(int, "B", "A", "<", -48790)
-
-        fsm = FsmBuilder().buildFsm("shuffleInChoice.txt")
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -542,11 +554,12 @@ class TestFsmBuilder(unittest.TestCase):
     # see single_loop_deterministic.png in tests/testcases/fsms for fsm
     def test_single_loop_deterministic(self):
        
+        specificationPath = getSpecificationPath("single_loop_deterministic")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+    
         t1_A_B = Transition(int, "A", "B")
         t2_B_A = Transition(bool, "B", "A")
         t3_B_A = Transition(str, "B", "A")
-
-        fsm = FsmBuilder().buildFsm("single_loop_deterministic.txt")
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -572,11 +585,12 @@ class TestFsmBuilder(unittest.TestCase):
 
     # see single_loop_non_deterministic.png in tests/testcases/fsms for fsm
     def test_single_loop_non_deterministic(self):
+
+        specificationPath = getSpecificationPath("single_loop_non_deterministic")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
         
         t1_A_B = PredicateTransition(bool, "A", "B", "==", True)
         t2_B_A = PredicateTransition(int, "B", "A", ">=", -422390482308423)
-
-        fsm = FsmBuilder().buildFsm("single_loop_non_deterministic.txt")
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -602,6 +616,9 @@ class TestFsmBuilder(unittest.TestCase):
 
     # see nested_loop_deterministic.png in tests/testcases/fsms for fsm
     def test_nested_loop_deterministic(self):
+
+        specificationPath = getSpecificationPath("nested_loop_deterministic")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
         
         t0_A_B = Transition(int, "A", "B")
         t1_A_B = Transition(str, "A", "B")
@@ -609,8 +626,6 @@ class TestFsmBuilder(unittest.TestCase):
         t3_B_A = PredicateTransition(bool, "B", "A", "==", True)
         t4_B_A = PredicateTransition(bool, "B", "A", "==", False)
         t5_B_A = PredicateTransition(str, "B", "A", "==", "hello world")
-
-        fsm = FsmBuilder().buildFsm("nested_loop_deterministic.txt")
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -656,14 +671,15 @@ class TestFsmBuilder(unittest.TestCase):
 
     # see nested_loop_non_deterministic.png in tests/testcases/fsms for fsm
     def test_nested_loop_non_deterministic(self):
-        
+
+        specificationPath = getSpecificationPath("nested_loop_non_deterministic")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+                
         t0_A_B = Transition(int, "A", "B")
         t1_A_B = PredicateTransition(str, "A", "B", "==", "s2348SJrfh2314")
         t2_A_B = Transition(bool, "A", "B")
         t3_B_A = PredicateTransition(bool, "B", "A", "==", True)
         t4_B_A = PredicateTransition(bool, "B", "A", "==", False)
-
-        fsm = FsmBuilder().buildFsm("nested_loop_non_deterministic.txt")
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -707,6 +723,9 @@ class TestFsmBuilder(unittest.TestCase):
     # see intertwined_loops.png in tests/testcases/fsms for fsm
     def test_intertwined_loops(self):
 
+        specificationPath = getSpecificationPath("intertwined_loops")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
         t0_A_B = Transition(bool, "A", "B")
         t1_A_B = Transition(int, "A", "B")
         t2_A_B = Transition(bool, "A", "B")
@@ -714,8 +733,6 @@ class TestFsmBuilder(unittest.TestCase):
         t4_B_C = Transition(int, "B", "C")
         t5_C_A = PredicateTransition(float, "C", "A", "<", 3.9)
         t6_C_D = Transition(str, "C", "D")
-
-        fsm = FsmBuilder().buildFsm("intertwined_loops.txt")
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -766,6 +783,9 @@ class TestFsmBuilder(unittest.TestCase):
     # see non_intertwined_loops.png in tests/testcases/fsms for fsm
     def test_non_intertwined_loops(self):
 
+        specificationPath = getSpecificationPath("non_intertwined_loops")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
         t0_A_B = Transition(bool, "A", "B")
         t1_A_B = PredicateTransition(str, "A", "B", "!=", "420691337")
         t2_B_A = PredicateTransition(bool, "B", "A", "==", False)
@@ -774,8 +794,6 @@ class TestFsmBuilder(unittest.TestCase):
         t5_C_D = Transition(int, "C", "D")
         t6_D_B = PredicateTransition(bool, "D", "B", "==", False)
         t7_D_E = Transition(str, "D", "E")
-
-        fsm = FsmBuilder().buildFsm("non_intertwined_loops.txt")
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -832,12 +850,13 @@ class TestFsmBuilder(unittest.TestCase):
     # see connected_loops_perpetual.png in tests/testcases/fsms for fsm
     def test_connected_loops_perpetual(self):
     
+        specificationPath = getSpecificationPath("connected_loops_perpetual")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
         t0_A_B = Transition(str, "A", "B")
         t1_B_C = Transition(str, "B", "C")
         t2_C_B = Transition(int, "C", "B")
         t2_B_A = Transition(float, "B", "A")
-
-        fsm = FsmBuilder().buildFsm("connected_loops_perpetual.txt")
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -867,6 +886,9 @@ class TestFsmBuilder(unittest.TestCase):
 
     # see nested_loops.png in tests/testcases/fsms for fsm
     def test_nested_loops(self):
+                
+        specificationPath = getSpecificationPath("nested_loops")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
 
         t0_A_B = Transition(int, "A", "B")
         t1_A_B = Transition(bool, "A", "B")
@@ -875,8 +897,6 @@ class TestFsmBuilder(unittest.TestCase):
         t4_B_C = PredicateTransition(bool, "B", "C", "==", True)
         t5_C_A = Transition(str, "C", "A")
         t6_C_D = Transition(float, "C", "D")
-
-        fsm = FsmBuilder().buildFsm("nested_loops.txt")
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -924,15 +944,16 @@ class TestFsmBuilder(unittest.TestCase):
 
     # see one_loop_multiple_repeats.png in tests/testcases/fsms for fsm
     def one_loop_multiple_repeats(self):
-        
+                
+        specificationPath = getSpecificationPath("one_loop_multiple_repeats")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+    
         t0_A_B = PredicateTransition(int, "A", "B", "!=", 0)
         t1_A_B = Transition(str, "A", "B")
         t2_B_C = Transition(str, "B", "C")
         t3_B_A = Transition(bool, "B", "A")
         t3_C_A = Transition(bool, "C", "A")
         t4_C_D = Transition(float, "C", "D")
-
-        fsm = FsmBuilder().buildFsm("one_loop_multiple_repeats.txt")
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -974,6 +995,9 @@ class TestFsmBuilder(unittest.TestCase):
 
     # see choice_loop_sequence.png in tests/testcases/fsms for fsm
     def test_choice_loop_sequence(self):
+
+        specificationPath = getSpecificationPath("choice_loop_sequence")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
         
         t1_A_B = PredicateTransition(int, "A", "B", ">", 0)
         t1_A_C = PredicateTransition(int, "A", "C", ">", 0)
@@ -981,8 +1005,6 @@ class TestFsmBuilder(unittest.TestCase):
         t4_C_B = PredicateTransition(bool, "C", "B", "==", False)
         t3_B_D = Transition(int, "B", "D")
         t4_C_D = PredicateTransition(bool, "C", "D", "==", False)
-
-        fsm = FsmBuilder().buildFsm("choice_loop_sequence.txt")
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -1035,12 +1057,13 @@ class TestFsmBuilder(unittest.TestCase):
     # see shuffle_loop_sequence.png in tests/testcases/fsms for fsm
     def test_shuffle_loop_sequence(self):
         
+        specificationPath = getSpecificationPath("shuffle_loop_sequence")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
         t1_A_B = Transition(bool, "A", "B")
         t2_B_A = Transition(str, "B", "A")
         t3_B_D = Transition(float, "B", "D")
         t4_C_D = Transition(float, "C", "D")
-
-        fsm = FsmBuilder().buildFsm("shuffle_loop_sequence.txt")
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -1090,10 +1113,11 @@ class TestFsmBuilder(unittest.TestCase):
     # see loop_choice.png in tests/testcases/fsms for fsm
     def test_loop_choice(self):
 
+        specificationPath = getSpecificationPath("loop_choice")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
         t1_A_B = PredicateTransition(bool, "A", "B", "==", False)
         t2_A_B = PredicateTransition(bool, "A", "B", "==", True)
-
-        fsm = FsmBuilder().buildFsm("loop_choice.txt")
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -1112,5 +1136,9 @@ class TestFsmBuilder(unittest.TestCase):
         # in q1 there is no transition
         self.assertEqual(0, len(q1.getTransitions()))
 
+
 if __name__ == '__main__':
     unittest.main()
+
+def getSpecificationPath(specificationName: str):
+        return os.path.abspath(f"test/testcases/specifications/{specificationName}.txt") 

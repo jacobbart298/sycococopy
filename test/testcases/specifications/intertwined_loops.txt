@@ -2,6 +2,7 @@ roles:
 	A
 	B
 	C
+	D
 
 protocol:
 	sequence:

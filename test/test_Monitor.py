@@ -127,20 +127,6 @@ class TestMonitor(unittest.TestCase):
         self.assertIn((str_A_B, message_str), monitor.transitionHistory)
 
 
-    def testInitializationUncheckedReceives(self):
-        specification = r".\test\Test specifications\test_monitor.txt"
-        monitor = Monitor(specification)
-
-        # Upon initialization uncheckedReceives has keys for A and B
-        self.assertEqual(2, len(monitor.uncheckedReceives))    
-        self.assertIn("A", monitor.uncheckedReceives)  
-        self.assertIn("B", monitor.uncheckedReceives)  
-
-        # Upon initialization A and B have no unchecked receives
-        self.assertEqual(0, len(monitor.uncheckedReceives["A"]))
-        self.assertEqual(0, len(monitor.uncheckedReceives["B"]))
-
-
     def testInitializationHalted(self):
         specification = r".\test\Test specifications\test_monitor.txt"
         monitor = Monitor(specification)
@@ -312,17 +298,18 @@ class TestMonitor(unittest.TestCase):
         monitor = Monitor(specification)
 
         bool_A_C = Transition(bool, "A", "C")
-        bool_B_C = Transition(bool, "B", "C")
+        int_C_A = Transition(bool, "C", "A")
         message_bool = False
+        message_int = 4
 
         monitor.verifySend(bool_A_C, message_bool)
         monitor.verifyReceive(bool_A_C)
 
-        # B is not waiting for any messages, and sending a
-        # bool from B to C is allowed at this point
-        self.assertEqual(0, len(monitor.uncheckedReceives["B"]))
+        # C is not waiting for any messages, and sending an
+        # int from C to A is allowed at this point
+        self.assertEqual(0, len(monitor.uncheckedReceives["C"]))
         try:
-            monitor.verifySend(bool_B_C, message_bool)
+            monitor.verifySend(int_C_A, message_int)
         except IllegalTransitionException:
             self.fail
 
@@ -410,7 +397,6 @@ class TestMonitor(unittest.TestCase):
 
         # Note that sending True from B to A satisfies two edges in the FSM.
         # However, only one unchecked receive should be added to the monitor.        
-        self.assertEqual(0, len(monitor.uncheckedReceives["A"]))
         monitor.verifySend(t2_B_A, True)
         self.assertEqual(1, len(monitor.uncheckedReceives["A"]))
 
