@@ -79,12 +79,12 @@ class Monitor():
             message += "\nProgram failed to reach end of protocol!\n"
             count: int = 1
             for transition, item in self.transitionHistory:
-                message += f"{str(count)}: send {str(transition.getType())}({str(item)}) from {str(transition.getSender())} to {str(transition.getReceiver())}\n"
+                message += f"{str(count)}: send {str(transition.getType().__name__)}({str(item)}) from {str(transition.getSender())} to {str(transition.getReceiver())}\n"
                 count += 1
         if len(lostMessages) > 0:
             message += "\nThe following messages were lost:\n"
             for transition in lostMessages:
-                message += f"{str(transition.getReceiver())} is waiting for a message of type {str(transition.getType())} from {str(transition.getSender())}\n"
+                message += f"{str(transition.getReceiver())} is waiting for a message of type {str(transition.getType().__name__)} from {str(transition.getSender())}\n"
         return message
         
     def setExceptionHook(self) -> None:
