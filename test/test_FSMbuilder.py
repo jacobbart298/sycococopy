@@ -1,20 +1,17 @@
 import unittest
 import os
-from antlr4 import CommonTokenStream, FileStream
-from antlrFiles.PythonicLexer import PythonicLexer
-from antlrFiles.PythonicParser import PythonicParser
 from src.core.fsmBuilder import FsmBuilder
 from src.core.transition import Transition, PredicateTransition
 
-class TestFSMBuilder(unittest.TestCase):
+class TestFsmBuilder(unittest.TestCase):
 
     # see singleSend.png in tests/testcases/fsms for fsm
     def test_singlePredicateSend(self):
-        
-        send = PredicateTransition(int, "B", "A", ">", 4)
-        path = os.path.abspath("singlePredicateSend.txt")
 
-        fsm = FsmBuilder().buildFsm(path)
+        specificationPath = os.path.abspath("singlePredicateSend.txt")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
+        send = PredicateTransition(int, "B", "A", ">", 4)
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -32,10 +29,11 @@ class TestFSMBuilder(unittest.TestCase):
 
     # see singleSend.png in tests/testcases/fsms for fsm
     def test_singleRegularSend(self):
-        
-        send = Transition(int, "B", "A")
+    
+        specificationPath = os.path.abspath("singleRegularSend.txt")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
 
-        fsm = FsmBuilder().buildFsm("singleRegularSend.txt")
+        send = Transition(int, "B", "A")
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
