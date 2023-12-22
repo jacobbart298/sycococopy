@@ -52,32 +52,30 @@ class FsmBuilder(PythonicVisitor):
     # Gets the state of the FSM and visits the first expression found in the protocol
     def visitProtocol(self, ctx: PythonicParser.ProtocolContext) -> None:
         expression: str = ctx.getChild(1).getChild(1).getChild(0)
-        expression.startState: State = self.fsm.getStates()[0]
-        expression.endState: State = State()
-        self.visitExpression(expression) 
+        startState: State = self.fsm.getStates()[0]
+        endState: State = State()
+        self.visitExpression(expression, startState, endState) 
 
 
     # Checks what expression is offered and continues in the respective visitor
-    def visitExpression(self, ctx: PythonicParser.ExpressionContext) -> None:
+    def visitExpression(self, ctx: PythonicParser.ExpressionContext, startState: State, endState: State) -> None:
         expression: str = ctx.getChild(1)
-        expression.startState: State = ctx.startState
-        expression.endState: State = ctx.endState
         match ctx.getChild(0).getText():
             case "sequence:":
-                self.visitSequence(expression)
+                self.visitSequence(expression, startState, endState)
             case "choice:":
-                self.visitChoice(expression)
+                self.visitChoice(expression, startState, endState)
             case "shuffle:":
-                self.visitShuffle(expression)
+                self.visitShuffle(expression, startState, endState)
             case "send":
-                self.visitSend(ctx)
+                self.visitSend(ctx, startState, endState)
             case "loop":
-                self.visitLoop(ctx)
+                self.visitLoop(ctx, startState, endState)
 
  
     # Builds the fsm sequence part, checks for repeat and end of sequence. Visits the expression that
     # is at each part in the sequence
-    def visitSequence(self, ctx:PythonicParser.SequenceContext) -> None:
+    def visitSequence(self, ctx:PythonicParser.SequenceContext, startState: State, endState: State) -> None:
         repeat: bool = False
         expressionCount: int = ctx.getChildCount() - 2
 
@@ -87,7 +85,7 @@ class FsmBuilder(PythonicVisitor):
             repeat = True
             expressionCount -= 1    
 
-        currentState: State = ctx.startState     
+        currentState: State = startState     
         expressionIndices: range = range(1, expressionCount + 1)
         for index in expressionIndices:
             if index == expressionCount:
@@ -95,57 +93,49 @@ class FsmBuilder(PythonicVisitor):
                     loopTag: str = lastChild.getChild(1).getText() 
                     nextState: State =  self.loop_dictionary[loopTag]
                 else:
-                    nextState: State = ctx.endState
+                    nextState: State = endState
             else:
                 nextState: State = State()
             expression: str = ctx.getChild(index).getChild(0)
-            expression.startState: State = currentState
-            expression.endState: State = nextState
-            self.visitExpression(expression)
+            self.visitExpression(expression, currentState, nextState)
             currentState = nextState
 
     # Builds a shuffle part of an fsm, where the expressions in the shuffle are allowed
     # to happen in any order.
-    def visitShuffle(self, ctx: PythonicParser.ShuffleContext) -> None:
+    def visitShuffle(self, ctx: PythonicParser.ShuffleContext, startState: State, endState: State) -> None:
         expressionCount: int = ctx.getChildCount() - 2
         expressionIndices: range = range(1, expressionCount + 1)
         for indicesPermutation in permutations(expressionIndices):
             counter: int = 0
-            currentState: State = ctx.startState
+            currentState: State = startState
             for index in indicesPermutation:
                 counter += 1
                 if counter == expressionCount:
-                    nextState: State = ctx.endState
+                    nextState: State = endState
                 else:
                     nextState = State()
                 expression: str = ctx.getChild(index).getChild(0)
-                expression.startState: State = currentState
-                expression.endState: State = nextState
-                self.visitExpression(expression)
+                self.visitExpression(expression, currentState, nextState)
                 currentState = nextState
 
     # Builds a choice part of an FSM, where one of multiple options is allowed.
-    def visitChoice(self, ctx:PythonicParser.ChoiceContext) -> None:
+    def visitChoice(self, ctx:PythonicParser.ChoiceContext, startState: State, endState: State) -> None:
         expressionCount: int = ctx.getChildCount() - 2
         expressionIndices: range =  range(1, expressionCount + 1)
         for index in expressionIndices:
             expression: str = ctx.getChild(index).getChild(0)
-            expression.startState: State = ctx.startState
-            expression.endState: State = ctx.endState
-            self.visitExpression(expression)
+            self.visitExpression(expression, startState, endState)
     
     # Builds the start of a loop in an FSM and adds the loop tag to the loop_dictionary.
-    def visitLoop(self, ctx:PythonicParser.LoopContext) -> None:
+    def visitLoop(self, ctx:PythonicParser.LoopContext, startState: State, endState: State) -> None:
         tag_with_semi_colon: str = ctx.getChild(1).getText()
         tag: str = tag_with_semi_colon[0:len(tag_with_semi_colon) - 1]
-        self.loop_dictionary[tag] = ctx.startState
+        self.loop_dictionary[tag] = startState
         expression: str = ctx.getChild(2).getChild(1).getChild(0)
-        expression.startState: State = ctx.startState
-        expression.endState: State = ctx.endState
-        self.visitExpression(expression)
+        self.visitExpression(expression, startState, endState)
 
     # Builds a transition from the given SendContext and adds it to the FSM.
-    def visitSend(self, ctx: PythonicParser.SendContext) -> None:
+    def visitSend(self, ctx: PythonicParser.SendContext, startState: State, endState: State) -> None:
 
         if self.isNonPredicateSend(ctx):
             transition = self.buildNonPredicateTransition(ctx)
@@ -159,7 +149,7 @@ class FsmBuilder(PythonicVisitor):
         else:
             transition = self.buildNonCustomTypeEqualPredicateTransition(ctx)
 
-        ctx.startState.addTransitionToState(transition, ctx.endState)
+        startState.addTransitionToState(transition, endState)
         self.used_roles.add(transition.getSender())
         self.used_roles.add(transition.getReceiver())
 
