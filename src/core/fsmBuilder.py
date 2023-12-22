@@ -1,20 +1,23 @@
-from antlr4 import *
 import builtins
+import antlrFiles
+from antlr4 import FileStream, CommonTokenStream
+from antlrFiles.PythonicLexer import PythonicLexer
+from antlrFiles.pythonicvisitor import PythonicVisitor
 from antlr4.tree.Trees import Trees
 from antlr4.tree.Tree import TerminalNodeImpl
-from antlrFiles.pythonicvisitor import PythonicVisitor
 from src import customtypes
 from src.core.fsm import FSM
 from src.core.transition import Transition, PredicateTransition
 from src.core.state import State
 from src.core.exceptions.illegaltypeexception import IllegalTypeException
 from src.core.exceptions.illegalvalueexception import IllegalValueException
+from src.core.exceptions.rolemismatchexception import RoleMismatchException
 from itertools import permutations
 
 if "." in __name__:
-    from antlrFiles.PythonicParser import PythonicParser
+     from antlrFiles.PythonicParser import PythonicParser
 else:
-    from antlrFiles.PythonicParser import PythonicParser
+     from antlrFiles.PythonicParser import PythonicParser
 
     
 # FsmBuilder is responsible for building the FSM based on a parse tree produced from a specification by the PythonicParser. 
@@ -25,14 +28,22 @@ class FsmBuilder(PythonicVisitor):
     def __init__(self):
         self.fsm: FSM = FSM()
         self.loop_dictionary: dict[str, State] = {}
-        self.roles_in_fsm: set(str) = set()
+        self.used_roles: set(str) = set()
+        self.defined_roles: set(str) = set()
 
+    def buildFsm(self, filePath: str) -> tuple[FSM, set[str]]:
+        ast = self.buildParseTree(filePath)
+        self.visitSpecification(ast)
+        if not self.used_roles == self.defined_roles:
+            raise RoleMismatchException(self.used_roles, self.defined_roles)
+        return self.fsm     
+        
     # Visits the protocol in the specification and returns the created FSM and all roles
     # that were used in the specification
-    def visitSpecification(self, ctx: PythonicParser.SpecificationContext) -> tuple[FSM, set[str]]:
+    def visitSpecification(self, ctx: PythonicParser.SpecificationContext):
+        self.visitRoles(ctx.getChild(0))
         self.visitProtocol(ctx.getChild(1))
-        return self.fsm, self.roles_in_fsm
-
+        
     # Gets the state of the FSM and visits the first expression found in the protocol
     def visitProtocol(self, ctx: PythonicParser.ProtocolContext) -> None:
         expression: str = ctx.getChild(1).getChild(1).getChild(0)
@@ -180,8 +191,8 @@ class FsmBuilder(PythonicVisitor):
             transition: PredicateTransition = PredicateTransition(type, sender, receiver, comparator, value)
         # add transition to state
         ctx.startState.addTransitionToState(transition, ctx.endState)
-        self.roles_in_fsm.add(sender)
-        self.roles_in_fsm.add(receiver)
+        self.used_roles.add(sender)
+        self.used_roles.add(receiver)
 
     # Transforms a string to a primitive value based on the given type.
     def convert_string_to_value(self, type_obj: type, string: str) -> any:
@@ -215,6 +226,30 @@ class FsmBuilder(PythonicVisitor):
         # type not found: raise exception
         else:
             raise IllegalTypeException(type_str)
+        
+
+    # Determines the count of defined roles and adds each role to the set of roles
+    def visitRoles(self, ctx:PythonicParser.RolesContext) -> None:
+        roleCount: int = ctx.getChild(1).getChildCount() - 2
+        roleNodes: range =  range(1, roleCount + 1)
+        for roleNode in roleNodes:
+            role: str = self.visitRole(ctx.getChild(1).getChild(roleNode))
+            self.defined_roles.add(role)
+
+
+    # Returns the role found in the context
+    def visitRole(self, ctx: PythonicParser.RoleContext) -> str:
+        return ctx.getChild(0).getText()
+        
+
+    # Parses the given specification in the filePath to a parse tree.
+    def buildParseTree(self, filePath: str):
+        input = FileStream(filePath)
+        lexer = PythonicLexer(input)
+        stream = CommonTokenStream(lexer)
+        parser = antlrFiles.PythonicParser.PythonicParser(stream)
+        return parser.specification() 
+
 
     def dump(self, node, depth=0, ruleNames=None):
         depthStr = '. ' * depth
