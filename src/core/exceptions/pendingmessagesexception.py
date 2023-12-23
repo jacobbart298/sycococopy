@@ -14,13 +14,13 @@ class PendingMessagesException(SycococopyException):
         
     def __str__(self) -> str:
         failedTransition, itemFailedTransition = self.transitionHistory[len(self.transitionHistory)-1]
-        message: str = f"\nPENDING MESSAGE FAILURE: send {str(failedTransition.getType())}({str(itemFailedTransition)}) from {str(failedTransition.getSender())} to {str(failedTransition.getReceiver())} is not allowed, because the following messages need to be received first: \n"
+        message: str = f"\nPENDING MESSAGE FAILURE: send {str(failedTransition.getType().__name__)}({str(itemFailedTransition)}) from {str(failedTransition.getSender())} to {str(failedTransition.getReceiver())} is not allowed, because the following messages need to be received first: \n"
         pendingMessagesCounter: int = 1
         for transition in self.pendingMessages:
-            message += f"\t{str(pendingMessagesCounter)}: a message with type {str(transition.getType())} from {str(transition.getSender())}"
+            message += f"\t{str(pendingMessagesCounter)}: a message with type {str(transition.getType().__name__)} from {str(transition.getSender())}"
         message += "\n\nThe following messages were already sent:\n"
         historyCount: int = 1
         for transition, item in self.transitionHistory:
-            message += f"\t{str(historyCount)}: send {str(transition.getType())}({str(item)}) from {str(transition.getSender())} to {str(transition.getReceiver())}\n"
+            message += f"\t{str(historyCount)}: send {str(transition.getType().__name__)}({str(item)}) from {str(transition.getSender())} to {str(transition.getReceiver())}\n"
             historyCount += 1
         return message
