@@ -1,0 +1,9 @@
+roles:
+	main
+	worker1
+	worker2
+
+protocol:
+	shuffle:
+		send str from main to worker1
+		send str from main to worker2

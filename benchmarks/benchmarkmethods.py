@@ -11,6 +11,8 @@ specTreeNoPredicates = "protocol_tree_no_predicates.txt"
 specTreeWithPredicates= "protocol_tree_with_predicates.txt"
 specRingNoPredicates = "protocol_ring_no_predicates.txt"
 specRingWithPredicates = "protocol_ring_with_predicates.txt"
+specStarNoPredicates = "protocol_shuffle_no_predicates.txt"
+specStarWithPredicates = "protocol_shuffle_with_predicates.txt"
 
 
 # Parses the given specification in the filePath to a parse tree.
@@ -22,13 +24,21 @@ def buildParseTree(filePath: str):
     return parser.specification()
 
 
-def writeSpecifications(shuffleCount: int, nddepth: int, ringCount: int):
+def writeLoopSpecifications():
     writeLoopSpecificationNoPredicates()
     writeLoopSpecificationWithPredicates()
+
+def writeTreeSpecifications(nddepth: int):
     writeTreeSpecificationNoPredicates(nddepth)
     writeTreeSpecificationWithPredicates(nddepth)
+
+def writeRingSpecifications(ringCount: int):
     writeRingSpecificationNoPredicates(ringCount)
     writeRingSpecificationWithPredicates(ringCount)
+
+def writeStarSpecifications(shuffleCount: int):
+    writeStarSpecificationNoPredicates(shuffleCount)
+    writeStarSpecificationWithPredicates(shuffleCount)
 
 
 def writeLoopSpecificationNoPredicates() -> None:
@@ -190,3 +200,53 @@ def writeRingSpecificationWithPredicates(coroutineCount: int) -> None:
     specification_path = path.normpath(path.join(specification_folder, specRingWithPredicates))
     with open(specification_path, 'w') as spec:
         spec.write(specification)
+
+
+def writeStarSpecificationNoPredicates(workerCount: int) -> None:
+    indent = "\t"
+    specification : str = ""
+    # write role header
+    specification += "roles:\n"
+    specification += indent + "main\n"
+    # write roles
+    for i in range(1, workerCount+1):
+        specification += indent + f"worker{i}\n"
+        # print(f"Worker {i} created")
+    # write protocol header
+    specification += "\nprotocol:\n"
+    # write sequence expression
+    specification += indent + "shuffle:\n"
+    # write sends
+    for i in range(1, workerCount+1):
+        # print(f"send from main to worker {i} in protocol")
+        specification += 2*indent + f"send str from main to worker{i}\n"
+
+    specification_path = path.normpath(path.join(specification_folder, specStarNoPredicates))
+    with open(specification_path, 'w') as spec:
+        spec.write(specification)
+        spec.close()
+
+
+def writeStarSpecificationWithPredicates(workerCount: int) -> None:
+    indent = "\t"
+    specification : str = ""
+    # write role header
+    specification += "roles:\n"
+    specification += indent + "main\n"
+    # write roles
+    for i in range(1, workerCount+1):
+        specification += indent + f"worker{i}\n"
+        # print(f"Worker {i} created")
+    # write protocol header
+    specification += "\nprotocol:\n"
+    # write sequence expression
+    specification += indent + "shuffle:\n"
+    # write sends
+    for i in range(1, workerCount+1):
+        # print(f"send from main to worker {i} in protocol")
+        specification += 2*indent + f'send str(>"C") from main to worker{i}\n'
+
+    specification_path = path.normpath(path.join(specification_folder, specStarWithPredicates))
+    with open(specification_path, 'w') as spec:
+        spec.write(specification)
+        spec.close()
