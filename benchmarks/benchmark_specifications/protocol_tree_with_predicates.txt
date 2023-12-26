@@ -10,55 +10,23 @@ protocol:
 				sequence:
 					send bool(True) from B to A
 					choice:
-						sequence:
-							send bool(True) from A to B
-							choice:
-								send bool(True) from B to A
-								send bool(False) from B to A
-						sequence:
-							send bool(False) from A to B
-							choice:
-								send bool(False) from B to A
-								send bool(True) from B to A
+						send bool(True) from A to B
+						send bool(False) from A to B
 				sequence:
 					send bool(False) from B to A
 					choice:
-						sequence:
-							send bool(False) from A to B
-							choice:
-								send bool(False) from B to A
-								send bool(True) from B to A
-						sequence:
-							send bool(True) from A to B
-							choice:
-								send bool(True) from B to A
-								send bool(False) from B to A
+						send bool(False) from A to B
+						send bool(True) from A to B
 		sequence:
 			send bool(False) from A to B
 			choice:
 				sequence:
 					send bool(False) from B to A
 					choice:
-						sequence:
-							send bool(False) from A to B
-							choice:
-								send bool(False) from B to A
-								send bool(True) from B to A
-						sequence:
-							send bool(True) from A to B
-							choice:
-								send bool(True) from B to A
-								send bool(False) from B to A
+						send bool(False) from A to B
+						send bool(True) from A to B
 				sequence:
 					send bool(True) from B to A
 					choice:
-						sequence:
-							send bool(True) from A to B
-							choice:
-								send bool(True) from B to A
-								send bool(False) from B to A
-						sequence:
-							send bool(False) from A to B
-							choice:
-								send bool(False) from B to A
-								send bool(True) from B to A
+						send bool(True) from A to B
+						send bool(False) from A to B

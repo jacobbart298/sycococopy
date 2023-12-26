@@ -9,6 +9,8 @@ specLoopNoPredicates = "protocol_loop_no_predicates.txt"
 specLoopWithPredicates = "protocol_loop_with_predicates.txt"
 specTreeNoPredicates = "protocol_tree_no_predicates.txt"
 specTreeWithPredicates= "protocol_tree_with_predicates.txt"
+specRingNoPredicates = "protocol_ring_no_predicates.txt"
+specRingWithPredicates = "protocol_ring_with_predicates.txt"
 
 
 # Parses the given specification in the filePath to a parse tree.
@@ -25,6 +27,8 @@ def writeSpecifications(shuffleCount: int, nddepth: int, ringCount: int):
     writeLoopSpecificationWithPredicates()
     writeTreeSpecificationNoPredicates(nddepth)
     writeTreeSpecificationWithPredicates(nddepth)
+    writeRingSpecificationNoPredicates(ringCount)
+    writeRingSpecificationWithPredicates(ringCount)
 
 
 def writeLoopSpecificationNoPredicates() -> None:
@@ -143,3 +147,46 @@ def writeProtocolWithPredicates(depth: int, indentLevel: int, maxDepth: int, val
         protocol += writeProtocolWithPredicates(depth + 1, indentLevel + 1, maxDepth, value)
         protocol += writeProtocolWithPredicates(depth + 1, indentLevel + 1, maxDepth, not value)
         return protocol
+    
+
+def writeRingSpecificationNoPredicates(coroutineCount: int) -> None:
+    specification : str = ""
+    # write role header
+    specification += "roles:\n"
+    # write roles
+    for i in range(coroutineCount):
+        specification += f"\tcoroutine{i}\n"
+    # write protocol header
+    specification += "\nprotocol:\n"
+    # write sequence expression
+    specification += "\tsequence:\n"
+    # write sends
+    for i in range(coroutineCount-1):
+        specification += f"\t\tsend bool from coroutine{i} to coroutine{i+1}\n"
+    specification += f"\t\tsend bool from coroutine{coroutineCount-1} to coroutine{0}"
+
+    specification_path = path.normpath(path.join(specification_folder, specRingNoPredicates))
+    with open(specification_path, 'w') as spec:
+        spec.write(specification)
+        spec.close()
+
+
+def writeRingSpecificationWithPredicates(coroutineCount: int) -> None:
+    specification : str = ""
+    # write role header
+    specification += "roles:\n"
+    # write roles
+    for i in range(coroutineCount):
+        specification += f"\tcoroutine{i}\n"
+    # write protocol header
+    specification += "\nprotocol:\n"
+    # write sequence expression
+    specification += "\tsequence:\n"
+    # write sends
+    for i in range(coroutineCount-1):
+        specification += f"\t\tsend bool(True) from coroutine{i} to coroutine{i+1}\n"
+    specification += f"\t\tsend bool(True) from coroutine{coroutineCount-1} to coroutine{0}"
+
+    specification_path = path.normpath(path.join(specification_folder, specRingWithPredicates))
+    with open(specification_path, 'w') as spec:
+        spec.write(specification)

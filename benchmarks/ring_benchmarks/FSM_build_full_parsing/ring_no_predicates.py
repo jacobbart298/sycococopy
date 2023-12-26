@@ -1,30 +1,11 @@
 import pyperf
-from benchmarks.config import coroutineCount
+import json
+from os import path
 from src.core.instrumentation import Queue
 import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor
 
-specification_path = r".\protocol_ring_no_predicates.txt"
-
-def writeSpecification(coroutineCount: int) -> None:
-    specification : str = ""
-    # write role header
-    specification += "roles:\n"
-    # write roles
-    for i in range(coroutineCount):
-        specification += f"\tcoroutine{i}\n"
-    # write protocol header
-    specification += "\nprotocol:\n"
-    # write sequence expression
-    specification += "\tsequence:\n"
-    # write sends
-    for i in range(coroutineCount-1):
-        specification += f"\t\tsend bool from coroutine{i} to coroutine{i+1}\n"
-    specification += f"\t\tsend bool from coroutine{coroutineCount-1} to coroutine{0}"
-
-    with open(specification_path, 'w') as spec:
-        spec.write(specification)
-        spec.close()
+specification_path = path.abspath("benchmark_specifications/protocol_ring_no_predicates.txt")
 
 async def worker(receiveQueue: Queue, sendQueue: Queue) -> None:
     await receiveQueue.get()
@@ -64,6 +45,7 @@ async def runBenchmark() -> None:
     await main(coroutineCount)
 
 if __name__ == '__main__':
-    writeSpecification(coroutineCount)
+    with open(path.abspath('config.json'), 'r') as config:
+        coroutineCount = json.load(config)["ringCount"]
     runner = pyperf.Runner()
     runner.bench_async_func(f"Coroutine count: {coroutineCount}", runBenchmark)

@@ -1,0 +1,204 @@
+roles:
+	coroutine0
+	coroutine1
+	coroutine2
+	coroutine3
+	coroutine4
+	coroutine5
+	coroutine6
+	coroutine7
+	coroutine8
+	coroutine9
+	coroutine10
+	coroutine11
+	coroutine12
+	coroutine13
+	coroutine14
+	coroutine15
+	coroutine16
+	coroutine17
+	coroutine18
+	coroutine19
+	coroutine20
+	coroutine21
+	coroutine22
+	coroutine23
+	coroutine24
+	coroutine25
+	coroutine26
+	coroutine27
+	coroutine28
+	coroutine29
+	coroutine30
+	coroutine31
+	coroutine32
+	coroutine33
+	coroutine34
+	coroutine35
+	coroutine36
+	coroutine37
+	coroutine38
+	coroutine39
+	coroutine40
+	coroutine41
+	coroutine42
+	coroutine43
+	coroutine44
+	coroutine45
+	coroutine46
+	coroutine47
+	coroutine48
+	coroutine49
+	coroutine50
+	coroutine51
+	coroutine52
+	coroutine53
+	coroutine54
+	coroutine55
+	coroutine56
+	coroutine57
+	coroutine58
+	coroutine59
+	coroutine60
+	coroutine61
+	coroutine62
+	coroutine63
+	coroutine64
+	coroutine65
+	coroutine66
+	coroutine67
+	coroutine68
+	coroutine69
+	coroutine70
+	coroutine71
+	coroutine72
+	coroutine73
+	coroutine74
+	coroutine75
+	coroutine76
+	coroutine77
+	coroutine78
+	coroutine79
+	coroutine80
+	coroutine81
+	coroutine82
+	coroutine83
+	coroutine84
+	coroutine85
+	coroutine86
+	coroutine87
+	coroutine88
+	coroutine89
+	coroutine90
+	coroutine91
+	coroutine92
+	coroutine93
+	coroutine94
+	coroutine95
+	coroutine96
+	coroutine97
+	coroutine98
+	coroutine99
+
+protocol:
+	sequence:
+		send bool(True) from coroutine0 to coroutine1
+		send bool(True) from coroutine1 to coroutine2
+		send bool(True) from coroutine2 to coroutine3
+		send bool(True) from coroutine3 to coroutine4
+		send bool(True) from coroutine4 to coroutine5
+		send bool(True) from coroutine5 to coroutine6
+		send bool(True) from coroutine6 to coroutine7
+		send bool(True) from coroutine7 to coroutine8
+		send bool(True) from coroutine8 to coroutine9
+		send bool(True) from coroutine9 to coroutine10
+		send bool(True) from coroutine10 to coroutine11
+		send bool(True) from coroutine11 to coroutine12
+		send bool(True) from coroutine12 to coroutine13
+		send bool(True) from coroutine13 to coroutine14
+		send bool(True) from coroutine14 to coroutine15
+		send bool(True) from coroutine15 to coroutine16
+		send bool(True) from coroutine16 to coroutine17
+		send bool(True) from coroutine17 to coroutine18
+		send bool(True) from coroutine18 to coroutine19
+		send bool(True) from coroutine19 to coroutine20
+		send bool(True) from coroutine20 to coroutine21
+		send bool(True) from coroutine21 to coroutine22
+		send bool(True) from coroutine22 to coroutine23
+		send bool(True) from coroutine23 to coroutine24
+		send bool(True) from coroutine24 to coroutine25
+		send bool(True) from coroutine25 to coroutine26
+		send bool(True) from coroutine26 to coroutine27
+		send bool(True) from coroutine27 to coroutine28
+		send bool(True) from coroutine28 to coroutine29
+		send bool(True) from coroutine29 to coroutine30
+		send bool(True) from coroutine30 to coroutine31
+		send bool(True) from coroutine31 to coroutine32
+		send bool(True) from coroutine32 to coroutine33
+		send bool(True) from coroutine33 to coroutine34
+		send bool(True) from coroutine34 to coroutine35
+		send bool(True) from coroutine35 to coroutine36
+		send bool(True) from coroutine36 to coroutine37
+		send bool(True) from coroutine37 to coroutine38
+		send bool(True) from coroutine38 to coroutine39
+		send bool(True) from coroutine39 to coroutine40
+		send bool(True) from coroutine40 to coroutine41
+		send bool(True) from coroutine41 to coroutine42
+		send bool(True) from coroutine42 to coroutine43
+		send bool(True) from coroutine43 to coroutine44
+		send bool(True) from coroutine44 to coroutine45
+		send bool(True) from coroutine45 to coroutine46
+		send bool(True) from coroutine46 to coroutine47
+		send bool(True) from coroutine47 to coroutine48
+		send bool(True) from coroutine48 to coroutine49
+		send bool(True) from coroutine49 to coroutine50
+		send bool(True) from coroutine50 to coroutine51
+		send bool(True) from coroutine51 to coroutine52
+		send bool(True) from coroutine52 to coroutine53
+		send bool(True) from coroutine53 to coroutine54
+		send bool(True) from coroutine54 to coroutine55
+		send bool(True) from coroutine55 to coroutine56
+		send bool(True) from coroutine56 to coroutine57
+		send bool(True) from coroutine57 to coroutine58
+		send bool(True) from coroutine58 to coroutine59
+		send bool(True) from coroutine59 to coroutine60
+		send bool(True) from coroutine60 to coroutine61
+		send bool(True) from coroutine61 to coroutine62
+		send bool(True) from coroutine62 to coroutine63
+		send bool(True) from coroutine63 to coroutine64
+		send bool(True) from coroutine64 to coroutine65
+		send bool(True) from coroutine65 to coroutine66
+		send bool(True) from coroutine66 to coroutine67
+		send bool(True) from coroutine67 to coroutine68
+		send bool(True) from coroutine68 to coroutine69
+		send bool(True) from coroutine69 to coroutine70
+		send bool(True) from coroutine70 to coroutine71
+		send bool(True) from coroutine71 to coroutine72
+		send bool(True) from coroutine72 to coroutine73
+		send bool(True) from coroutine73 to coroutine74
+		send bool(True) from coroutine74 to coroutine75
+		send bool(True) from coroutine75 to coroutine76
+		send bool(True) from coroutine76 to coroutine77
+		send bool(True) from coroutine77 to coroutine78
+		send bool(True) from coroutine78 to coroutine79
+		send bool(True) from coroutine79 to coroutine80
+		send bool(True) from coroutine80 to coroutine81
+		send bool(True) from coroutine81 to coroutine82
+		send bool(True) from coroutine82 to coroutine83
+		send bool(True) from coroutine83 to coroutine84
+		send bool(True) from coroutine84 to coroutine85
+		send bool(True) from coroutine85 to coroutine86
+		send bool(True) from coroutine86 to coroutine87
+		send bool(True) from coroutine87 to coroutine88
+		send bool(True) from coroutine88 to coroutine89
+		send bool(True) from coroutine89 to coroutine90
+		send bool(True) from coroutine90 to coroutine91
+		send bool(True) from coroutine91 to coroutine92
+		send bool(True) from coroutine92 to coroutine93
+		send bool(True) from coroutine93 to coroutine94
+		send bool(True) from coroutine94 to coroutine95
+		send bool(True) from coroutine95 to coroutine96
+		send bool(True) from coroutine96 to coroutine97
+		send bool(True) from coroutine97 to coroutine98
+		send bool(True) from coroutine98 to coroutine99
+		send bool(True) from coroutine99 to coroutine0

@@ -1,5 +1,6 @@
 import pyperf
-from benchmarks.config import coroutineCount
+import json
+from os import path
 import asyncio
 from asyncio import Queue
 
@@ -31,5 +32,7 @@ async def runBenchmark() -> None:
     await main(coroutineCount)
 
 if __name__ == '__main__':
+    with open(path.abspath('config.json'), 'r') as config:
+        coroutineCount = json.load(config)["ringCount"]
     runner = pyperf.Runner()
     runner.bench_async_func(f"Coroutine count: {coroutineCount}", runBenchmark)
