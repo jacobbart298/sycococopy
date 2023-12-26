@@ -1,0 +1,23 @@
+roles:
+	A
+	B
+	C
+	D
+
+protocol:
+	loop l:
+		sequence:
+			choice:
+				sequence:
+					send int(>0) from A to B
+					send int(>0) from A to C
+				sequence:
+					send int(>0) from A to B
+					send str from A to C
+			choice:
+				sequence:
+					send bool(False) from C to B
+					repeat l
+				sequence:
+					send int from B to D
+					send bool(False) from C to D

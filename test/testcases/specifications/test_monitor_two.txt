@@ -1,0 +1,12 @@
+roles:
+	A
+	B
+	C
+	D
+
+protocol:
+	sequence:
+		shuffle:
+			send bool from A to C
+			send bool from B to C
+		send bool from C to D

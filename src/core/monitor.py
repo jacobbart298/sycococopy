@@ -1,13 +1,7 @@
-import typing
 import sys
-from antlr4 import FileStream, CommonTokenStream
-from antlrFiles.PythonicLexer import PythonicLexer
-from antlrFiles.PythonicParser import PythonicParser
-from src.core.fsmBuilder import FSMbuilder
+from src.core.fsmBuilder import FsmBuilder
 from src.core.transition import Transition
-from src.core.roleBuilder import Rolebuilder
 from src.core.exceptions.illegaltransitionexception import IllegalTransitionException
-from src.core.exceptions.rolemismatchexception import RoleMismatchException
 from src.core.exceptions.haltedexception import HaltedException
 from src.core.exceptions.sycococopyexception import SycococopyException
 from src.core.exceptions.pendingmessagesexception import PendingMessagesException
@@ -26,12 +20,7 @@ class Monitor():
         self.setExceptionHook()
         self.transitionHistory: list[tuple[Transition, any]] = []
         self.uncheckedReceives: dict[str, Transition] = {}
-        tree = self.buildParseTree(filePath)
-        self.fsm, used_roles = FSMbuilder().visitSpecification(tree)
-        defined_roles: set[str] = Rolebuilder().visitSpecification(tree)         
-        if not used_roles == defined_roles:
-            raise RoleMismatchException(used_roles, defined_roles)
-        self.initialiseUncheckedReceives(defined_roles)
+        self.fsm = FsmBuilder().buildFsm(filePath)
 
     # Destructor method. Note that a destructor does not raise but silences exceptions.
     def __del__(self):
@@ -50,7 +39,7 @@ class Monitor():
             raise HaltedException()     
         self.transitionHistory.append((transition, item))
         # sending is not allowed if the sender is waiting for any messages
-        if self.uncheckedReceives[transition.getSender()]:
+        if transition.getSender() in self.uncheckedReceives and self.uncheckedReceives[transition.getSender()]:
             self.halted = True
             raise PendingMessagesException(self.transitionHistory, self.uncheckedReceives[transition.getSender()])        
         transitionMade = self.fsm.makeTransition(transition, item)
@@ -65,7 +54,7 @@ class Monitor():
     def verifyReceive(self, transition: Transition) -> any:
         if self.halted:
             raise HaltedException()
-        if transition in self.uncheckedReceives[transition.getReceiver()]:
+        if transition.getReceiver() in self.uncheckedReceives and transition in self.uncheckedReceives[transition.getReceiver()]:
             self.uncheckedReceives[transition.getReceiver()].remove(transition)
         else:
             self.halted = True
@@ -78,15 +67,10 @@ class Monitor():
 
     # Adds a transition to the receiver's list of uncheckedReceives.
     def addToUncheckedReceives(self, transition: Transition) -> None:
-        self.uncheckedReceives[transition.getReceiver()].append(transition)
-
-    # Parses the given specification in the filePath to a parse tree.
-    def buildParseTree(self, filePath: str):
-        input = FileStream(filePath)
-        lexer = PythonicLexer(input)
-        stream = CommonTokenStream(lexer)
-        parser = PythonicParser(stream)
-        return parser.specification() 
+        if transition.getReceiver() in self.uncheckedReceives:
+            self.uncheckedReceives[transition.getReceiver()].append(transition)
+        else:
+            self.uncheckedReceives[transition.getReceiver()] = [transition]
     
     # Function that builds the errorMessage in case the program terminates prematurely.
     def buildErrorMessage(self, lostMessages, hasTerminated):
@@ -95,15 +79,14 @@ class Monitor():
             message += "\nProgram failed to reach end of protocol!\n"
             count: int = 1
             for transition, item in self.transitionHistory:
-                message += f"{str(count)}: send {str(transition.getType())}({str(item)}) from {str(transition.getSender())} to {str(transition.getReceiver())}\n"
+                message += f"{str(count)}: send {str(transition.getType().__name__)}({str(item)}) from {str(transition.getSender())} to {str(transition.getReceiver())}\n"
                 count += 1
         if len(lostMessages) > 0:
             message += "\nThe following messages were lost:\n"
             for transition in lostMessages:
-                message += f"{str(transition.getReceiver())} is waiting for a message of type {str(transition.getType())} from {str(transition.getSender())}\n"
+                message += f"{str(transition.getReceiver())} is waiting for a message of type {str(transition.getType().__name__)} from {str(transition.getSender())}\n"
         return message
-    
-    
+        
     def setExceptionHook(self) -> None:
         legacy_excepthook = sys.excepthook
 
@@ -119,7 +102,7 @@ class Monitor():
                     if isinstance(exception, SycococopyException):
                         print(str(exception))
                         noSycocopyExceptionPresent = False
-            elif isinstance(value, RoleMismatchException):
+            elif isinstance(value, SycococopyException):
                 print(str(value))
                 noSycocopyExceptionPresent = False
             if noSycocopyExceptionPresent:

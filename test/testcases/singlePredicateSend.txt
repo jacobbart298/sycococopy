@@ -1,6 +1,0 @@
-roles:
-    A
-    B
-
-protocol:
-    send int(>4) from B to A

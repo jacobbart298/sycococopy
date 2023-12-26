@@ -1,0 +1,10 @@
+roles:
+	A
+	B
+
+protocol:
+	sequence:
+		shuffle:
+			send bool(True) from A to B
+			send bool from B to A
+		send str("") from B to A

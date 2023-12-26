@@ -1,0 +1,26 @@
+roles:
+	A
+	B
+	C
+	D
+
+protocol:
+	sequence:
+		send bool from A to B
+		loop first:
+			sequence:
+				send int from A to B
+				loop second:
+					sequence:
+						send bool from A to B
+						choice:
+							sequence:
+								send int(<=-42342432) from B to A
+								repeat first
+							sequence:
+								send int from B to C
+								choice:
+									sequence:
+										send float(<3.9) from C to A
+										repeat second
+									send str from C to D

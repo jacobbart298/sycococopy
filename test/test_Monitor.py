@@ -1,53 +1,27 @@
 import unittest
+import os
 from src.core.monitor import Monitor
 from src.core.transition import Transition
 from src.core.exceptions.illegaltransitionexception import IllegalTransitionException
-from src.core.exceptions.rolemismatchexception import RoleMismatchException
 from src.core.exceptions.haltedexception import HaltedException
 from src.core.exceptions.pendingmessagesexception import PendingMessagesException
 
 class TestMonitor(unittest.TestCase):
 
-
-    def testCorrectRoles(self):        
-        specification = r".\test\Test specifications\test_monitor.txt"
-        try:
-            Monitor(specification)
-        except RoleMismatchException:
-            self.fail
-  
-
-    def testRoleNotUsed(self):        
-        specification = r".\test\Test specifications\test_role_not_used.txt"
-        with self.assertRaises(RoleMismatchException):
-            Monitor(specification)
-        
-
-    def testRoleNotDefined(self):
-        specification = r".\test\Test specifications\test_role_not_defined.txt"
-        with self.assertRaises(RoleMismatchException):
-            Monitor(specification)
-
-
-    def testRoleNotDefinedNotUsed(self):
-        specification = r".\test\Test specifications\test_role_not_defined_not_used.txt"
-        with self.assertRaises(RoleMismatchException):
-            Monitor(specification)
-
-
     def testInitializationTransitionHistory(self):
-        specification = r".\test\Test specifications\test_monitor.txt"
-        monitor = Monitor(specification)
+        specificationPath = getSpecificationPath("test_monitor")
+        monitor = Monitor(specificationPath)
+
         # initally, transition history is empty
         self.assertEqual(0, len(monitor.transitionHistory))
 
 
     def testTransitionHistoryOnlyContainsSends(self):
-        specification = r".\test\Test specifications\test_monitor.txt"
-        monitor = Monitor(specification)
+        specificationPath = getSpecificationPath("test_monitor")
+        monitor = Monitor(specificationPath)
 
-        str_A_B = Transition("str", "A", "B")
-        int_B_A = Transition("int", "B", "A")
+        str_A_B = Transition(str, "A", "B")
+        int_B_A = Transition(int, "B", "A")
         message_str = "hello world"
         message_int = 42
 
@@ -78,11 +52,11 @@ class TestMonitor(unittest.TestCase):
     
 
     def testTransitionHistoryIncludesIllegalSend(self):
-        specification = r".\test\Test specifications\test_monitor.txt"
-        monitor = Monitor(specification)
+        specificationPath = getSpecificationPath("test_monitor")
+        monitor = Monitor(specificationPath)
 
-        str_A_B = Transition("str", "A", "B")
-        bool_B_A = Transition("bool", "B", "A")
+        str_A_B = Transition(str, "A", "B")
+        bool_B_A = Transition(bool, "B", "A")
         message_str = "hello world"
         message_bool = True
 
@@ -105,11 +79,11 @@ class TestMonitor(unittest.TestCase):
 
 
     def testTransitionHistoryDoesNotIncludeIllegalReceive(self):
-        specification = r".\test\Test specifications\test_monitor.txt"
-        monitor = Monitor(specification)
+        specificationPath = getSpecificationPath("test_monitor")
+        monitor = Monitor(specificationPath)
 
-        str_A_B = Transition("str", "A", "B")
-        bool_B_A = Transition("bool", "B", "A")
+        str_A_B = Transition(str, "A", "B")
+        bool_B_A = Transition(bool, "B", "A")
         message_str = "hello world"
 
         # initally, transition history is empty
@@ -127,33 +101,19 @@ class TestMonitor(unittest.TestCase):
         self.assertIn((str_A_B, message_str), monitor.transitionHistory)
 
 
-    def testInitializationUncheckedReceives(self):
-        specification = r".\test\Test specifications\test_monitor.txt"
-        monitor = Monitor(specification)
-
-        # Upon initialization uncheckedReceives has keys for A and B
-        self.assertEqual(2, len(monitor.uncheckedReceives))    
-        self.assertIn("A", monitor.uncheckedReceives)  
-        self.assertIn("B", monitor.uncheckedReceives)  
-
-        # Upon initialization A and B have no unchecked receives
-        self.assertEqual(0, len(monitor.uncheckedReceives["A"]))
-        self.assertEqual(0, len(monitor.uncheckedReceives["B"]))
-
-
     def testInitializationHalted(self):
-        specification = r".\test\Test specifications\test_monitor.txt"
-        monitor = Monitor(specification)
+        specificationPath = getSpecificationPath("test_monitor")
+        monitor = Monitor(specificationPath)
 
         # Upon initialization halted is false
         self.assertFalse(monitor.halted)
 
 
     def testHaltedRemainsFalseAfterLegalSend(self):
-        specification = r".\test\Test specifications\test_monitor.txt"
-        monitor = Monitor(specification)
+        specificationPath = getSpecificationPath("test_monitor")
+        monitor = Monitor(specificationPath)
         
-        str_A_B = Transition("str", "A", "B")
+        str_A_B = Transition(str, "A", "B")
         message_str = "hello world"
 
         # A is allowed to send a str to B
@@ -163,10 +123,10 @@ class TestMonitor(unittest.TestCase):
 
 
     def testHaltedRemainsFalseAfterLegalReceive(self):
-        specification = r".\test\Test specifications\test_monitor.txt"
-        monitor = Monitor(specification)
+        specificationPath = getSpecificationPath("test_monitor")
+        monitor = Monitor(specificationPath)
         
-        str_A_B = Transition("str", "A", "B")
+        str_A_B = Transition(str, "A", "B")
         message_str = "hello world"
 
         monitor.verifySend(str_A_B, message_str)       
@@ -177,10 +137,10 @@ class TestMonitor(unittest.TestCase):
 
 
     def testHaltedBecomesTrueAfterIllegalSend(self):
-        specification = r".\test\Test specifications\test_monitor.txt"
-        monitor = Monitor(specification)
+        specificationPath = getSpecificationPath("test_monitor")
+        monitor = Monitor(specificationPath)
         
-        int_B_A = Transition("int", "B", "A")
+        int_B_A = Transition(int, "B", "A")
         message_bool = 42
 
         # B is not allowed to send a int to A
@@ -191,10 +151,10 @@ class TestMonitor(unittest.TestCase):
 
 
     def testHaltedBecomesTrueAfterIllegalReceive(self):
-        specification = r".\test\Test specifications\test_monitor.txt"
-        monitor = Monitor(specification)
+        specificationPath = getSpecificationPath("test_monitor")
+        monitor = Monitor(specificationPath)
         
-        str_A_B = Transition("str", "A", "B")
+        str_A_B = Transition(str, "A", "B")
 
         # A is not allowed to receive any messages that have not been sent
         self.assertFalse(monitor.halted)
@@ -204,10 +164,10 @@ class TestMonitor(unittest.TestCase):
 
 
     def testNoTransitionsLegalOnceHalted(self):
-        specification = r".\test\Test specifications\test_monitor.txt"
-        monitor = Monitor(specification)
+        specificationPath = getSpecificationPath("test_monitor")
+        monitor = Monitor(specificationPath)
         
-        str_A_B = Transition("str", "A", "B")
+        str_A_B = Transition(str, "A", "B")
         message_str = "hello world"
 
         # A is not allowed to receive any messages that have not been sent
@@ -222,12 +182,12 @@ class TestMonitor(unittest.TestCase):
 
 
     def testNoSendsAddedToTransitionHistoryOnceHalted(self):
-        specification = r".\test\Test specifications\test_monitor.txt"
-        monitor = Monitor(specification)
+        specificationPath = getSpecificationPath("test_monitor")
+        monitor = Monitor(specificationPath)
         
-        str_A_B = Transition("str", "A", "B")
-        bool_B_A = Transition("bool", "A", "B")
-        int_B_A = Transition("int", "A", "B")
+        str_A_B = Transition(str, "A", "B")
+        bool_B_A = Transition(bool, "A", "B")
+        int_B_A = Transition(int, "A", "B")
         message_str = "hello world"
         message_bool = True
         message_int = 42
@@ -255,11 +215,11 @@ class TestMonitor(unittest.TestCase):
         
 
     def testAlternateSendAndReceive(self):
-        specification = r".\test\Test specifications\test_monitor.txt"
-        monitor = Monitor(specification)
+        specificationPath = getSpecificationPath("test_monitor_two")
+        monitor = Monitor(specificationPath)
 
-        str_A_B = Transition("str", "A", "B")
-        int_B_A = Transition("int", "B", "A")
+        str_A_B = Transition(str, "A", "B")
+        int_B_A = Transition(int, "B", "A")
         message_str = "hello world"
         message_int = 42
 
@@ -273,11 +233,11 @@ class TestMonitor(unittest.TestCase):
 
 
     def testConsecutiveSendsAndReveices(self):
-        specification = r".\test\Test specifications\test_monitor_two.txt"
-        monitor = Monitor(specification)
+        specificationPath = getSpecificationPath("test_monitor_two")
+        monitor = Monitor(specificationPath)
 
-        bool_A_C = Transition("bool", "A", "B")
-        bool_B_C = Transition("bool", "B", "A")
+        bool_A_C = Transition(bool, "A", "B")
+        bool_B_C = Transition(bool, "B", "A")
         message_bool = False
 
         try:
@@ -290,11 +250,11 @@ class TestMonitor(unittest.TestCase):
 
 
     def testIllegalSendUncheckedReceivesEmpty(self):
-        specification = r".\test\Test specifications\test_monitor_two.txt"
-        monitor = Monitor(specification)
+        specificationPath = getSpecificationPath("test_monitor_two")
+        monitor = Monitor(specificationPath)   
 
-        bool_A_C = Transition("bool", "A", "C")
-        bool_C_D = Transition("bool", "C", "D")
+        bool_A_C = Transition(bool, "A", "C")
+        bool_C_D = Transition(bool, "C", "D")
         message_bool = False
 
         monitor.verifySend(bool_A_C, message_bool)
@@ -307,32 +267,33 @@ class TestMonitor(unittest.TestCase):
             monitor.verifySend(bool_C_D, message_bool)
 
 
-    def testLegalSendUncheckedReceivesEmpty(self):    
-        specification = r".\test\Test specifications\test_monitor_two.txt"
-        monitor = Monitor(specification)
+    def testLegalSendUncheckedReceivesEmpty(self): 
+        specificationPath = getSpecificationPath("test_monitor_two")
+        monitor = Monitor(specificationPath)   
 
-        bool_A_C = Transition("bool", "A", "C")
-        bool_B_C = Transition("bool", "B", "C")
+        bool_A_C = Transition(bool, "A", "C")
+        int_C_A = Transition(bool, "C", "A")
         message_bool = False
+        message_int = 4
 
         monitor.verifySend(bool_A_C, message_bool)
         monitor.verifyReceive(bool_A_C)
 
-        # B is not waiting for any messages, and sending a
-        # bool from B to C is allowed at this point
-        self.assertEqual(0, len(monitor.uncheckedReceives["B"]))
+        # C is not waiting for any messages, and sending an
+        # int from C to A is allowed at this point
+        self.assertEqual(0, len(monitor.uncheckedReceives["C"]))
         try:
-            monitor.verifySend(bool_B_C, message_bool)
+            monitor.verifySend(int_C_A, message_int)
         except IllegalTransitionException:
             self.fail
 
 
     def testSendUncheckedReceivesNotEmpty(self):    
-        specification = r".\test\Test specifications\test_monitor.txt"
-        monitor = Monitor(specification)
+        specificationPath = getSpecificationPath("test_monitor")
+        monitor = Monitor(specificationPath)
 
-        str_A_B = Transition("str", "A", "B")
-        int_B_A = Transition("int", "B", "A")
+        str_A_B = Transition(str, "A", "B")
+        int_B_A = Transition(int, "B", "A")
         message_str = "hello world"
         message_int = 42
         
@@ -346,11 +307,11 @@ class TestMonitor(unittest.TestCase):
 
 
     def testLegalReceiveUncheckedReceivesNotEmpty(self):
-        specification = r".\test\Test specifications\test_monitor.txt"
-        monitor = Monitor(specification)
+        specificationPath = getSpecificationPath("test_monitor")
+        monitor = Monitor(specificationPath)
 
-        str_A_B = Transition("str", "A", "B")
-        int_B_A = Transition("int", "B", "A")
+        str_A_B = Transition(str, "A", "B")
+        int_B_A = Transition(int, "B", "A")
         message_str = "hello world"
         message_int = 42
 
@@ -367,11 +328,11 @@ class TestMonitor(unittest.TestCase):
 
 
     def testIllegalReceiveUncheckedReceivesNotEmpty(self):
-        specification = r".\test\Test specifications\test_monitor.txt"
-        monitor = Monitor(specification)
+        specificationPath = getSpecificationPath("test_monitor")
+        monitor = Monitor(specificationPath)
 
-        str_A_B = Transition("str", "A", "B")
-        bool_A_B = Transition("bool", "A", "B")
+        str_A_B = Transition(str, "A", "B")
+        bool_A_B = Transition(bool, "A", "B")
         message_str = "hello world"
 
         monitor.verifySend(str_A_B, message_str)
@@ -382,10 +343,10 @@ class TestMonitor(unittest.TestCase):
 
 
     def testIllegalReceiveUncheckedReceivesEmpty(self):
-        specification = r".\test\Test specifications\test_monitor.txt"
-        monitor = Monitor(specification)
+        specificationPath = getSpecificationPath("test_monitor")
+        monitor = Monitor(specificationPath)
 
-        str_A_B = Transition("str", "A", "B")
+        str_A_B = Transition(str, "A", "B")
         message_str = "hello world"
 
         monitor.verifySend(str_A_B, message_str)
@@ -398,11 +359,11 @@ class TestMonitor(unittest.TestCase):
 
 
     def testSendNonDeterminism(self):
-        specification = r".\test\Test specifications\test_monitor_non_determinism.txt"
-        monitor = Monitor(specification)
-
-        t1_A_B = Transition("str", "A", "B")
-        t2_B_A = Transition("bool", "B", "A")
+        specificationPath = getSpecificationPath("test_monitor_non_determinism")
+        monitor = Monitor(specificationPath)
+        
+        t1_A_B = Transition(str, "A", "B")
+        t2_B_A = Transition(bool, "B", "A")
         message_str = "hello world"
 
         monitor.verifySend(t1_A_B, message_str)
@@ -410,7 +371,6 @@ class TestMonitor(unittest.TestCase):
 
         # Note that sending True from B to A satisfies two edges in the FSM.
         # However, only one unchecked receive should be added to the monitor.        
-        self.assertEqual(0, len(monitor.uncheckedReceives["A"]))
         monitor.verifySend(t2_B_A, True)
         self.assertEqual(1, len(monitor.uncheckedReceives["A"]))
 
@@ -428,14 +388,17 @@ class TestMonitor(unittest.TestCase):
 
 
     def testDoubleTest(self):
-        specification = r".\test\Test specifications\test_double_send.txt"
-        monitor = Monitor(specification)
+        specificationPath = getSpecificationPath("test_double_send")
+        monitor = Monitor(specificationPath)
 
-        int_A_B = Transition("int", "A", "B")
-        bool_B_A = Transition("bool", "B", "A")
+        int_A_B = Transition(int, "A", "B")
+        bool_B_A = Transition(bool, "B", "A")
         
         monitor.verifySend(int_A_B, 42)
         monitor.verifySend(int_A_B, 42)            
         monitor.verifyReceive(int_A_B)
         with self.assertRaises(PendingMessagesException):
-            monitor.verifySend(bool_B_A, True)    
+            monitor.verifySend(bool_B_A, True)
+
+def getSpecificationPath(specificationName: str):
+    return os.path.abspath(f"test/testcases/specifications/{specificationName}.txt")   

@@ -1,9 +1,0 @@
-roles:
-    A
-    B
-    C
-
-protocol:
-    sequence:
-        send str from A to B
-        send bool from B to A

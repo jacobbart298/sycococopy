@@ -9,7 +9,7 @@ protocol:
 		shuffle:
 			send int from seller to buyer1
 			send int from seller to buyer2
-			send int from buyer1 to buyer2
+		send int from buyer1 to buyer2
 		choice:
 			sequence:
 				send bool from buyer2 to buyer1

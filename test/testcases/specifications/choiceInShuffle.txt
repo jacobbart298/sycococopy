@@ -1,0 +1,10 @@
+roles:
+	A
+	B
+
+protocol:
+	shuffle:
+		choice:
+			send int from A to B
+			send float(>13333.7) from B to A
+		send str from B to A

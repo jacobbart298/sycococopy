@@ -1,8 +1,0 @@
-roles:
-    A
-    B
-
-protocol:
-    sequence:
-        send str from A to B
-        send int from B to A

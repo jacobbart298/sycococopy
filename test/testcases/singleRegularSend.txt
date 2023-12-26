@@ -1,6 +1,0 @@
-roles:
-    A
-    B
-
-protocol:
-    send int from B to A

@@ -124,3 +124,6 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 
 ## Project status
 The project is still being worked, expected delivery is January 2024.
+
+## Ondersteuning reference types
+Melden dat developer voor comparison dunder methodes moet overriden 

@@ -1,0 +1,8 @@
+roles:
+	A
+	B
+
+protocol:
+	choice:
+		send int from A to B
+		send bool(True) from B to A
