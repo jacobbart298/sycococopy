@@ -38,7 +38,6 @@ async def runBenchmark() -> None:
     await main(loopCount)
 
 if __name__ == '__main__':
-    global loopCount
     with open(path.abspath('config.json'), 'r') as config:
         loopCount = json.load(config)["loopCount"]
     monitor = Monitor(specification_path)

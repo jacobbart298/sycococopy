@@ -1,43 +1,12 @@
 import pyperf
+import json
+from os import path
 from benchmarks.benchmarkmethods import buildParseTree
-from benchmarks.config import level
 from src.core.instrumentation import Queue
 import src.core.instrumentation as asyncio
 from benchmarks.benchmark_monitor import BenchmarkMonitor
 
-specification_path = r".\protocol_tree_no_predicates.txt"
-
-def writeSpecification(level: int) -> None:
-    indent = "\t"
-    specification = "roles:\n"
-    specification += indent + "A\n"
-    specification += indent + "B\n"
-    specification += "\nprotocol:\n"
-    specification += indent + "choice:\n"
-    specification += writeProtocol(1, 2, level)
-    specification += writeProtocol(1, 2, level)
-
-    with open(specification_path, 'w') as spec:
-        spec.write(specification)
-
-# recursive method to write increasingly deep choice protocol with binary tree result
-def writeProtocol(depth: int, indentLevel: int, maxDepth: int) -> str:
-    indent = "\t"
-    if depth == maxDepth and depth % 2 == 1:
-        return indentLevel*indent + "send bool from A to B\n"
-    elif depth == maxDepth and depth % 2 == 0:
-        return indentLevel*indent + "send bool from B to A\n"
-    else:
-        protocol = indentLevel*indent + "sequence:\n"
-        indentLevel += 1
-        if depth % 2 == 1:
-            protocol += indentLevel*indent + "send bool from A to B\n"
-        else:
-            protocol += indentLevel*indent + "send bool from B to A\n"
-        protocol += indentLevel*indent + "choice:\n"
-        protocol += writeProtocol(depth + 1, indentLevel + 1, maxDepth)
-        protocol += writeProtocol(depth + 1, indentLevel + 1, maxDepth)
-        return protocol
+specification_path = path.abspath("benchmark_specifications/protocol_tree_no_predicates.txt")
 
 async def A(queueBtoA: Queue, queueAtoB: Queue, level: int) -> None:
     while level > 0:
@@ -70,7 +39,8 @@ async def runBenchmark() -> None:
     await main(level)
 
 if __name__ == '__main__':
-    writeSpecification(level)
+    with open(path.abspath('config.json'), 'r') as config:
+        level = json.load(config)["nddepth"]
     parseTree = buildParseTree(specification_path)
     runner = pyperf.Runner()
     runner.bench_async_func(f"Benchmark {level}", runBenchmark)
