@@ -1,26 +1,9 @@
-import asyncio
-import random
-from enum import Enum
 import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor
+from rps_item import Item
 
 specification_path = r".\protocol_RPS.txt"
 monitor = Monitor(specification_path)
-
-class Item(Enum):
-    ROCK = 1
-    PAPER = 2
-    SCISSORS = 3
-
-    def beats(self, other):
-        return ((self == Item.ROCK and other == Item.SCISSORS) 
-                or (self == Item.PAPER and other == Item.ROCK) 
-                or (self == Item.SCISSORS and other == Item.PAPER))
-
-    @staticmethod
-    def random():
-        return random.choice(list(Item))
-
 
 async def player(number: int, outgoing_queues: dict[int:asyncio.Queue], incoming_queues: dict[int:asyncio.Queue]):
     is_participating = True
@@ -68,7 +51,7 @@ async def main(player_count: int):
         for p2 in range(player_count):
             if (p1 != p2):
                 queue = asyncio.Queue()
-                # asyncio.link(queue, f"Player{p1}", f"Player{p2}", monitor)
+                asyncio.link(queue, f"Player{p1}", f"Player{p2}", monitor)
                 queueMap[(p1,p2)] = queue
         
     async with asyncio.TaskGroup() as tg:
@@ -82,4 +65,4 @@ async def main(player_count: int):
                     outgoing_queues[p2] = queueMap[(p1, p2)]
             tg.create_task(player(number, incoming_queues, outgoing_queues))
 
-asyncio.run(main(5))
+asyncio.run(main(3))
