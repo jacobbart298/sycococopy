@@ -47,7 +47,7 @@ async def player(number: int, incoming_queues: dict[int:asyncio.Queue], outgoing
 
         else:
             print(f"It's a draw! Player {number} continues to the next round!")
-            allItems = opponent_items.update({number: item})
+            opponent_items.update({number: item})
             losers = findLosers(opponent_items)
             for loser in losers:
                 incoming_queues.pop(loser)
