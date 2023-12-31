@@ -3,7 +3,21 @@ from src.core.monitor import Monitor
 from rps_item import Item
 
 specification_path = r".\protocol_RPS.txt"
-monitor = Monitor(specification_path, enforceCausality=True, checkLostMessages=False)
+monitor = Monitor(specification_path, enforceCausality=False)
+
+def findLosers(playerItems: dict[int: Item]) -> list[int]:
+    losers = []
+    for player, item in playerItems.items():
+        win = False
+        lose = False
+        for opponent, opponent_item in playerItems.items():
+            if player != opponent:
+                win = win or item.beats(opponent_item)
+                lose = lose or opponent_item.beats(item)
+        if lose and not win:
+            losers.append(player)
+    return losers
+
 
 async def player(number: int, incoming_queues: dict[int:asyncio.Queue], outgoing_queues: dict[int:asyncio.Queue]):
     is_participating = True
@@ -12,14 +26,14 @@ async def player(number: int, incoming_queues: dict[int:asyncio.Queue], outgoing
         print(f"Player {number} has chosen {item}")
         for queue in outgoing_queues.values():
             await queue.put(item)
-        opponent_items = []
-        for queue in incoming_queues.values():
+        opponent_items = {}
+        for player, queue in incoming_queues.items():
             opponent_item = await queue.get()
-            opponent_items.append(opponent_item)
+            opponent_items[player] = opponent_item
         win = False
         lose = False
         tie = False
-        for opponent_item in opponent_items:
+        for opponent_item in opponent_items.values():
             win = win or item.beats(opponent_item)
             lose = lose or opponent_item.beats(item)
             tie = tie or item == opponent_item
@@ -30,16 +44,11 @@ async def player(number: int, incoming_queues: dict[int:asyncio.Queue], outgoing
         elif lose and not win:
             print(f"Player{number} is out of the game!")
             is_participating = False
-            for queue in outgoing_queues.values():
-                await queue.put(False)
+
         else:
             print(f"It's a draw! Player {number} continues to the next round!")
-            losers = []
-            for queue in outgoing_queues.values():
-                await queue.put(True)
-            for player, queue in incoming_queues.items():
-                if not await queue.get():
-                    losers.append(player)
+            allItems = opponent_items.update({number: item})
+            losers = findLosers(opponent_items)
             for loser in losers:
                 incoming_queues.pop(loser)
                 outgoing_queues.pop(loser)

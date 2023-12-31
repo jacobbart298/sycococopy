@@ -5,99 +5,74 @@ roles:
 
 protocol:
 	loop players0and1and2:
-		sequence:
-			shuffle:
-				send Item from Player0 to Player1
-				send Item from Player0 to Player2
-				send Item from Player1 to Player2
-				send Item from Player1 to Player0
-				send Item from Player2 to Player0
-				send Item from Player2 to Player1
-			choice:
-				sequence:
-					shuffle:
-						send bool(True) from Player0 to Player1
-						send bool(True) from Player0 to Player2
-						send bool(True) from Player1 to Player2
-						send bool(True) from Player1 to Player0
-						send bool(True) from Player2 to Player0
-						send bool(True) from Player2 to Player1
-					repeat players0and1and2
-				sequence:
-					shuffle:
-						send bool(True) from Player0 to Player1
-						send bool(True) from Player0 to Player2
-						send bool(True) from Player1 to Player2
-						send bool(True) from Player1 to Player0
-						send bool(False) from Player2 to Player0
-						send bool(False) from Player2 to Player1
-					loop players0and1:
+		choice:
+			sequence:
+				shuffle:
+					send Item from Player0 to Player1
+					send Item from Player0 to Player2
+					send Item from Player1 to Player2
+					send Item from Player1 to Player0
+					send Item from Player2 to Player0
+					send Item from Player2 to Player1
+				repeat players0and1and2
+			sequence:
+				shuffle:
+					send Item from Player0 to Player1
+					send Item from Player0 to Player2
+					send Item from Player1 to Player2
+					send Item from Player1 to Player0
+					send Item from Player2 to Player0
+					send Item from Player2 to Player1
+				loop players0and1:
+					choice:
 						sequence:
 							shuffle:
 								send Item from Player0 to Player1
 								send Item from Player1 to Player0
-							choice:
-								sequence:
-									shuffle:
-										send bool(True) from Player0 to Player1
-										send bool(True) from Player1 to Player0
-									repeat players0and1
-								send bool(False) from Player1 to Player0
-								send bool(False) from Player0 to Player1
-				sequence:
-					shuffle:
-						send bool(True) from Player0 to Player1
-						send bool(True) from Player0 to Player2
-						send bool(False) from Player1 to Player2
-						send bool(False) from Player1 to Player0
-						send bool(True) from Player2 to Player0
-						send bool(True) from Player2 to Player1
-					loop players0and2:
+							repeat players0and1
+						shuffle:
+							send Item from Player0 to Player1
+							send Item from Player1 to Player0
+			sequence:
+				shuffle:
+					send Item from Player0 to Player1
+					send Item from Player0 to Player2
+					send Item from Player1 to Player2
+					send Item from Player1 to Player0
+					send Item from Player2 to Player0
+					send Item from Player2 to Player1
+				loop players0and2:
+					choice:
 						sequence:
 							shuffle:
 								send Item from Player0 to Player2
 								send Item from Player2 to Player0
-							choice:
-								sequence:
-									shuffle:
-										send bool(True) from Player0 to Player2
-										send bool(True) from Player2 to Player0
-									repeat players0and2
-								send bool(False) from Player2 to Player0
-								send bool(False) from Player0 to Player2
-				sequence:
-					shuffle:
-						send bool(False) from Player0 to Player1
-						send bool(False) from Player0 to Player2
-						send bool(True) from Player1 to Player2
-						send bool(True) from Player1 to Player0
-						send bool(True) from Player2 to Player0
-						send bool(True) from Player2 to Player1
-					loop players1and2:
+							repeat players0and2
+						shuffle:
+							send Item from Player0 to Player2
+							send Item from Player2 to Player0
+			sequence:
+				shuffle:
+					send Item from Player0 to Player1
+					send Item from Player0 to Player2
+					send Item from Player1 to Player2
+					send Item from Player1 to Player0
+					send Item from Player2 to Player0
+					send Item from Player2 to Player1
+				loop players1and2:
+					choice:
 						sequence:
 							shuffle:
-								send Item from Player1 to Player2
 								send Item from Player2 to Player1
-							choice:
-								sequence:
-									shuffle:
-										send bool(True) from Player1 to Player2
-										send bool(True) from Player2 to Player1
-									repeat players1and2
-								send bool(False) from Player2 to Player1
-								send bool(False) from Player1 to Player2
-				shuffle:
-						send bool(False) from Player0 to Player1
-						send bool(False) from Player0 to Player2
-						send bool(False) from Player1 to Player2
-						send bool(False) from Player1 to Player0
-				shuffle:
-						send bool(False) from Player0 to Player1
-						send bool(False) from Player0 to Player2
-						send bool(False) from Player2 to Player0
-						send bool(False) from Player2 to Player1
-				shuffle:
-						send bool(False) from Player1 to Player0
-						send bool(False) from Player1 to Player2
-						send bool(False) from Player2 to Player0
-						send bool(False) from Player2 to Player1
+								send Item from Player1 to Player2
+							repeat players1and2
+						shuffle:
+							send Item from Player2 to Player1
+							send Item from Player1 to Player2
+			shuffle:
+					send Item from Player0 to Player1
+					send Item from Player0 to Player2
+					send Item from Player1 to Player2
+					send Item from Player1 to Player0
+					send Item from Player2 to Player0
+					send Item from Player2 to Player1
