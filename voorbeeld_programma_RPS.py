@@ -3,9 +3,9 @@ from src.core.monitor import Monitor
 from rps_item import Item
 
 specification_path = r".\protocol_RPS.txt"
-monitor = Monitor(specification_path)
+monitor = Monitor(specification_path, enforceCausality=True, checkLostMessages=False)
 
-async def player(number: int, outgoing_queues: dict[int:asyncio.Queue], incoming_queues: dict[int:asyncio.Queue]):
+async def player(number: int, incoming_queues: dict[int:asyncio.Queue], outgoing_queues: dict[int:asyncio.Queue]):
     is_participating = True
     while is_participating:
         item = Item.random()
@@ -19,7 +19,6 @@ async def player(number: int, outgoing_queues: dict[int:asyncio.Queue], incoming
         win = False
         lose = False
         tie = False
-        # print(f"Player {number} has the following opponent items {str(opponent_items)}")
         for opponent_item in opponent_items:
             win = win or item.beats(opponent_item)
             lose = lose or opponent_item.beats(item)
@@ -27,6 +26,7 @@ async def player(number: int, outgoing_queues: dict[int:asyncio.Queue], incoming
         if win and not lose and not tie:
             print(f"Player{number} has won!")
             is_participating = False
+
         elif lose and not win:
             print(f"Player{number} is out of the game!")
             is_participating = False

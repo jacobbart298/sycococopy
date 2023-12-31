@@ -42,12 +42,8 @@ protocol:
 										send bool(True) from Player0 to Player1
 										send bool(True) from Player1 to Player0
 									repeat players0and1
-								shuffle:
-									send bool(True) from Player0 to Player1
-									send bool(False) from Player1 to Player0
-								shuffle:
-									send bool(False) from Player0 to Player1
-									send bool(True) from Player1 to Player0
+								send bool(False) from Player1 to Player0
+								send bool(False) from Player0 to Player1
 				sequence:
 					shuffle:
 						send bool(True) from Player0 to Player1
@@ -67,12 +63,8 @@ protocol:
 										send bool(True) from Player0 to Player2
 										send bool(True) from Player2 to Player0
 									repeat players0and2
-								shuffle:
-									send bool(True) from Player0 to Player2
-									send bool(False) from Player2 to Player0
-								shuffle:
-									send bool(False) from Player0 to Player2
-									send bool(True) from Player2 to Player0
+								send bool(False) from Player2 to Player0
+								send bool(False) from Player0 to Player2
 				sequence:
 					shuffle:
 						send bool(False) from Player0 to Player1
@@ -92,9 +84,20 @@ protocol:
 										send bool(True) from Player1 to Player2
 										send bool(True) from Player2 to Player1
 									repeat players1and2
-								shuffle:
-									send bool(True) from Player1 to Player2
-									send bool(False) from Player2 to Player1
-								shuffle:
-									send bool(False) from Player1 to Player2
-									send bool(True) from Player2 to Player1
+								send bool(False) from Player2 to Player1
+								send bool(False) from Player1 to Player2
+				shuffle:
+						send bool(False) from Player0 to Player1
+						send bool(False) from Player0 to Player2
+						send bool(False) from Player1 to Player2
+						send bool(False) from Player1 to Player0
+				shuffle:
+						send bool(False) from Player0 to Player1
+						send bool(False) from Player0 to Player2
+						send bool(False) from Player2 to Player0
+						send bool(False) from Player2 to Player1
+				shuffle:
+						send bool(False) from Player1 to Player0
+						send bool(False) from Player1 to Player2
+						send bool(False) from Player2 to Player0
+						send bool(False) from Player2 to Player1
