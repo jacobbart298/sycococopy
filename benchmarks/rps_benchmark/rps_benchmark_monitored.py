@@ -1,6 +1,6 @@
 import pyperf
 import time
-from os import path
+import time
 import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor
 from rps_item import Item
