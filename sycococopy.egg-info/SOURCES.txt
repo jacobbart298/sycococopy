@@ -8,9 +8,11 @@ antlrFiles/__init__.py
 antlrFiles/pythonicSyntaxErrorException.py
 antlrFiles/pythonicvisitor.py
 benchmarks/__init__.py
+benchmarks/benchmark_fsm_builder.py
 benchmarks/benchmark_monitor.py
 benchmarks/benchmarkmethods.py
 benchmarks/config.py
+benchmarks/run_benchmarks.py
 benchmarks/ring_benchmarks/__init__.py
 src/__init__.py
 src/auto.py
