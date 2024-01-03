@@ -5,4 +5,4 @@
 # from [user-module] import X, Y, Z
 
 from src.auto import *
-from rps_item import Item
+# from rps_item import Item
