@@ -4,4 +4,5 @@
 # from [user-module] import *
 # from [user-module] import X, Y, Z
 
-from src.auto import *
+from src.pet import *
+from src.plant import *

@@ -1,4 +1,4 @@
-from src.auto import Auto
+from src.pet import Dog, Cat
 from src.core.instrumentation import Channel
 import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor
@@ -17,8 +17,8 @@ selltobuy1 = Channel(seller, buyer1, monitor)
 selltobuy2 = Channel(seller, buyer2, monitor)
  
 async def buyer1():
-    await buy1tosell.send(Auto("Tesla", 3000))
-    await buy1tosell.send(Auto("Mercedes", 348734))
+    await buy1tosell.send(Cat(age=2,name="Kitty"))
+    await buy1tosell.send(Dog(age=4,name="Lily"))
     quote = await selltobuy1.receive()
     await buy1tobuy2.send(quote//2)
     buys_book = await buy2tobuy1.receive()
@@ -37,10 +37,10 @@ async def buyer2():
         await buy2tosell.send(False)
 
 async def seller():
-    auto1 = await buy1tosell.receive()
-    auto2 = await buy1tosell.receive()
-    print(f"Auto1 is een {auto1.merk} en heeft kmstand {auto1.kilometerstand}")
-    print(f"Auto2 is een {auto2.merk} en heeft kmstand {auto2.kilometerstand}")
+    cat = await buy1tosell.receive()
+    print(f"{cat.name} is {cat.age} years old")
+    dog = await buy1tosell.receive()
+    print(f"{dog.name} is {dog.age} years old")
     await selltobuy1.send(60)
     await selltobuy2.send(60)
     await buy2tosell.receive()

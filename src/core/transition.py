@@ -9,7 +9,7 @@ also contains a comparator and a value to check against to allow value checking 
 '''
 class Transition:
 
-    def __init__(self, type: any, sender: str, receiver: str):
+    def __init__(self, type: type, sender: str, receiver: str):
         self.type = type
         self.sender = sender
         self.receiver = receiver
@@ -27,7 +27,6 @@ class Transition:
     # That is to say, it checks whether this Transition's type, sender 
     # and receiver are equal to those of the given Transition.
     def satisfies(self, other: Transition, value: any) -> bool:
-        # check if value is of a built-in type
         if hasattr(builtins, type(value).__name__):
             typeValid = self.type == other.type
         else:
@@ -65,40 +64,20 @@ class PredicateTransition(Transition):
         match self.comparator:
             case '<':
                 verdict = value.__lt__(self.value)
-                if verdict == NotImplemented:
-                    raise ComparatorNotImplementedException('<', type(value))
-                else:
-                    return verdict
             case '<=':
                 verdict = value.__le__(self.value)
-                if verdict == NotImplemented:
-                    raise ComparatorNotImplementedException('<=', type(value))
-                else:
-                    return verdict
             case '>':
                 verdict = value.__gt__(self.value)
-                if verdict == NotImplemented:
-                    raise ComparatorNotImplementedException('>', type(value))
-                else:
-                    return verdict
             case '>=':
                 verdict = value.__ge__(self.value)
-                if verdict == NotImplemented:
-                    raise ComparatorNotImplementedException('>=', type(value))
-                else:
-                    return verdict
-            case '!=':
-                verdict = value.__ne__(self.value)
-                if verdict == NotImplemented:
-                    raise ComparatorNotImplementedException('!=', type(value))
-                else:
-                    return verdict
             case '==':
                 verdict = value.__eq__(self.value)
-                if verdict == NotImplemented:
-                    raise ComparatorNotImplementedException('==', type(value))
-                else:
-                    return verdict
+            case '!=':
+                verdict = not value.__eq__(self.value)
+        if verdict == NotImplemented:
+            raise ComparatorNotImplementedException(self.comparator, type(value))
+        else:
+            return verdict
 
     # Checks if the given object is a PredicateTransition equal to this PredicateTransition. 
     def __eq__(self, other: any) -> bool:
