@@ -15,11 +15,11 @@ class RoleMismatchException(SycococopyException):
     def __str__(self) -> str:
         message: str = "" 
         if len(self.surplus_defined_roles ) > 0:
-            message += "You defined the following roles that were not used:\n"
+            message += "\nYou defined the following roles that were not used:\n"
             for surplus_role in self.surplus_defined_roles:
                 message += f"\t{surplus_role}\n"
         if len(self.surplus_used_roles) > 0:
-            message += "You used the following roles that were not defined:\n"
+            message += "\nYou used the following roles that were not defined:\n"
             for surplus_role in self.surplus_used_roles:
                 message += f"\t{surplus_role}\n"
 

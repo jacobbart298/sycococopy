@@ -4,5 +4,5 @@
 # from [user-module] import *
 # from [user-module] import X, Y, Z
 
-from src.auto import *
-# from rps_item import Item
+from src.pet import *
+from src.plant import *

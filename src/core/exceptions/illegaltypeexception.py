@@ -10,5 +10,5 @@ class IllegalTypeException(SycococopyException):
         self.illegalType = illegalType
         
     def __str__(self) -> str:
-        return f"TYPE NOT RECOGNISED!\nThe type {self.illegalType} was not recognised as a valid type!"        
+        return f"\nTYPE NOT RECOGNISED!\nThe type {self.illegalType} was not recognised as a valid type!\n"        
         

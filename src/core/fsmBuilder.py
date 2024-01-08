@@ -226,37 +226,35 @@ class FsmBuilder(PythonicVisitor):
 
 
     # Transforms a string to a primitive value based on the given type.
-    def convert_string_to_value(self, type_obj: type, string: str) -> any:
-        # if the value is of a custom type, try to evaluate it
+    def convert_string_to_value(self, type_obj: type, value_string: str) -> any:
         if hasattr(customtypes, type_obj.__name__):
             try:
-                return eval(string, {}, {type_obj.__name__: type_obj})
+                return eval(value_string, {}, customtypes.__dict__)
             except TypeError:
-                raise IllegalValueException(string, type_obj.__name__)    
-        # value is not of a custom type
+                raise IllegalValueException(value_string, type_obj.__name__)           
+        elif type_obj == str:
+            # remove the additional first and last quotes
+            return value_string[1:len(value_string)-1]
+        elif type_obj == bool:
+            return value_string == True
+        elif type_obj in [int, float]:
+            return type_obj(value_string)
         else:
-            match type_obj.__name__:
-                case "bool":
-                    return string == "True"
-                case "str":
-                    # remove the additional first and last quotes
-                    return string[1:len(string)-1]
-                case _:
-                    return type_obj(string)
-            
+            raise IllegalValueException(value_string, type_obj.__name__)    
+
 
     # Transforms the given string to the corresponding type. If the string does not match with the string 
     # representation of either a built-in type or a user-defined type, an IllegalTypeException is raised.
-    def convert_string_to_type(self, type_str):
+    def convert_string_to_type(self, type_string):
         # check if the given type is a built-in type
-        if hasattr(builtins, type_str):
-            return getattr(builtins, type_str)
+        if type_string in ['int','str','float','bool']:
+            return getattr(builtins, type_string)
         # check if the given type is a user-defined type
-        elif hasattr(customtypes, type_str):
-            return getattr(customtypes, type_str)
+        elif hasattr(customtypes, type_string):
+            return getattr(customtypes, type_string)
         # type not found: raise exception
         else:
-            raise IllegalTypeException(type_str)
+            raise IllegalTypeException(type_string)
         
 
     # Determines the count of defined roles and adds each role to the set of roles
