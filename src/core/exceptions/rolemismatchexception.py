@@ -1,4 +1,3 @@
-import typing
 from src.core.exceptions.sycococopyexception import SycococopyException
 
 '''
@@ -13,15 +12,13 @@ class RoleMismatchException(SycococopyException):
         self.surplus_used_roles: set[str] = used_roles.difference(defined_roles)
         
     def __str__(self) -> str:
-        message: str = "" 
-        if len(self.surplus_defined_roles ) > 0:
-            message += "\nYou defined the following roles that were not used:\n"
+        message: str = "\nROLE MISMATCH DETECTED!\n" 
+        if len(self.surplus_defined_roles) > 0:
+            message += "You defined the following roles that were not used:\n"
             for surplus_role in self.surplus_defined_roles:
                 message += f"\t{surplus_role}\n"
         if len(self.surplus_used_roles) > 0:
-            message += "\nYou used the following roles that were not defined:\n"
+            message += "You used the following roles that were not defined:\n"
             for surplus_role in self.surplus_used_roles:
                 message += f"\t{surplus_role}\n"
-
         return message        
-        

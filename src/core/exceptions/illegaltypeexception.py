@@ -1,8 +1,8 @@
-import typing
 from src.core.exceptions.sycococopyexception import SycococopyException
 
 '''
-The IllegalTypeException is raised when a type is used in the protocol that is not defined.
+IllegalTypeException is raised when a type is used in the communication 
+protocol that is not recognised.
 '''
 class IllegalTypeException(SycococopyException):
         
@@ -10,5 +10,5 @@ class IllegalTypeException(SycococopyException):
         self.illegalType = illegalType
         
     def __str__(self) -> str:
-        return f"\nTYPE NOT RECOGNISED!\nThe type {self.illegalType} was not recognised as a valid type!\n"        
+        return f"\nILLEGAL TYPE PROVIDED: failed to recognise type {self.illegalType}!\n"
         

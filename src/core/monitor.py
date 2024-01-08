@@ -72,17 +72,17 @@ class Monitor():
     
     # Function that builds the errorMessage in case the program terminates prematurely.
     def buildErrorMessage(self, lostMessages, hasTerminated):
-        message: str = "\nUNEXPECTED TERMINATION:" 
+        message: str = "\nUNEXPECTED TERMINATION!\n" 
         if not hasTerminated:
-            message += "\nProgram failed to reach end of protocol!\n"
+            message += "The program failed to reach the end of the protocol. Only the following messages were sent:\n"
             count: int = 1
             for transition, item in self.transitionHistory:
-                message += f"{str(count)}: send {str(transition.getType().__name__)}({str(item)}) from {str(transition.getSender())} to {str(transition.getReceiver())}\n"
+                message += f"\t{count}: send {transition.getType().__name__}({item}) from {transition.getSender()} to {transition.getReceiver()}\n"
                 count += 1
         if len(lostMessages) > 0:
-            message += "\nThe following messages were lost:\n"
+            message += "The following messages were lost:\n"
             for transition in lostMessages:
-                message += f"{str(transition.getReceiver())} is waiting for a message of type {str(transition.getType().__name__)} from {str(transition.getSender())}\n"
+                message += f"\t{transition.getType().__name__} from {transition.getSender()} to {transition.getReceiver()}\n"
         return message
         
     def setExceptionHook(self) -> None:
@@ -93,18 +93,18 @@ class Monitor():
         but the normal stack trace if there was no IllegalTransitionException
         '''
         def exceptionHandler(type, value, traceback):
-            noSycocopyExceptionPresent = True
+            SycococopyExceptionPresent = False
             self.halted = True
             if isinstance(value, ExceptionGroup):
                 for exception in value.args[1]:
                     if isinstance(exception, SycococopyException):
                         print(str(exception))
-                        noSycocopyExceptionPresent = False
+                        SycococopyExceptionPresent = True
             elif isinstance(value, SycococopyException):
                 print(str(value))
-                noSycocopyExceptionPresent = False
-            if noSycocopyExceptionPresent:
+                SycococopyExceptionPresent = True
+            if not SycococopyExceptionPresent:
                 legacy_excepthook(type, value, traceback)
             
-        # changes standard Python interperter Exception handler to our exception handler
+        # changes the default exception handler to our custom exception handler
         sys.excepthook = exceptionHandler

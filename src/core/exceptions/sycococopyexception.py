@@ -1,6 +1,6 @@
 
 '''
-BaseException for the sycococopy framework.
+BaseException for the SyCoCoCoPy framework.
 '''
 
 class SycococopyException(Exception):
