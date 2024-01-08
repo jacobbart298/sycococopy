@@ -211,7 +211,6 @@ class FsmBuilder(PythonicVisitor):
         receiver: str = ctx.getChild(ctx.getChildCount() - 2).getText()
         value: any = self.convert_string_to_value(type, valueString)
         return PredicateTransition(type, sender, receiver, comparator, value)
-    s
     
     # Builds a predicate transition with a non-custom type and the "==" comparator from the given SendContext.
     def buildNonCustomTypeEqualPredicateTransition(self, ctx: PythonicParser.SendContext) -> PredicateTransition:
@@ -235,7 +234,7 @@ class FsmBuilder(PythonicVisitor):
             # remove the additional first and last quotes
             return value_string[1:len(value_string)-1]
         elif type_obj == bool:
-            return value_string == True
+            return value_string == "True"
         elif type_obj in [int, float]:
             return type_obj(value_string)
         else:
