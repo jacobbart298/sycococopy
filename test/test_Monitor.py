@@ -416,6 +416,7 @@ class TestMonitor(unittest.TestCase):
 
         monitor.verifyReceive(t2_B_A)
 
+
     def testIllegalSendUncheckedReceivesNotEmpty(self):
         specificationPath = getSpecificationPath("test_double_send")
         monitor = Monitor(specificationPath, enforceCausality = True)
@@ -428,6 +429,7 @@ class TestMonitor(unittest.TestCase):
         monitor.verifyReceive(int_A_B)
         with self.assertRaises(PendingMessagesException):
             monitor.verifySend(bool_B_A, True)
+
 
 def getSpecificationPath(specificationName: str):
     return os.path.abspath(f"test/testcases/specifications/{specificationName}.txt")   
