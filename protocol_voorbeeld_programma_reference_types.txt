@@ -5,8 +5,8 @@ roles:
 
 protocol:
 	sequence:
-		send Cat(!=Cat(2,"Mies")) from buyer1 to seller
-		send Dog(Dog(4,"Lily")) from buyer1 to seller
+		send Cat(>Cat(2,"Mies")) from buyer1 to seller
+		send Dog(Dog(4, "Lily")) from buyer1 to seller
 		shuffle:
 			send int from seller to buyer1
 			send int from seller to buyer2

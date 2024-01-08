@@ -10,5 +10,5 @@ class ComparatorNotImplementedException(SycococopyException):
         self.comparator = comparator
         
     def __str__(self) -> str:
-        return f"\nCOMPARATOR NOT IMPLEMENTED: \n{self.type.__name__} does not support {self.comparator} comparison"        
+        return f"\nCOMPARATOR NOT IMPLEMENTED: \n{self.type.__name__} does not support {self.comparator} comparison\n"        
         
