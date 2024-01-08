@@ -136,7 +136,6 @@ class FsmBuilder(PythonicVisitor):
 
     # Builds a transition from the given SendContext and adds it to the FSM.
     def visitSend(self, ctx: PythonicParser.SendContext, startState: State, endState: State) -> None:
-
         if self.isNonPredicateSend(ctx):
             transition = self.buildNonPredicateTransition(ctx)
         elif self.containsNonEqualPredicate(ctx):
@@ -155,74 +154,74 @@ class FsmBuilder(PythonicVisitor):
 
 
     # Checks whether the given SendContext concerns a non-predicate send.
-    def isNonPredicateSend(self, ctx: PythonicParser.SendContext):
+    def isNonPredicateSend(self, ctx: PythonicParser.SendContext) -> bool:
         return ctx.getChild(2).getText() == 'from'
 
 
     # Checks whether the given SendContext contains a custom type.
-    def containsCustomType(self, ctx: PythonicParser.SendContext):
+    def containsCustomType(self, ctx: PythonicParser.SendContext) -> bool:
         return ctx.getChild(ctx.getChildCount() - 6).getText() == ")" and ctx.getChild(ctx.getChildCount() - 7).getText() == ")"
     
 
     # Checks whether the given SendContext contains a non-equal predicate.
-    def containsNonEqualPredicate(self, ctx: PythonicParser.SendContext):
+    def containsNonEqualPredicate(self, ctx: PythonicParser.SendContext) -> bool:
         return ctx.getChild(3).getText() in [">", "<", ">=", "<=", "!="]
 
 
     # Builds a non-predicate transition from the given SendContext.
-    def buildNonPredicateTransition(self, ctx: PythonicParser.SendContext):
-            type: any = self.convert_string_to_type(ctx.getChild(1).getText())
-            sender: str = ctx.getChild(3).getText()
-            receiver: str = ctx.getChild(5).getText()
-            return Transition(type, sender, receiver)
+    def buildNonPredicateTransition(self, ctx: PythonicParser.SendContext) -> Transition:
+        type: any = self.convert_string_to_type(ctx.getChild(1).getText())
+        sender: str = ctx.getChild(3).getText()
+        receiver: str = ctx.getChild(5).getText()
+        return Transition(type, sender, receiver)
 
 
     # Builds a predicate transition with a custom type and a non-equal comparator from the given SendContext.
-    def buildCustomTypeNonEqualPredicateTransition(self, ctx: PythonicParser.SendContext):
-            type: any = self.convert_string_to_type(ctx.getChild(1).getText())
-            comparator: str = ctx.getChild(3).getText()
-            valueString: str = ""
-            for i in range(4, ctx.getChildCount() - 6):
-                valueString += ctx.getChild(i).getText()
-            sender: str = ctx.getChild(ctx.getChildCount() - 4).getText()
-            receiver: str = ctx.getChild(ctx.getChildCount() - 2).getText()
-            value: any = self.convert_string_to_value(type, valueString)
-            return PredicateTransition(type, sender, receiver, comparator, value)
+    def buildCustomTypeNonEqualPredicateTransition(self, ctx: PythonicParser.SendContext) -> PredicateTransition:
+        type: any = self.convert_string_to_type(ctx.getChild(1).getText())
+        comparator: str = ctx.getChild(3).getText()
+        valueString: str = ""
+        for i in range(4, ctx.getChildCount() - 6):
+            valueString += ctx.getChild(i).getText()
+        sender: str = ctx.getChild(ctx.getChildCount() - 4).getText()
+        receiver: str = ctx.getChild(ctx.getChildCount() - 2).getText()
+        value: any = self.convert_string_to_value(type, valueString)
+        return PredicateTransition(type, sender, receiver, comparator, value)
     
 
     # Builds a predicate transition with a non-custom type and a non-equal comparator from the given SendContext.
-    def buildNonCustomTypeNonEqualPredicateTransition(self, ctx: PythonicParser.SendContext):
-            type: any = self.convert_string_to_type(ctx.getChild(1).getText())
-            comparator: str = ctx.getChild(3).getText()
-            value: str = ctx.getChild(4).getText()
-            sender: str = ctx.getChild(7).getText()
-            receiver: str = ctx.getChild(9).getText()
-            value: any = self.convert_string_to_value(type, value)
-            return PredicateTransition(type, sender, receiver, comparator, value)  
+    def buildNonCustomTypeNonEqualPredicateTransition(self, ctx: PythonicParser.SendContext) -> PredicateTransition:
+        type: any = self.convert_string_to_type(ctx.getChild(1).getText())
+        comparator: str = ctx.getChild(3).getText()
+        value: str = ctx.getChild(4).getText()
+        sender: str = ctx.getChild(7).getText()
+        receiver: str = ctx.getChild(9).getText()
+        value: any = self.convert_string_to_value(type, value)
+        return PredicateTransition(type, sender, receiver, comparator, value)  
     
 
     # Builds a predicate transition with a custom type and the "==" comparator from the given SendContext.
-    def buildCustomTypeEqualPredicateTransition(self, ctx: PythonicParser.SendContext):
-            type: any = self.convert_string_to_type(ctx.getChild(1).getText())
-            comparator: str = "=="
-            valueString: str = ""
-            for i in range(3, ctx.getChildCount() - 6):
-                valueString += ctx.getChild(i).getText()
-            sender: str = ctx.getChild(ctx.getChildCount() - 4).getText()
-            receiver: str = ctx.getChild(ctx.getChildCount() - 2).getText()
-            value: any = self.convert_string_to_value(type, valueString)
-            return PredicateTransition(type, sender, receiver, comparator, value)
-    
+    def buildCustomTypeEqualPredicateTransition(self, ctx: PythonicParser.SendContext) -> PredicateTransition:
+        type: any = self.convert_string_to_type(ctx.getChild(1).getText())
+        comparator: str = "=="
+        valueString: str = ""
+        for i in range(3, ctx.getChildCount() - 6):
+            valueString += ctx.getChild(i).getText()
+        sender: str = ctx.getChild(ctx.getChildCount() - 4).getText()
+        receiver: str = ctx.getChild(ctx.getChildCount() - 2).getText()
+        value: any = self.convert_string_to_value(type, valueString)
+        return PredicateTransition(type, sender, receiver, comparator, value)
+    s
     
     # Builds a predicate transition with a non-custom type and the "==" comparator from the given SendContext.
-    def buildNonCustomTypeEqualPredicateTransition(self, ctx: PythonicParser.SendContext):
-            type: any = self.convert_string_to_type(ctx.getChild(1).getText())
-            comparator: str = "=="
-            valueString: str = ctx.getChild(3).getText()
-            sender: str = ctx.getChild(6).getText()
-            receiver: str = ctx.getChild(8).getText()
-            value: any = self.convert_string_to_value(type, valueString)
-            return PredicateTransition(type, sender, receiver, comparator, value)
+    def buildNonCustomTypeEqualPredicateTransition(self, ctx: PythonicParser.SendContext) -> PredicateTransition:
+        type: any = self.convert_string_to_type(ctx.getChild(1).getText())
+        comparator: str = "=="
+        valueString: str = ctx.getChild(3).getText()
+        sender: str = ctx.getChild(6).getText()
+        receiver: str = ctx.getChild(8).getText()
+        value: any = self.convert_string_to_value(type, valueString)
+        return PredicateTransition(type, sender, receiver, comparator, value)
 
 
     # Transforms a string to a primitive value based on the given type.
@@ -245,7 +244,7 @@ class FsmBuilder(PythonicVisitor):
 
     # Transforms the given string to the corresponding type. If the string does not match with the string 
     # representation of either a built-in type or a user-defined type, an IllegalTypeException is raised.
-    def convert_string_to_type(self, type_string):
+    def convert_string_to_type(self, type_string) -> type:
         # check if the given type is a built-in type
         if type_string in ['int','str','float','bool']:
             return getattr(builtins, type_string)
