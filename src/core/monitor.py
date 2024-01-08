@@ -15,8 +15,10 @@ The specification must be passed to the monitor as a txt file on creation.
 
 class Monitor():
 
-    def __init__(self, filePath: str):
+    def __init__(self, filePath: str, enforceCausality = True, checkLostMessages = True):
         self.halted: bool = False
+        self.enforceCausality = enforceCausality
+        self.checkLostMessages = checkLostMessages
         self.setExceptionHook()
         self.transitionHistory: list[tuple[Transition, any]] = []
         self.uncheckedReceives: dict[str, Transition] = {}
@@ -27,8 +29,9 @@ class Monitor():
         if not self.halted:
             fsmInFinalState: bool = self.fsm.inFinalState()
             lostMessages: list[Transition] = []
-            for uncheckedReceives in self.uncheckedReceives.values():
-                lostMessages.extend(uncheckedReceives) 
+            if self.checkLostMessages:
+                for uncheckedReceives in self.uncheckedReceives.values():
+                    lostMessages.extend(uncheckedReceives) 
             if lostMessages or not fsmInFinalState:
                 print(self.buildErrorMessage(lostMessages, fsmInFinalState))
 
@@ -39,7 +42,7 @@ class Monitor():
             raise HaltedException()     
         self.transitionHistory.append((transition, item))
         # sending is not allowed if the sender is waiting for any messages
-        if transition.getSender() in self.uncheckedReceives and self.uncheckedReceives[transition.getSender()]:
+        if self.enforceCausality and transition.getSender() in self.uncheckedReceives and self.uncheckedReceives[transition.getSender()]:
             self.halted = True
             raise PendingMessagesException(self.transitionHistory, self.uncheckedReceives[transition.getSender()])        
         transitionMade = self.fsm.makeTransition(transition, item)

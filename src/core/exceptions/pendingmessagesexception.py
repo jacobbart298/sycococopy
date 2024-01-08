@@ -17,7 +17,8 @@ class PendingMessagesException(SycococopyException):
         message: str = f"\nPENDING MESSAGE FAILURE: send {str(failedTransition.getType().__name__)}({str(itemFailedTransition)}) from {str(failedTransition.getSender())} to {str(failedTransition.getReceiver())} is not allowed, because the following messages need to be received first: \n"
         pendingMessagesCounter: int = 1
         for transition in self.pendingMessages:
-            message += f"\t{str(pendingMessagesCounter)}: a message with type {str(transition.getType().__name__)} from {str(transition.getSender())}"
+            message += f"\t{str(pendingMessagesCounter)}: a message with type {str(transition.getType().__name__)} from {str(transition.getSender())}\n"
+            pendingMessagesCounter +=1
         message += "\n\nThe following messages were already sent:\n"
         historyCount: int = 1
         for transition, item in self.transitionHistory:

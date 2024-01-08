@@ -1,0 +1,16 @@
+roles:
+	requester
+	handler
+
+protocol:
+	loop urls:
+		choice:
+			sequence:
+				send str from handler to requester
+				send int from requester to handler
+				send str from requester to handler
+				repeat urls
+			sequence:
+				send str from handler to requester
+				send int from requester to handler
+				send str from requester to handler

@@ -1,29 +1,11 @@
 import pyperf
-from benchmarks.config import coroutineCount
+import json
+from os import path
 from src.core.instrumentation import Channel
 import asyncio
 from src.core.monitor import Monitor
 
-specification_path = r".\protocol_ring_with_predicates.txt"
-
-def writeSpecification(coroutineCount: int) -> None:
-    specification : str = ""
-    # write role header
-    specification += "roles:\n"
-    # write roles
-    for i in range(coroutineCount):
-        specification += f"\tcoroutine{i}\n"
-    # write protocol header
-    specification += "\nprotocol:\n"
-    # write sequence expression
-    specification += "\tsequence:\n"
-    # write sends
-    for i in range(coroutineCount-1):
-        specification += f"\t\tsend bool(True) from coroutine{i} to coroutine{i+1}\n"
-    specification += f"\t\tsend bool(True) from coroutine{coroutineCount-1} to coroutine{0}"
-
-    with open(specification_path, 'w') as spec:
-        spec.write(specification)
+specification_path = path.abspath("benchmark_specifications/protocol_ring_with_predicates.txt")
 
 async def worker(receiveChannel: Channel, sendChannel: Channel) -> None:
     await receiveChannel.receive()
@@ -59,7 +41,8 @@ async def runBenchmark() -> None:
     await main(coroutineCount)
 
 if __name__ == '__main__':
-    writeSpecification(coroutineCount)
+    with open(path.abspath('config.json'), 'r') as config:
+        coroutineCount = json.load(config)["ringCount"]
     monitor = Monitor(specification_path)
     initialState = list(monitor.fsm.states)[0]
     runner = pyperf.Runner()

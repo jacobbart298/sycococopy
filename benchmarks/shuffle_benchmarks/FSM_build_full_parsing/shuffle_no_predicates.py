@@ -1,5 +1,6 @@
 import pyperf
-from benchmarks.config import starWorkers
+import json
+from os import path
 from src.core.instrumentation import Queue
 import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor
@@ -10,30 +11,7 @@ The order predetermined to ensure repeatability of the benchmark.
 This tests the sycococopy shuffle operator. 
 '''
 
-specification_path = r".\protocol_shuffle_no_predicates.txt"
-
-def writeSpecification(workerCount: int) -> None:
-    indent = "\t"
-    specification : str = ""
-    # write role header
-    specification += "roles:\n"
-    specification += indent + "main\n"
-    # write roles
-    for i in range(1, workerCount+1):
-        specification += indent + f"worker{i}\n"
-        # print(f"Worker {i} created")
-    # write protocol header
-    specification += "\nprotocol:\n"
-    # write sequence expression
-    specification += indent + "shuffle:\n"
-    # write sends
-    for i in range(1, workerCount+1):
-        # print(f"send from main to worker {i} in protocol")
-        specification += 2*indent + f"send str from main to worker{i}\n"
-
-    with open(specification_path, 'w') as spec:
-        spec.write(specification)
-        spec.close()
+specification_path = path.abspath("benchmark_specifications/protocol_shuffle_no_predicates.txt")
 
 async def worker(receiveQueue: Queue) -> None:
     await receiveQueue.get()
@@ -55,13 +33,12 @@ async def main(workerCount: int) -> None:
             tg.create_task(worker(queue))
         tg.create_task(center(queueList, workerCount))
 
-# initialState = list(monitor.fsm.states)[0]
 
 async def runBenchmark() -> None:
-    # monitor.fsm.states = {initialState}
     await main(starWorkers)
 
 if __name__ == '__main__':
-    writeSpecification(starWorkers)
+    with open(path.abspath('config.json'), 'r') as config:
+        starWorkers = json.load(config)["shuffleCount"]
     runner = pyperf.Runner()
     runner.bench_async_func(f"Worker count: {starWorkers}", runBenchmark)

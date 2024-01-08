@@ -1,30 +1,12 @@
 import pyperf
-from benchmarks.config import coroutineCount
+import json
+from os import path
 from src.core.instrumentation import Queue
 import src.core.instrumentation as asyncio
 from benchmarks.benchmarkmethods import buildParseTree
 from benchmarks.benchmark_monitor import BenchmarkMonitor
 
-specification_path = r".\protocol_ring_with_predicates.txt"
-
-def writeSpecification(coroutineCount: int) -> None:
-    specification : str = ""
-    # write role header
-    specification += "roles:\n"
-    # write roles
-    for i in range(coroutineCount):
-        specification += f"\tcoroutine{i}\n"
-    # write protocol header
-    specification += "\nprotocol:\n"
-    # write sequence expression
-    specification += "\tsequence:\n"
-    # write sends
-    for i in range(coroutineCount-1):
-        specification += f"\t\tsend bool(True) from coroutine{i} to coroutine{i+1}\n"
-    specification += f"\t\tsend bool(True) from coroutine{coroutineCount-1} to coroutine{0}"
-
-    with open(specification_path, 'w') as spec:
-        spec.write(specification)
+specification_path = path.abspath("benchmark_specifications/protocol_ring_with_predicates.txt")
 
 async def worker(receiveQueue: Queue, sendQueue: Queue) -> None:
     await receiveQueue.get()
@@ -64,7 +46,8 @@ async def runBenchmark() -> None:
     await main(coroutineCount)
 
 if __name__ == '__main__':
-    writeSpecification(coroutineCount)
+    with open(path.abspath('config.json'), 'r') as config:
+        coroutineCount = json.load(config)["ringCount"]
     parseTree = buildParseTree(specification_path)
     runner = pyperf.Runner()
     runner.bench_async_func(f"Coroutine count: {coroutineCount}", runBenchmark)

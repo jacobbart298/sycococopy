@@ -1,11 +1,12 @@
 import pyperf
-from benchmarks.config import coroutineCount
+import json
+from os import path
 from src.core.instrumentation import Channel
 import asyncio
 from benchmarks.benchmarkmethods import buildParseTree
 from benchmarks.benchmark_monitor import BenchmarkMonitor
 
-specification_path = r".\protocol_ring_with_predicates.txt"
+specification_path = path.abspath("benchmark_specifications/protocol_ring_with_predicates.txt")
 
 def writeSpecification(coroutineCount: int) -> None:
     specification : str = ""
@@ -60,7 +61,8 @@ async def runBenchmark() -> None:
     await main(coroutineCount)
 
 if __name__ == '__main__':
-    writeSpecification(coroutineCount)
+    with open(path.abspath('config.json'), 'r') as config:
+        coroutineCount = json.load(config)["ringCount"]
     parseTree = buildParseTree(specification_path)
     runner = pyperf.Runner()
     runner.bench_async_func(f"Coroutine count: {coroutineCount}", runBenchmark)

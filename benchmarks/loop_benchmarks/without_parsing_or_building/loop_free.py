@@ -1,5 +1,6 @@
 import pyperf
-from benchmarks.config import loopCount
+import json
+from os import path
 from asyncio import Queue
 import asyncio
 
@@ -28,5 +29,7 @@ async def runBenchmark() -> None:
     await main(loopCount)
 
 if __name__ == '__main__':
+    with open(path.abspath('config.json'), 'r') as config:
+        loopCount = json.load(config)["loopCount"]
     runner = pyperf.Runner()
     runner.bench_async_func(f"Loopcount: {loopCount}", runBenchmark)

@@ -1,33 +1,15 @@
 import pyperf
+import json
+from os import path
 from antlr4 import FileStream, CommonTokenStream
 from antlrFiles.PythonicLexer import PythonicLexer
 from antlrFiles.PythonicParser import PythonicParser
-from benchmarks.config import loopCount
 from src.core.instrumentation import Queue
 import src.core.instrumentation as asyncio
 from benchmarks.benchmark_monitor import BenchmarkMonitor
 
-specification_path = r".\protocol_loop_with_predicates.txt"
+specification_path = path.abspath("benchmark_specifications/protocol_loop_with_predicates.txt")
 
-def writeSpecification() -> None:
-    indent = '\t'
-    specification : str = ""
-    # write role header and roles
-    specification += f"roles:\n{indent}A\n{indent}B\n"
-    # write protocol header
-    specification += "\nprotocol:\n"
-    # start loop
-    specification += indent + "loop start:\n"
-    # sequence with choice to loop or send and end
-    specification += 2 * indent + "choice:\n"
-    specification += 3 * indent + "sequence:\n"
-    specification += 4 * indent + "send int(1) from A to B\n"
-    specification += 4 * indent + "send int(0) from B to A\n"
-    specification += 4 * indent + "repeat start\n"
-    specification += 3 * indent + "send int(>-1) from A to B\n"
-
-    with open(specification_path, 'w') as spec:
-        spec.write(specification)
 
 async def A(receiveQueue: Queue, sendQueue: Queue, loopCount: int) -> None:
     while loopCount > 0:
@@ -67,6 +49,8 @@ async def runBenchmark() -> None:
     await main(loopCount)
 
 if __name__ == '__main__':
+    with open(path.abspath('config.json'), 'r') as config:
+        loopCount = json.load(config)["loopCount"]
     parseTree = buildParseTree(specification_path)
     runner = pyperf.Runner()
     runner.bench_async_func(f"Loopcount: {loopCount}", runBenchmark)
