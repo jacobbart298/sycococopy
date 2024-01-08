@@ -12,9 +12,11 @@ that is forwarded by the instrumentation is in accordance with a given specifica
 
 The specification must be passed to the monitor as a txt file on creation.
 '''
-
 class Monitor():
 
+    # set enforceCausality to False if senders are allowed to send while there are still messages incoming
+    # set checkLostMessages to False if the program is allowed to terminate while there are still messages that
+    # haven't been received.
     def __init__(self, filePath: str, enforceCausality = True, checkLostMessages = True):
         self.halted: bool = False
         self.enforceCausality = enforceCausality
@@ -24,7 +26,8 @@ class Monitor():
         self.uncheckedReceives: dict[str, Transition] = {}
         self.fsm = FsmBuilder().buildFsm(filePath)
 
-    # Destructor method. Note that a destructor does not raise but silences exceptions.
+    # Destructor method. Prints error message to console if there are still messages that haven't been
+    # received or if the FSM is not in a final state.
     def __del__(self):
         if not self.halted:
             fsmInFinalState: bool = self.fsm.inFinalState()
@@ -36,12 +39,13 @@ class Monitor():
                 print(self.buildErrorMessage(lostMessages, fsmInFinalState))
 
     # Checks if the given send Transition is allowed in the Monitor's FSM.
-    # Throws a HaltedException if the FSM was already halted or an IllegalTransitionException if the given Transition is not allowed.    
+    # Throws a HaltedException if the FSM was already halted or an IllegalTransitionException if the given 
+    # Transition is not allowed.    
     def verifySend(self, transition: Transition, item: any) -> None:
         if self.halted:
             raise HaltedException()     
         self.transitionHistory.append((transition, item))
-        # sending is not allowed if the sender is waiting for any messages
+        # sending is not allowed if the sender is waiting for any messages and enforceCausality is True
         if self.enforceCausality and transition.getSender() in self.uncheckedReceives and self.uncheckedReceives[transition.getSender()]:
             self.halted = True
             raise PendingMessagesException(self.transitionHistory, self.uncheckedReceives[transition.getSender()])        
@@ -63,11 +67,6 @@ class Monitor():
             self.halted = True
             raise IllegalTransitionException(self.transitionHistory)
 
-    # Initiatialises the dictionary of uncheckedReceives with an empty list for each role.
-    def initialiseUncheckedReceives(self, roles: set[str]):
-        for role in roles:
-            self.uncheckedReceives[role] = []
-
     # Adds a transition to the receiver's list of uncheckedReceives.
     def addToUncheckedReceives(self, transition: Transition) -> None:
         if transition.getReceiver() in self.uncheckedReceives:
@@ -75,7 +74,7 @@ class Monitor():
         else:
             self.uncheckedReceives[transition.getReceiver()] = [transition]
     
-    # Function that builds the errorMessage in case the program terminates prematurely.
+    # Method that builds the errorMessage in case the program terminates prematurely.
     def buildErrorMessage(self, lostMessages, hasTerminated):
         message: str = "\nUNEXPECTED TERMINATION:" 
         if not hasTerminated:
@@ -89,13 +88,14 @@ class Monitor():
             for transition in lostMessages:
                 message += f"{str(transition.getReceiver())} is waiting for a message of type {str(transition.getType().__name__)} from {str(transition.getSender())}\n"
         return message
-        
+
+    # method that changes the standard excepthook to a sycococopy version.   
     def setExceptionHook(self) -> None:
         legacy_excepthook = sys.excepthook
 
         '''
-        Function that provides a clean print of the transition history on an illegal transition, 
-        but the normal stack trace if there was no IllegalTransitionException
+        Method that provides a clear error message when the exception is caused by the framework, 
+        but the normal stack trace if there was no SycococopyException.
         '''
         def exceptionHandler(type, value, traceback):
             noSycocopyExceptionPresent = True
