@@ -3,8 +3,6 @@ import antlrFiles
 from antlr4 import FileStream, CommonTokenStream
 from antlrFiles.PythonicLexer import PythonicLexer
 from antlrFiles.pythonicvisitor import PythonicVisitor
-from antlr4.tree.Trees import Trees
-from antlr4.tree.Tree import TerminalNodeImpl
 from src import customtypes
 from src.core.fsm import FSM
 from src.core.transition import Transition, PredicateTransition
