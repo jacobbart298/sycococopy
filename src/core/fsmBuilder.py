@@ -233,10 +233,12 @@ class FsmBuilder(PythonicVisitor):
             except TypeError:
                 raise IllegalValueException(value_string, type_obj.__name__)           
         elif type_obj == str:
-                # remove the additional first and last quotes
-                return value_string[1:len(value_string)-1]
-        elif type_obj in [int, float, bool]:
-                return type_obj(value_string)
+            # remove the additional first and last quotes
+            return value_string[1:len(value_string)-1]
+        elif type_obj == bool:
+            return value_string == True
+        elif type_obj in [int, float]:
+            return type_obj(value_string)
         else:
             raise IllegalValueException(value_string, type_obj.__name__)    
 
