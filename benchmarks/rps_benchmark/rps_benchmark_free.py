@@ -5,6 +5,7 @@ from src.core.monitor import Monitor
 from rps_item import Item
 
 PLAYER_COUNT = 3
+DELAY = 200
 specification_path = r".\protocol_RPS.txt"
 # monitor = Monitor(specification_path, enforceCausality=False)
 
@@ -25,7 +26,7 @@ def findLosers(playerItems: dict[int: Item]) -> list[int]:
 async def player(number: int, incoming_queues: dict[int:asyncio.Queue], outgoing_queues: dict[int:asyncio.Queue], item_list: list[Item]):
     is_participating = True
     while is_participating:
-        time.sleep(1.5/1000000) # simulates random choice
+        time.sleep(DELAY/1000000) # simulates random choice
         item = item_list.pop()
         print(f"Player {number} has chosen {item}")
         for queue in outgoing_queues.values():
@@ -84,4 +85,4 @@ async def main():
 
 if __name__ == '__main__':
     runner = pyperf.Runner()
-    runner.bench_async_func(f"Rock Paper Scissors", main)
+    runner.bench_async_func(f"Rock Paper Scissors {DELAY} microsec", main)
