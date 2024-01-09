@@ -1,15 +1,17 @@
 import pyperf
 import json
 from os import path
-from antlr4 import FileStream, CommonTokenStream
-from antlrFiles.PythonicLexer import PythonicLexer
-from antlrFiles.PythonicParser import PythonicParser
+from benchmarks.benchmarkmethods import buildParseTree
 from src.core.instrumentation import Queue
 import src.core.instrumentation as asyncio
 from benchmarks.benchmark_monitor import BenchmarkMonitor
 
-specification_path = path.abspath("benchmark_specifications/protocol_loop_with_predicates.txt")
+'''
+Loop benchmarks where two coroutines send messages back and forth for a
+number of times. Test without parsing but with building of the fsm.
+'''
 
+specification_path = path.abspath("benchmark_specifications/protocol_loop_with_predicates.txt")
 
 async def A(receiveQueue: Queue, sendQueue: Queue, loopCount: int) -> None:
     while loopCount > 0:
@@ -36,14 +38,6 @@ async def main(loopCount: int):
         asyncio.link(queueBtoA, workerB, workerA, monitor)
         tg.create_task(A(queueBtoA, queueAtoB, loopCount))
         tg.create_task(B(queueAtoB, queueBtoA, loopCount))
-
-# Parses the given specification in the filePath to a parse tree.
-def buildParseTree(filePath: str):
-    input = FileStream(filePath)
-    lexer = PythonicLexer(input)
-    stream = CommonTokenStream(lexer)
-    parser = PythonicParser(stream)
-    return parser.specification()
 
 async def runBenchmark() -> None:
     await main(loopCount)

@@ -6,8 +6,12 @@ import src.core.instrumentation as asyncio
 from benchmarks.benchmarkmethods import buildParseTree
 from benchmarks.benchmark_monitor import BenchmarkMonitor
 
-specification_path = path.abspath("benchmark_specifications/protocol_loop_no_predicates.txt")
+'''
+Loop benchmarks where two coroutines send messages back and forth for a
+number of times. Test without parsing but with building of the fsm.
+'''
 
+specification_path = path.abspath("benchmark_specifications/protocol_loop_no_predicates.txt")
 
 async def A(receiveQueue: Queue, sendQueue: Queue, loopCount: int) -> None:
     while loopCount > 0:
