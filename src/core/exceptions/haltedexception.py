@@ -5,5 +5,5 @@ HaltedException is used to prevent further transitions being made when an Illega
 has been raised previously, needed because the EventLoop may continue to run briefly 
 '''
 
-class HaltedException(Exception):
+class HaltedException(SycococopyException):
     pass
