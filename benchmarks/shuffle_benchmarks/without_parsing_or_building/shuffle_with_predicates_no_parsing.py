@@ -9,6 +9,7 @@ from src.core.monitor import Monitor
 A benchmark that performs one-to-many send operations (star send).
 The order predetermined to ensure repeatability of the benchmark.
 This tests the sycococopy shuffle operator with predicates. 
+BENCHMARK MONITORING ONLY WITHOUT PARSING OR BUILDING
 '''
 
 specification_path = path.abspath("benchmark_specifications/protocol_shuffle_with_predicates.txt")
