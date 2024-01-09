@@ -1,4 +1,3 @@
-
 '''
 BaseException for the sycococopy framework.
 '''
