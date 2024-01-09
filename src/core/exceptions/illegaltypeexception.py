@@ -1,4 +1,3 @@
-import typing
 from src.core.exceptions.sycococopyexception import SycococopyException
 
 '''
