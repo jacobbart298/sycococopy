@@ -1,9 +1,8 @@
-import typing
 from src.core.exceptions.sycococopyexception import SycococopyException
 
 '''
 The RoleMismatchException is raised when the defined roles do not match with the roles used in the
-protocol. Provides clear message to indicate if defined roles were not used and/or if roles in the
+protocol. Provides a message to indicate if defined roles were not used and/or if roles in the
 protocol were not declared.
 '''
 class RoleMismatchException(SycococopyException):
