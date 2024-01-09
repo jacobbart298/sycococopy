@@ -1,8 +1,7 @@
-import typing
 from src.core.exceptions.sycococopyexception import SycococopyException
 
 '''
-The IllegalTypeException is raised when a type is used in the protocol that is not defined.
+The IllegalValueException is raised when the provided value cannot be parsed to the given type.
 '''
 class IllegalValueException(SycococopyException):
         

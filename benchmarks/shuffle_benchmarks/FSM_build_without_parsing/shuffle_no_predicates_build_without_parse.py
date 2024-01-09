@@ -10,6 +10,7 @@ from benchmarks.benchmark_monitor import BenchmarkMonitor
 A benchmark that performs one-to-many send operations (star send).
 The order predetermined to ensure repeatability of the benchmark.
 This tests the sycococopy shuffle operator. 
+BENCHMARK WITHOUT PARSING BUT INCLUDING BUILDING OF THE FSM
 '''
 
 specification_path = path.abspath("benchmark_specifications/protocol_shuffle_no_predicates.txt")

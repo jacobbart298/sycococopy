@@ -5,8 +5,12 @@ from src.core.instrumentation import Queue
 import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor
 
-specification_path = path.abspath("benchmark_specifications/protocol_tree_no_predicates.txt")
+'''
+Benchmark that generates a choice tree without predicates.
+Tests effect of non-determinism with full parsing. 
+'''
 
+specification_path = path.abspath("benchmark_specifications/protocol_tree_no_predicates.txt")
 
 async def A(queueBtoA: Queue, queueAtoB: Queue, level: int) -> None:
     while level > 0:
@@ -32,7 +36,6 @@ async def main(depth: int):
         queueBtoA = Queue()
         asyncio.link(queueAtoB, workerA, workerB, monitor)
         asyncio.link(queueBtoA, workerB, workerA, monitor)
-        # create first worker
         tg.create_task(A(queueBtoA, queueAtoB, depth))
         tg.create_task(B(queueAtoB, queueBtoA, depth))
 

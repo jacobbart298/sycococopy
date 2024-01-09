@@ -1,4 +1,3 @@
-import typing
 import asyncio as asyncio
 from src.core.transition import Transition
 from src.core.monitor import Monitor
@@ -14,27 +13,28 @@ used as a drop in replacement for the asyncio library (simply import the instrum
 2. Channel, which provides a more intuitive way of sending messages between coroutines
 '''
 
-# list of queues that are linked to the monitor
+# list of queues that are linked to the monitor.
 linked_queues: set[asyncio.Queue] = set()
 
-# Function that links a Queue to a sender, receiver and monitor
+# Function that links a Queue to a sender, receiver and monitor.
 def link(queue: asyncio.Queue, sender: str, receiver: str, monitor: Monitor) -> None:
     queue.sender = sender
     queue.receiver = receiver
     queue.monitor = monitor
     linked_queues.add(queue)
 
-# Function required to pass all non-monitor related asyncio calls through to asyncio   
+# Function required to pass all non-monitor related asyncio calls through to asyncio.
 def __getattr__(name):
     return getattr(asyncio, name)
 
-# Class that overrides asyncio.Queue to allow instrumentation to be used as drop in replacement
+# Class that overrides asyncio.Queue to allow instrumentation to be used as drop in replacement.
 class Queue(asyncio.Queue):
 
     '''
     If the Queue is linked to the monitor, the put function forwards the message to the
     monitor to verify that is is allowed by the protocol before adding the item on the
-    Queue. The monitor raises a HaltedException if the put operation is not allowed.
+    Queue. The monitor raises a HaltedException if it was already halted by a previous 
+    attempt to send.
 
     If the Queue is not linked, the put operation is handled by the asyncio library.
     '''
@@ -49,11 +49,11 @@ class Queue(asyncio.Queue):
         else:
             await super().put(item)
 
-
     '''
     If the Queue is linked to the monitor, the get function forwards the message to the
     monitor to verify that the message is allowed to be received by the protocol before taking the item 
-    from the Queue. The monitor raises a HaltedException if the get operation is not allowed.
+    from the Queue. The monitor raises a HaltedException if it was already halted by a previous 
+    attempt to send.
 
     If the Queue is not linked, the get operation is handled by the asyncio library.
     '''
@@ -69,7 +69,8 @@ class Queue(asyncio.Queue):
         else:
             return await super().get()
 
-# Class that provides an intuitive way of sending messages between coroutines
+
+# Class that provides an intuitive way of sending messages between coroutines.
 class Channel():
 
     '''
@@ -82,7 +83,7 @@ class Channel():
         self.receiver = receiver
         self.monitor = monitor
     
-    # Function that checks is send is allowed by the monitor and, if so, adds item to the queue
+    # Method that checks if send is allowed by the monitor and, if so, adds item to the queue.
     async def send(self, item: any) -> None:
         transition: Transition = Transition(type(item), self.sender, self.receiver)
         try:
@@ -91,7 +92,7 @@ class Channel():
         except HaltedException:
             pass
     
-    # Function that checks if receive is allowed by the monitor and, if so, returns the item on the queue
+    # Method that checks if receive is allowed by the monitor and, if so, returns the item from the queue.
     async def receive(self) -> any:
         item: any = await self.queue.get()
         transition: Transition = Transition(type(item), self.sender, self.receiver)

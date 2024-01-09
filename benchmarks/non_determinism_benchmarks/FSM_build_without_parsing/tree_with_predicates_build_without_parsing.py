@@ -6,6 +6,11 @@ from src.core.instrumentation import Queue
 import src.core.instrumentation as asyncio
 from benchmarks.benchmark_monitor import BenchmarkMonitor
 
+'''
+Benchmark that generates a choice tree with predicates.
+Tests effect of predicates to keep fsm deterministic without parsing but with building of the fsm. 
+'''
+
 specification_path = path.abspath("benchmark_specifications/protocol_tree_with_predicates.txt")
 
 async def A(queueBtoA: Queue, queueAtoB: Queue, level: int) -> None:

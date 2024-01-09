@@ -6,6 +6,11 @@ import src.core.instrumentation as asyncio
 from benchmarks.benchmarkmethods import buildParseTree
 from benchmarks.benchmark_monitor import BenchmarkMonitor
 
+'''
+Ring benchmark where coroutines forward messages in a ring until intial coroutine is reached.
+Benchmark without parsing but with building of the fsm.
+'''
+
 specification_path = path.abspath("benchmark_specifications/protocol_ring_with_predicates.txt")
 
 async def worker(receiveQueue: Queue, sendQueue: Queue) -> None:

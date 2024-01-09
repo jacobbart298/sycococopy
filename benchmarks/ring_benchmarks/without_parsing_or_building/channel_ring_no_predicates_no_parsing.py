@@ -5,6 +5,11 @@ from src.core.instrumentation import Channel
 import asyncio
 from src.core.monitor import Monitor
 
+'''
+Ring benchmark where coroutines forward messages in a ring until intial coroutine is reached.
+CHANNEL Benchmark without parsing or building of the fsm.
+'''
+
 specification_path = path.abspath("benchmark_specifications/protocol_ring_no_predicates.txt")
 
 async def worker(receiveChannel: Channel, sendChannel: Channel) -> None:

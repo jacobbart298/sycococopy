@@ -1,12 +1,8 @@
-import typing
 from src.core.state import State
 from src.core.transition import Transition
 
 '''
-The FSM module is the starting point for the monitor to check whether a transition adheres to the
-given protocol. 
-
-An FSM object is responsible for managing a set of State objects.
+The FSM class holds a set of State objects that reflect the current possible states of the FSM.
 '''
 
 class FSM:
