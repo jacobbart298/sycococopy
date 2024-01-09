@@ -6,13 +6,11 @@ from rps_item import Item
 
 '''
 Macro benchmark for Rock-Paper-Scissors that uses a delay instead of picking a random item to ensure
-each round is the same.
+each round is the same. Basline benchmark without monitor
 '''
-
 
 PLAYER_COUNT = 3
 DELAY = 200
-
 
 def findLosers(playerItems: dict[int: Item]) -> list[int]:
     losers = []
@@ -26,7 +24,6 @@ def findLosers(playerItems: dict[int: Item]) -> list[int]:
         if lose and not win:
             losers.append(player)
     return losers
-
 
 async def player(number: int, incoming_queues: dict[int:asyncio.Queue], outgoing_queues: dict[int:asyncio.Queue], item_list: list[Item]):
     is_participating = True
@@ -63,7 +60,6 @@ async def player(number: int, incoming_queues: dict[int:asyncio.Queue], outgoing
                 incoming_queues.pop(loser)
                 outgoing_queues.pop(loser)
     
-
 async def main():
     queueMap = {}
     item_list_p1 = [Item.ROCK, Item.SCISSORS, Item.PAPER, Item.ROCK, Item.PAPER, Item.SCISSORS, Item.PAPER, Item.ROCK]
@@ -86,7 +82,6 @@ async def main():
                 if p1 == number:
                     outgoing_queues[p2] = queueMap[(p1, p2)]
             tg.create_task(player(number, incoming_queues, outgoing_queues, item_lists.pop()))
-
 
 if __name__ == '__main__':
     runner = pyperf.Runner()
