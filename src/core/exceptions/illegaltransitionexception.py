@@ -2,8 +2,7 @@ from src.core.exceptions.sycococopyexception import SycococopyException
 from src.core.transition import Transition
 
 '''
-IllegalTransitionException is raised when a send or receive operation occurs
-outside of the communication protocol.
+IllegalTransitionException is raised when an illegal send or receive operation occurs.
 '''
 class IllegalTransitionException(SycococopyException):
 

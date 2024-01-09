@@ -2,11 +2,11 @@ import pyperf
 import time
 import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor
-from rps_item import Item
+from benchmarks.rps_benchmark.rps_item import Item
 
 '''
 Macro benchmark for Rock-Paper-Scissors that uses a delay instead of picking a random item to ensure
-each round is the same. Benchmark with monitor including full parsing
+each round is the same. Benchmark with monitor including full parsing.
 '''
 
 PLAYER_COUNT = 3

@@ -1,4 +1,4 @@
-from rps_item import Item
+from examples.rps_item import Item
 import pyperf
 
 def findRandomItem():

@@ -1,4 +1,6 @@
 antlrFiles
 benchmarks
+customs
+examples
 src
 test

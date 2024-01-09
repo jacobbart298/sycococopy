@@ -1,8 +1,7 @@
 from src.core.exceptions.sycococopyexception import SycococopyException
 
 '''
-IllegalTypeException is raised when a type is used in the communication 
-protocol that is not recognised.
+IllegalTypeException is raised when the given type cannot not recognised.
 '''
 class IllegalTypeException(SycococopyException):
         

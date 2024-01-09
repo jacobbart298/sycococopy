@@ -1,6 +1,6 @@
 import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor
-from rps_item import Item
+from examples.rps_item import Item
 
 specification_path = r".\protocol_RPS.txt"
 monitor = Monitor(specification_path, enforceCausality=False)

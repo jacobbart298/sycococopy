@@ -334,7 +334,9 @@ class TestMonitor(unittest.TestCase):
             monitor.verifySend(int_B_A, message_int)
         except PendingMessagesException:
             self.fail
-
+        
+        monitor.verifyReceive(int_B_A)
+        monitor.verifyReceive(str_A_B)
 
     def testLegalReceiveUncheckedReceivesNotEmpty(self):
         specificationPath = getSpecificationPath("test_monitor")
@@ -429,6 +431,7 @@ class TestMonitor(unittest.TestCase):
         monitor.verifyReceive(int_A_B)
         with self.assertRaises(PendingMessagesException):
             monitor.verifySend(bool_B_A, True)
+        
 
 
 def getSpecificationPath(specificationName: str):
