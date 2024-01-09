@@ -3,6 +3,12 @@ import pyperf
 import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor
 
+'''
+Benchmark to test the compare the framework in a real world scenario where website requests are
+handled and results passed between coroutines. 
+Benchmark with monitoring including full parsing
+'''
+
 URLS = 2
 specification = 'requests.txt'
 
@@ -30,8 +36,6 @@ async def handleResponse(incoming, outgoing):
         status_codes.append(status)
         headers.append(header)
         i += 1
-    # print(f"The received status codes were {status_codes}")
-    # print(f"The received headers were {headers}")
 
 async def main():
     monitor = Monitor(specification)
@@ -44,4 +48,3 @@ async def main():
 if __name__ == '__main__':
     runner = pyperf.Runner()
     runner.bench_async_func(f"Request", main)
-

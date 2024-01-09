@@ -3,6 +3,12 @@ import pyperf
 import asyncio
 from requests.exceptions import HTTPError
 
+'''
+Benchmark to test the compare the framework in a real world scenario where website requests are
+handled and results passed between coroutines. 
+Baseline benchmark without monitoring
+'''
+
 URLS = 2
 
 async def getResponse(incoming, outgoing):
@@ -29,8 +35,6 @@ async def handleResponse(incoming, outgoing):
         status_codes.append(status)
         headers.append(header)
         i += 1
-    # print(f"The received status codes were {status_codes}")
-    # print(f"The received headers were {headers}")
 
 async def main():
     handle_to_response = asyncio.Queue()
@@ -40,4 +44,3 @@ async def main():
 if __name__ == '__main__':
     runner = pyperf.Runner()
     runner.bench_async_func(f"Request", main)
-
