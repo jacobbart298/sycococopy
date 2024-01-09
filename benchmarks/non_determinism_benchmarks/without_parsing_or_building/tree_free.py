@@ -4,6 +4,11 @@ from os import path
 from asyncio import Queue
 import asyncio
 
+'''
+Benchmark that generates a choice tree.
+Baseline without monitoring.
+'''
+
 async def A(queueBtoA: Queue, queueAtoB: Queue, level: int) -> None:
     while level > 0:
         await queueAtoB.put(True)
