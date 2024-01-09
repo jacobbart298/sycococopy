@@ -6,9 +6,9 @@ import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor
 
 '''
-A benchmark that performs one-to-many send operations (star send).
+Benchmark that performs one-to-many send operations (star send).
 The order predetermined to ensure repeatability of the benchmark.
-This tests the sycococopy shuffle operator. 
+This tests performance of the sycococopy shuffle operator. 
 '''
 
 specification_path = path.abspath("benchmark_specifications/protocol_shuffle_no_predicates.txt")
@@ -32,7 +32,6 @@ async def main(workerCount: int) -> None:
             asyncio.link(queue, sender, receiver, monitor)           
             tg.create_task(worker(queue))
         tg.create_task(center(queueList, workerCount))
-
 
 async def runBenchmark() -> None:
     await main(starWorkers)

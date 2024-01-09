@@ -5,8 +5,12 @@ from src.core.instrumentation import Queue
 import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor
 
-specification_path = path.abspath("benchmark_specifications/protocol_loop_with_predicates.txt")
+'''
+Loop benchmarks where two coroutines send messages back and forth for a
+number of times. Test with full parsing
+'''
 
+specification_path = path.abspath("benchmark_specifications/protocol_loop_with_predicates.txt")
 
 async def A(receiveQueue: Queue, sendQueue: Queue, loopCount: int) -> None:
     while loopCount > 0:

@@ -4,6 +4,11 @@ from os import path
 import asyncio
 from asyncio import Queue
 
+'''
+Ring benchmark where coroutines forward messages in a ring until intial coroutine is reached.
+Baseline without monitoring.
+'''
+
 async def worker(receiveQueue: Queue, sendQueue: Queue) -> None:
     await receiveQueue.get()
     await sendQueue.put(True)

@@ -8,7 +8,7 @@ from src.core.monitor import Monitor
 '''
 A benchmark that performs one-to-many send operations (star send).
 The order predetermined to ensure repeatability of the benchmark.
-This tests the sycococopy shuffle operator. 
+Baseline test without monitoring
 '''
 
 async def worker(receiveQueue: Queue) -> None:
@@ -26,7 +26,6 @@ async def main(workerCount: int) -> None:
             queueList.append(queue)
             tg.create_task(worker(queue))
         tg.create_task(center(queueList, workerCount))
-
 
 async def runBenchmark() -> None:
     await main(starWorkers)

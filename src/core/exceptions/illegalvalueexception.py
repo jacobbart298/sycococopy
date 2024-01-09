@@ -1,8 +1,7 @@
 from src.core.exceptions.sycococopyexception import SycococopyException
 
 '''
-IllegalValueException is raised when a type that is used in the protocol has
-not been defined.
+IllegalValueException is raised when the provided value cannot be parsed to the given type.
 '''
 class IllegalValueException(SycococopyException):
         

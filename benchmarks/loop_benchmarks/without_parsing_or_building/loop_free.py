@@ -4,6 +4,11 @@ from os import path
 from asyncio import Queue
 import asyncio
 
+'''
+Loop benchmarks where two coroutines send messages back and forth for a
+number of times. Baseline without monitoring.
+'''
+
 async def A(receiveQueue: Queue, sendQueue: Queue, loopCount: int) -> None:
     while loopCount > 0:
         await sendQueue.put(1)

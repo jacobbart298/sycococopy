@@ -5,5 +5,5 @@ HaltedException is used to prevent further transitions when an IllegalTransition
 has been raised previously.
 '''
 
-class HaltedException(Exception):
+class HaltedException(SycococopyException):
     pass

@@ -1,4 +1,3 @@
-
 '''
 BaseException for the SyCoCoCoPy framework.
 '''
