@@ -1,14 +1,20 @@
 import pyperf
 import time
-import time
 import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor
 from rps_item import Item
 
+'''
+Macro benchmark for Rock-Paper-Scissors that uses a delay instead of picking a random item to ensure
+each round is the same.
+'''
+
+
 PLAYER_COUNT = 3
-DELAY = 10
+DELAY = 1.45
 specification_path = "protocol_RPS.txt"
 monitor = Monitor(specification_path, enforceCausality=False)
+
 
 def findLosers(playerItems: dict[int: Item]) -> list[int]:
     losers = []
@@ -59,6 +65,7 @@ async def player(number: int, incoming_queues: dict[int:asyncio.Queue], outgoing
                 incoming_queues.pop(loser)
                 outgoing_queues.pop(loser)
         await asyncio.sleep(1.5/1000000)
+ 
     
 async def main():
     queueMap = {}
