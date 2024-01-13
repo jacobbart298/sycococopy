@@ -1,4 +1,3 @@
-from os import path
 from examples.pet import Dog, Cat
 from src.core.instrumentation import Channel
 import src.core.instrumentation as asyncio
@@ -7,7 +6,7 @@ from src.core.monitor import Monitor
 buyer1 = "buyer1"
 buyer2 = "buyer2"
 seller = "seller"
-specification_path = path.abspath("examples/protocol_voorbeeld_programma_reference_types.txt")
+specification_path = "protocol_voorbeeld_programma_reference_types.txt"
 monitor = Monitor(specification_path)
 
 buy1tobuy2 = Channel(buyer1, buyer2, monitor)
