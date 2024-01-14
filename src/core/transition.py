@@ -90,9 +90,9 @@ class PredicateTransition(Transition):
         return "send " + str(self.type) + "(" + str(self.comparator) + str(self.value) + ") from " + str(self.sender) + " to " + str(self.receiver)
 
 '''
-Lambda embodies a lambda transition between two states in a finite state machine.
+EpsilonTransition embodies an epsilon transition between two states in a finite state machine.
 '''
-class Lambda():
+class EpsilonTransition():
 
     def __eq__(self, other: any) -> bool:
         return type(self) == type(other)

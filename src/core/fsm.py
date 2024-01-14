@@ -1,5 +1,5 @@
 from src.core.state import State
-from src.core.transition import Transition, Lambda
+from src.core.transition import Transition, EpsilonTransition
 
 '''
 The FSM class holds a set of State objects that reflect the current possible states of the FSM.
@@ -15,8 +15,8 @@ class FSM:
         while(len(self.states) != 0):
             state: State = self.states.pop()
             for stateTransition in state.getTransitions():
-                if stateTransition == Lambda():
-                    self.states.update(state.getNextStates(Lambda()))
+                if isinstance(stateTransition, EpsilonTransition):
+                    self.states.update(state.getNextStates(EpsilonTransition()))
                 elif stateTransition.satisfies(transition, item):
                     newStates.update(state.getNextStates(stateTransition))
         self.states = newStates

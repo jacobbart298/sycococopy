@@ -5,7 +5,7 @@ from antlr4 import FileStream, CommonTokenStream
 from antlrFiles.PythonicLexer import PythonicLexer
 from antlrFiles.pythonicvisitor import PythonicVisitor
 from src.core.fsm import FSM
-from src.core.transition import Transition, PredicateTransition, Lambda
+from src.core.transition import Transition, PredicateTransition, EpsilonTransition
 from src.core.state import State
 from src.core.exceptions.illegaltypeexception import IllegalTypeException
 from src.core.exceptions.illegalvalueexception import IllegalValueException
@@ -123,7 +123,7 @@ class FsmBuilder(PythonicVisitor):
     def visitRepeat(self, ctx:PythonicParser.RepeatContext, startState: State):
         loopTag: str = ctx.getChild(1).getText()
         endState: State =  self.loop_dictionary[loopTag]
-        startState.addTransitionToState(Lambda(), endState)
+        startState.addTransitionToState(EpsilonTransition(), endState)
 
     # Builds a transition from the given SendContext and adds it to the FSM.
     def visitSend(self, ctx: PythonicParser.SendContext, startState: State, endState: State) -> None:
