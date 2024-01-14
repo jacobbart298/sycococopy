@@ -24,6 +24,6 @@ class State:
            return self.transitionsToStates[transition]
         return set()
     
-    # Returns a list of possible Transitions in this State.
-    def getTransitions(self) -> list[Transition]:
-        return list(self.transitionsToStates.keys())
+    # Returns a set of possible Transitions in this State.
+    def getTransitions(self) -> set[Transition]:
+        return set(self.transitionsToStates.keys())
