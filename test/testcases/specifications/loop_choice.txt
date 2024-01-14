@@ -5,7 +5,5 @@ roles:
 protocol:
 	loop l:
 		choice:
-			sequence:
-				send bool(False) from A to B
-				repeat l
+			repeat l
 			send bool(True) from A to B

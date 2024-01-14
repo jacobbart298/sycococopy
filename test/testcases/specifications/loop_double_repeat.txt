@@ -12,10 +12,6 @@ protocol:
 					sequence:
 						send float from A to B
 						choice:
-							sequence:
-								send bool(True) from B to A
-								repeat inner
-							sequence:
-								send bool(False) from B to A
-								repeat outer
+							repeat inner
+							repeat outer
 							send str("hello world") from B to A

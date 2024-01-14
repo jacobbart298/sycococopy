@@ -1,7 +1,7 @@
 import unittest
 import os
 from src.core.fsmBuilder import FsmBuilder
-from src.core.transition import Transition, PredicateTransition
+from src.core.transition import Transition, PredicateTransition, EpsilonTransition
 from src.core.exceptions.rolemismatchexception import RoleMismatchException
 
 class TestFsmBuilder(unittest.TestCase):
@@ -552,46 +552,15 @@ class TestFsmBuilder(unittest.TestCase):
         # in q3 there is no transition
         self.assertEqual(0, len(q3.getTransitions()))
 
-    # see single_loop_deterministic.png in tests/testcases/fsms for fsm
-    def test_single_loop_deterministic(self):
-       
-        specificationPath = getSpecificationPath("single_loop_deterministic")    
-        fsm = FsmBuilder().buildFsm(specificationPath)
-    
-        t1_A_B = Transition(int, "A", "B")
-        t2_B_A = Transition(bool, "B", "A")
-        t3_B_A = Transition(str, "B", "A")
+    # see single_loop.png in tests/testcases/fsms for fsm
+    def test_single_loop(self):
 
-        self.assertEqual(1, len(fsm.getStates()))
-        q0 = fsm.getStates()[0]
-
-        # in q0 there is one transition
-        self.assertEqual(1, len(q0.getTransitions()))
-        self.assertIn(t1_A_B, q0.getTransitions())
-        # transition t1_A_B in q0 leads to q1
-        self.assertEqual(1, len(q0.getNextStates(t1_A_B)))
-        q1 = list(q0.getNextStates(t1_A_B))[0]  
-        # in q1 there are two transitions: t2_B_A, t3_B_A
-        self.assertEqual(2, len(q1.getTransitions()))
-        self.assertIn(t2_B_A, q1.getTransitions())
-        self.assertIn(t3_B_A, q1.getTransitions())
-        # transition t2_B_A in q1 leads to q0
-        self.assertEqual(1, len(q1.getNextStates(t2_B_A)))
-        self.assertIn(q0, q1.getNextStates(t2_B_A))
-        # transition t3_B_A in q1 leads to q2
-        self.assertEqual(1, len(q1.getNextStates(t3_B_A)))
-        q2 = list(q1.getNextStates(t3_B_A))[0]
-        # in q2 there is no transition
-        self.assertEqual(0, len(q2.getTransitions()))
-
-    # see single_loop_non_deterministic.png in tests/testcases/fsms for fsm
-    def test_single_loop_non_deterministic(self):
-
-        specificationPath = getSpecificationPath("single_loop_non_deterministic")    
+        specificationPath = getSpecificationPath("single_loop")    
         fsm = FsmBuilder().buildFsm(specificationPath)
         
         t1_A_B = PredicateTransition(bool, "A", "B", "==", True)
         t2_B_A = PredicateTransition(int, "B", "A", ">=", -422390482308423)
+        e = EpsilonTransition()
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -602,31 +571,31 @@ class TestFsmBuilder(unittest.TestCase):
         # transition t1_A_B in q0 leads to q1
         self.assertEqual(1, len(q0.getNextStates(t1_A_B)))
         q1 = list(q0.getNextStates(t1_A_B))[0]         
-        # in q1 there is one transition
-        self.assertEqual(1, len(q1.getTransitions()))
+        # in q1 there are two transitions
+        self.assertEqual(2, len(q1.getTransitions()))
         self.assertIn(t2_B_A, q1.getTransitions())
-        # transition t2_B_A in q1 leads to q0 and q2
-        self.assertEqual(2, len(q1.getNextStates(t2_B_A)))
-        self.assertIn(q0, q1.getNextStates(t2_B_A))
-        if q0 is list(q1.getNextStates(t2_B_A))[0]:
-            q2 = list(q1.getNextStates(t2_B_A))[1]
-        else:
-            q2 = list(q1.getNextStates(t2_B_A))[0]
+        self.assertIn(e, q1.getTransitions())
+        # transition e in q1 leads to q0
+        self.assertEqual(1, len(q1.getNextStates(e)))
+        self.assertIn(q0, q1.getNextStates(e))
+        # transition t2_B_A in q1 leads to q2
+        self.assertEqual(1, len(q1.getNextStates(t2_B_A)))
+        q2 = list(q1.getNextStates(t2_B_A))[0]
         # in q2 there is no transition
         self.assertEqual(0, len(q2.getTransitions()))
 
-    # see nested_loop_deterministic.png in tests/testcases/fsms for fsm
-    def test_nested_loop_deterministic(self):
 
-        specificationPath = getSpecificationPath("nested_loop_deterministic")    
+    # see loop_double_repeat.png in tests/testcases/fsms for fsm
+    def test_loop_double_repeat(self):
+
+        specificationPath = getSpecificationPath("loop_double_repeat")    
         fsm = FsmBuilder().buildFsm(specificationPath)
         
         t0_A_B = Transition(int, "A", "B")
         t1_A_B = Transition(str, "A", "B")
         t2_A_B = Transition(float, "A", "B")
-        t3_B_A = PredicateTransition(bool, "B", "A", "==", True)
-        t4_B_A = PredicateTransition(bool, "B", "A", "==", False)
         t5_B_A = PredicateTransition(str, "B", "A", "==", "hello world")
+        e = EpsilonTransition()
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -650,76 +619,21 @@ class TestFsmBuilder(unittest.TestCase):
         # transition t2_A_B in q2 leads to q3
         self.assertEqual(1, len(q2.getNextStates(t2_A_B)))
         q3 = list(q2.getNextStates(t2_A_B))[0]   
-        # in q3 there are three transitions: t3_B_A, t4_B_A and t5_B_A
-        self.assertEqual(3, len(q3.getTransitions()))
-        self.assertIn(t3_B_A, q3.getTransitions())
-        self.assertIn(t4_B_A, q3.getTransitions())
+        # in q3 there are two transitions: e and t5_B_A
+        self.assertEqual(2, len(q3.getTransitions()))
+        self.assertIn(e, q3.getTransitions())
         self.assertIn(t5_B_A, q3.getTransitions())
 
-        # transition t4_B_A in q3 leads to q1
-        self.assertEqual(1, len(q3.getNextStates(t4_B_A)))
-        self.assertIn(q1, q3.getNextStates(t4_B_A))
-        # transition t3_B_A in q3 leads to q2
-        self.assertEqual(1, len(q3.getNextStates(t3_B_A)))
-        self.assertIn(q2, q3.getNextStates(t3_B_A))
+        # transition e in q3 leads to q1 and q2
+        self.assertEqual(2, len(q3.getNextStates(e)))
+        self.assertIn(q1, q3.getNextStates(e))
+        self.assertIn(q2, q3.getNextStates(e))
         # transition t5_B_A in q3 leads to q4
         self.assertEqual(1, len(q3.getNextStates(t5_B_A)))
         q4 = list(q3.getNextStates(t5_B_A))[0]   
 
         # in q4 there is no transition
         self.assertEqual(0, len(q4.getTransitions()))
-
-
-    # see nested_loop_non_deterministic.png in tests/testcases/fsms for fsm
-    def test_nested_loop_non_deterministic(self):
-
-        specificationPath = getSpecificationPath("nested_loop_non_deterministic")    
-        fsm = FsmBuilder().buildFsm(specificationPath)
-                
-        t0_A_B = Transition(int, "A", "B")
-        t1_A_B = PredicateTransition(str, "A", "B", "==", "s2348SJrfh2314")
-        t2_A_B = Transition(bool, "A", "B")
-        t3_B_A = PredicateTransition(bool, "B", "A", "==", True)
-        t4_B_A = PredicateTransition(bool, "B", "A", "==", False)
-
-        self.assertEqual(1, len(fsm.getStates()))
-        q0 = fsm.getStates()[0]
-
-        # in q0 there is one transition: t0_A_B
-        self.assertEqual(1, len(q0.getTransitions()))
-        self.assertIn(t0_A_B, q0.getTransitions())
-
-        # transition t0_A_B in q0 leads to q1
-        self.assertEqual(1, len(q0.getNextStates(t0_A_B)))
-        q1 = list(q0.getNextStates(t0_A_B))[0]   
-        # in q1 there is one transition: t1_A_B
-        self.assertEqual(1, len(q1.getTransitions()))
-        self.assertIn(t1_A_B, q1.getTransitions())
-        # transition t1_A_B in q1 leads to q2
-        self.assertEqual(1, len(q1.getNextStates(t1_A_B)))
-        q2 = list(q1.getNextStates(t1_A_B))[0]   
-        # in q2 there is one transition: t2_A_B
-        self.assertEqual(1, len(q2.getTransitions()))
-        self.assertIn(t2_A_B, q2.getTransitions())
-        # transition t2_A_B in q2 leads to q3
-        self.assertEqual(1, len(q2.getNextStates(t2_A_B)))
-        q3 = list(q2.getNextStates(t2_A_B))[0]   
-        # in q3 there are two transitions: t3_B_A and t4_B_A
-        self.assertEqual(2, len(q3.getTransitions()))
-        self.assertIn(t3_B_A, q3.getTransitions())
-        self.assertIn(t4_B_A, q3.getTransitions())
-
-        # transition t3_B_A in q3 leads to q1 and q2
-        self.assertEqual(2, len(q3.getNextStates(t3_B_A)))
-        self.assertIn(q1, q3.getNextStates(t3_B_A))
-        self.assertIn(q2, q3.getNextStates(t3_B_A))
-        # transition t4_B_A in q3 leads to q4
-        self.assertEqual(1, len(q3.getNextStates(t4_B_A)))
-        q4 = list(q3.getNextStates(t4_B_A))[0]   
-
-        # in q4 there is no transition
-        self.assertEqual(0, len(q4.getTransitions()))
-
 
     # see intertwined_loops.png in tests/testcases/fsms for fsm
     def test_intertwined_loops(self):
@@ -730,10 +644,9 @@ class TestFsmBuilder(unittest.TestCase):
         t0_A_B = Transition(bool, "A", "B")
         t1_A_B = Transition(int, "A", "B")
         t2_A_B = Transition(bool, "A", "B")
-        t3_B_A = PredicateTransition(int, "B", "A", "<=", -42342432)
         t4_B_C = Transition(int, "B", "C")
-        t5_C_A = PredicateTransition(float, "C", "A", "<", 3.9)
         t6_C_D = Transition(str, "C", "D")
+        e = EpsilonTransition()
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -756,23 +669,23 @@ class TestFsmBuilder(unittest.TestCase):
         # transition t2_A_B in q2 leads to q3
         self.assertEqual(1, len(q2.getNextStates(t2_A_B)))
         q3 = list(q2.getNextStates(t2_A_B))[0]   
-        # in q3 there are 2 transitions: t3_B_A and t4_B_C
+        # in q3 there are 2 transitions: e and t4_B_C
         self.assertEqual(2, len(q3.getTransitions()))
-        self.assertIn(t3_B_A, q3.getTransitions())
+        self.assertIn(e, q3.getTransitions())
         self.assertIn(t4_B_C, q3.getTransitions())
-        # transition t3_B_A in q3 leads to q1
-        self.assertEqual(1, len(q3.getNextStates(t3_B_A)))
-        self.assertIn(q1, q3.getNextStates(t3_B_A))
+        # transition e in q3 leads to q1
+        self.assertEqual(1, len(q3.getNextStates(e)))
+        self.assertIn(q1, q3.getNextStates(e))
         # transition t4_B_C in q3 leads to q4
         self.assertEqual(1, len(q3.getNextStates(t4_B_C)))
         q4 = list(q3.getNextStates(t4_B_C))[0]         
-        # in q4 there are 2 transitions: t5_C_A and t6_C_D
+        # in q4 there are 2 transitions: e and t6_C_D
         self.assertEqual(2, len(q4.getTransitions()))
-        self.assertIn(t5_C_A, q4.getTransitions())
+        self.assertIn(e, q4.getTransitions())
         self.assertIn(t6_C_D, q4.getTransitions())
-        # transition t5_C_A in q4 leads to q2
-        self.assertEqual(1, len(q4.getNextStates(t5_C_A)))
-        self.assertIn(q2, q4.getNextStates(t5_C_A))
+        # transition e in q4 leads to q2
+        self.assertEqual(1, len(q4.getNextStates(e)))
+        self.assertIn(q2, q4.getNextStates(e))
         # transition t6_C_D in q4 leads to q5
         self.assertEqual(1, len(q4.getNextStates(t6_C_D)))
         q5 = list(q4.getNextStates(t6_C_D))[0]   
@@ -789,12 +702,11 @@ class TestFsmBuilder(unittest.TestCase):
 
         t0_A_B = Transition(bool, "A", "B")
         t1_A_B = PredicateTransition(str, "A", "B", "!=", "420691337")
-        t2_B_A = PredicateTransition(bool, "B", "A", "==", False)
         t3_B_C = PredicateTransition(bool, "B", "C", "==", False)
         t4_B_C = Transition(int, "B", "C")
         t5_C_D = Transition(int, "C", "D")
-        t6_D_B = PredicateTransition(bool, "D", "B", "==", False)
         t7_D_E = Transition(str, "D", "E")
+        e = EpsilonTransition()
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -811,13 +723,13 @@ class TestFsmBuilder(unittest.TestCase):
         # transition t1_A_B in q1 leads to q2
         self.assertEqual(1, len(q1.getNextStates(t1_A_B)))
         q2 = list(q1.getNextStates(t1_A_B))[0]   
-        # in q2 there is are 2 transitions: t2_B_A and t3_B_C
+        # in q2 there is are 2 transitions: e and t3_B_C
         self.assertEqual(2, len(q2.getTransitions()))
-        self.assertIn(t2_B_A, q2.getTransitions())
+        self.assertIn(e, q2.getTransitions())
         self.assertIn(t3_B_C, q2.getTransitions())
-        # transition t2_B_A in q2 leads to q1
-        self.assertEqual(1, len(q2.getNextStates(t2_B_A)))
-        self.assertIn(q1, q2.getNextStates(t2_B_A))
+        # transition e in q2 leads to q1
+        self.assertEqual(1, len(q2.getNextStates(e)))
+        self.assertIn(q1, q2.getNextStates(e))
         # transition t3_B_C in q2 leads to q3
         self.assertEqual(1, len(q2.getNextStates(t3_B_C)))
         q3 = list(q2.getNextStates(t3_B_C))[0]  
@@ -833,13 +745,13 @@ class TestFsmBuilder(unittest.TestCase):
         # transition t5_C_D in q4 leads to q5
         self.assertEqual(1, len(q4.getNextStates(t5_C_D)))
         q5 = list(q4.getNextStates(t5_C_D))[0]   
-        # in q5 there is are 2 transitions: t6_D_B and t7_D_E
+        # in q5 there is are 2 transitions: e and t7_D_E
         self.assertEqual(2, len(q5.getTransitions()))
-        self.assertIn(t6_D_B, q5.getTransitions())
+        self.assertIn(e, q5.getTransitions())
         self.assertIn(t7_D_E, q5.getTransitions())
-        # transition t6_D_B in q5 leads to q3
-        self.assertEqual(1, len(q5.getNextStates(t6_D_B)))
-        self.assertIn(q3, q5.getNextStates(t6_D_B))
+        # transition e in q5 leads to q3
+        self.assertEqual(1, len(q5.getNextStates(e)))
+        self.assertIn(q3, q5.getNextStates(e))
         # transition t7_D_E in q5 leads to q6
         self.assertEqual(1, len(q5.getNextStates(t7_D_E)))
         q6 = list(q5.getNextStates(t7_D_E))[0]
@@ -856,8 +768,7 @@ class TestFsmBuilder(unittest.TestCase):
 
         t0_A_B = Transition(str, "A", "B")
         t1_B_C = Transition(str, "B", "C")
-        t2_C_B = Transition(int, "C", "B")
-        t2_B_A = Transition(float, "B", "A")
+        e = EpsilonTransition()
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -868,22 +779,22 @@ class TestFsmBuilder(unittest.TestCase):
         # transition t0_A_B in q0 leads to q1
         self.assertEqual(1, len(q0.getNextStates(t0_A_B)))
         q1 = list(q0.getNextStates(t0_A_B))[0]   
-        # in q1 there are two transitions: t2_B_A and t1_B_C
+        # in q1 there are two transitions: e and t1_B_C
         self.assertEqual(2, len(q1.getTransitions()))
-        self.assertIn(t2_B_A, q1.getTransitions())
+        self.assertIn(e, q1.getTransitions())
         self.assertIn(t1_B_C, q1.getTransitions())
-        # transition t2_B_A in q1 leads to q0
-        self.assertEqual(1, len(q1.getNextStates(t2_B_A)))
-        self.assertIn(q0, q1.getNextStates(t2_B_A))
+        # transition e in q1 leads to q0
+        self.assertEqual(1, len(q1.getNextStates(e)))
+        self.assertIn(q0, q1.getNextStates(e))
         # transition t1_B_C in q1 leads to q2
         self.assertEqual(1, len(q1.getNextStates(t1_B_C)))
         q2 = list(q1.getNextStates(t1_B_C))[0]
-        # in q2 there is one transition: t2_B_C
+        # in q2 there is one transition: e
         self.assertEqual(1, len(q2.getTransitions()))
-        self.assertIn(t2_C_B, q2.getTransitions())
-        # transition t2_C_B in q2 leads to q1
-        self.assertEqual(1, len(q2.getNextStates(t2_C_B)))
-        self.assertIn(q1, q2.getNextStates(t2_C_B))
+        self.assertIn(e, q2.getTransitions())
+        # transition e in q2 leads to q1
+        self.assertEqual(1, len(q2.getNextStates(e)))
+        self.assertIn(q1, q2.getNextStates(e))
 
     # see nested_loops.png in tests/testcases/fsms for fsm
     def test_nested_loops(self):
@@ -894,10 +805,9 @@ class TestFsmBuilder(unittest.TestCase):
         t0_A_B = Transition(int, "A", "B")
         t1_A_B = Transition(bool, "A", "B")
         t2_A_B = Transition(str, "A", "B")
-        t3_B_A = PredicateTransition(bool, "B", "A", "==", False)
         t4_B_C = PredicateTransition(bool, "B", "C", "==", True)
-        t5_C_A = Transition(str, "C", "A")
         t6_C_D = Transition(float, "C", "D")
+        e = EpsilonTransition()
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -920,23 +830,23 @@ class TestFsmBuilder(unittest.TestCase):
         # transition t2_A_B in q2 leads to q3
         self.assertEqual(1, len(q2.getNextStates(t2_A_B)))
         q3 = list(q2.getNextStates(t2_A_B))[0]   
-        # in q3 there are 2 transitions: t3_B_A and t4_B_C
+        # in q3 there are 2 transitions: e and t4_B_C
         self.assertEqual(2, len(q3.getTransitions()))
-        self.assertIn(t3_B_A, q3.getTransitions())
+        self.assertIn(e, q3.getTransitions())
         self.assertIn(t4_B_C, q3.getTransitions())
-        # transition t3_B_A in q3 leads to q2
-        self.assertEqual(1, len(q3.getNextStates(t3_B_A)))
-        self.assertIn(q2, q3.getNextStates(t3_B_A))
+        # transition e in q3 leads to q2
+        self.assertEqual(1, len(q3.getNextStates(e)))
+        self.assertIn(q2, q3.getNextStates(e))
         # transition t4_B_C in q3 leads to q4
         self.assertEqual(1, len(q3.getNextStates(t4_B_C)))
         q4 = list(q3.getNextStates(t4_B_C))[0]         
-        # in q4 there are 2 transitions: t5_C_A and t6_C_D
+        # in q4 there are 2 transitions: e and t6_C_D
         self.assertEqual(2, len(q4.getTransitions()))
-        self.assertIn(t5_C_A, q4.getTransitions())
+        self.assertIn(e, q4.getTransitions())
         self.assertIn(t6_C_D, q4.getTransitions())
-        # transition t5_C_A in q4 leads to q1
-        self.assertEqual(1, len(q4.getNextStates(t5_C_A)))
-        self.assertIn(q1, q4.getNextStates(t5_C_A))
+        # transition e in q4 leads to q1
+        self.assertEqual(1, len(q4.getNextStates(e)))
+        self.assertIn(q1, q4.getNextStates(e))
         # transition t6_C_D in q4 leads to q5
         self.assertEqual(1, len(q4.getNextStates(t6_C_D)))
         q5 = list(q4.getNextStates(t6_C_D))[0]           
@@ -1003,9 +913,9 @@ class TestFsmBuilder(unittest.TestCase):
         t1_A_B = PredicateTransition(int, "A", "B", ">", 0)
         t1_A_C = PredicateTransition(int, "A", "C", ">", 0)
         t2_A_C = Transition(str, "A", "C")
-        t4_C_B = PredicateTransition(bool, "C", "B", "==", False)
         t3_B_D = Transition(int, "B", "D")
         t4_C_D = PredicateTransition(bool, "C", "D", "==", False)
+        e = EpsilonTransition()
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -1036,13 +946,13 @@ class TestFsmBuilder(unittest.TestCase):
         # transition t2_A_C in q2 leads to q3
         self.assertEqual(1, len(q2.getNextStates(t2_A_C)))
         self.assertIn(q3, q2.getNextStates(t2_A_C))          
-        # in q3 there are two transitions: t4_C_B and t3_B_D
+        # in q3 there are two transitions: e and t3_B_D
         self.assertEqual(2, len(q3.getTransitions()))
-        self.assertIn(t4_C_B, q3.getTransitions())
+        self.assertIn(e, q3.getTransitions())
         self.assertIn(t3_B_D, q3.getTransitions())
-        # transition t4_C_B in q3 leads to q0
-        self.assertEqual(1, len(q3.getNextStates(t4_C_B)))
-        self.assertIn(q0, q3.getNextStates(t4_C_B))
+        # transition e in q3 leads to q0
+        self.assertEqual(1, len(q3.getNextStates(e)))
+        self.assertIn(q0, q3.getNextStates(e))
         # transition t3_B_D in q3 leads to q4
         self.assertEqual(1, len(q3.getNextStates(t3_B_D)))
         q4 = list(q3.getNextStates(t3_B_D))[0]
@@ -1055,82 +965,26 @@ class TestFsmBuilder(unittest.TestCase):
         # in q5 there is no transition
         self.assertEqual(0, len(q5.getTransitions()))
 
-    # see shuffle_loop_sequence.png in tests/testcases/fsms for fsm
-    def test_shuffle_loop_sequence(self):
-        
-        specificationPath = getSpecificationPath("shuffle_loop_sequence")    
-        fsm = FsmBuilder().buildFsm(specificationPath)
-
-        t1_A_B = Transition(bool, "A", "B")
-        t2_B_A = Transition(str, "B", "A")
-        t3_B_D = Transition(float, "B", "D")
-        t4_C_D = Transition(float, "C", "D")
-
-        self.assertEqual(1, len(fsm.getStates()))
-        q0 = fsm.getStates()[0]
-
-        # in q0 there are two transitions: t3_B_D and t4_C_D
-        self.assertEqual(2, len(q0.getTransitions()))
-        self.assertIn(t3_B_D, q0.getTransitions())
-        self.assertIn(t4_C_D, q0.getTransitions())
-
-        # transition t3_B_D in q0 leads to q1
-        self.assertEqual(1, len(q0.getNextStates(t3_B_D)))
-        q1 = list(q0.getNextStates(t3_B_D))[0]   
-        # in q1 there is one transition: t4_C_D
-        self.assertEqual(1, len(q1.getTransitions()))
-        self.assertIn(t4_C_D, q1.getTransitions())
-        # transition t4_C_D in q1 leads to q3
-        self.assertEqual(1, len(q1.getNextStates(t4_C_D)))
-        q3 = list(q1.getNextStates(t4_C_D))[0]   
-        # transition t4_C_D in q0 leads to q2
-        self.assertEqual(1, len(q0.getNextStates(t4_C_D)))
-        q2 = list(q0.getNextStates(t4_C_D))[0]   
-        # in q2 there is one transition: t3_B_D
-        self.assertEqual(1, len(q2.getTransitions()))
-        self.assertIn(t3_B_D, q2.getTransitions())
-        # transition t3_B_D in q2 leads to q3
-        self.assertEqual(1, len(q2.getNextStates(t3_B_D)))
-        self.assertIn(q3, q2.getNextStates(t3_B_D)) 
-        # in q3 there is one transition: t1_A_B
-        self.assertEqual(1, len(q3.getTransitions()))
-        self.assertIn(t1_A_B, q3.getTransitions())
-        # transition t1_A_B in q3 leads to q0 and q4
-        self.assertEqual(2, len(q3.getNextStates(t1_A_B)))
-        self.assertIn(q0, q3.getNextStates(t1_A_B))
-        if q0 is list(q3.getNextStates(t1_A_B))[0]:
-            q4 = list(q3.getNextStates(t1_A_B))[1]
-        else:
-            q4 = list(q3.getNextStates(t1_A_B))[0]
-        # in q4 there is one transition: t2_B_A
-        self.assertEqual(1, len(q4.getTransitions()))
-        self.assertIn(t2_B_A, q4.getTransitions())
-        # transition t2_B_A in q4 leads to q5
-        self.assertEqual(1, len(q4.getNextStates(t2_B_A)))
-        q5 = list(q4.getNextStates(t2_B_A))[0]           
-        # in q5 there is no transition
-        self.assertEqual(0, len(q5.getTransitions()))
-
     # see loop_choice.png in tests/testcases/fsms for fsm
     def test_loop_choice(self):
 
         specificationPath = getSpecificationPath("loop_choice")    
         fsm = FsmBuilder().buildFsm(specificationPath)
 
-        t1_A_B = PredicateTransition(bool, "A", "B", "==", False)
         t2_A_B = PredicateTransition(bool, "A", "B", "==", True)
+        e = EpsilonTransition()
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
 
-        # in q0 there are two transitions: t1_A_B and t2_A_B
+        # in q0 there are two transitions: e and t2_A_B
         self.assertEqual(2, len(q0.getTransitions()))
-        self.assertIn(t1_A_B, q0.getTransitions())
+        self.assertIn(e, q0.getTransitions())
         self.assertIn(t2_A_B, q0.getTransitions())
 
-        # transition t1_A_B in q0 leads to q0
-        self.assertEqual(1, len(q0.getNextStates(t1_A_B)))
-        self.assertIn(q0, q0.getNextStates(t1_A_B)) 
+        # transition e in q0 leads to q0
+        self.assertEqual(1, len(q0.getNextStates(e)))
+        self.assertIn(q0, q0.getNextStates(e)) 
         # transition t2_A_B in q0 leads to q1
         self.assertEqual(1, len(q0.getNextStates(t2_A_B)))
         q1 = list(q0.getNextStates(t2_A_B))[0]

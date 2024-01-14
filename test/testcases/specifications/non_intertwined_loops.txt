@@ -12,9 +12,7 @@ protocol:
 			sequence:
 				send str(!="420691337") from A to B
 				choice:
-					sequence:
-						send bool(False) from B to A
-						repeat l1
+					repeat l1
 					sequence:
 						send bool(False) from B to C
 						loop l2:
@@ -22,7 +20,5 @@ protocol:
 								send int from B to C
 								send int from C to D
 								choice:
-									sequence:
-										send bool(False) from D to B
-										repeat l2
+									repeat l2
 									send str from D to E

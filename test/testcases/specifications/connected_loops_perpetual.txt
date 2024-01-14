@@ -9,10 +9,7 @@ protocol:
 			send str from A to B
 			loop l2:
 				choice:
-					sequence:
-						send float from B to A
-						repeat l1
+					repeat l1
 					sequence:
 						send str from B to C
-						send int from C to B
 						repeat l2

@@ -14,13 +14,9 @@ protocol:
 					sequence:
 						send str from A to B
 						choice:
-							sequence:
-								send bool(False) from B to A
-								repeat l2
+							repeat l2
 							sequence:
 								send bool(True) from B to C
 								choice:
-									sequence:
-										send str from C to A
-										repeat l1
+									repeat l1
 									send float from C to D

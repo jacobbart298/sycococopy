@@ -14,13 +14,9 @@ protocol:
 					sequence:
 						send bool from A to B
 						choice:
-							sequence:
-								send int(<=-42342432) from B to A
-								repeat first
+							repeat first
 							sequence:
 								send int from B to C
 								choice:
-									sequence:
-										send float(<3.9) from C to A
-										repeat second
+									repeat second
 									send str from C to D
