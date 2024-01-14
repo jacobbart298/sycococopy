@@ -1,5 +1,5 @@
 from __future__ import annotations
-from src.core.transition import Transition
+from src.core.transition import Transition, Lambda
 
 '''
 The State class represents a state in a Finite State Machine.
@@ -11,7 +11,7 @@ class State:
         self.transitionsToStates: dict[Transition, set[State]] = {}
 
     # Adds a Transition, State pair to this State.
-    def addTransitionToState(self, transition: Transition, state: State) -> None:
+    def addTransitionToState(self, transition: Transition | Lambda, state: State) -> None:
         if transition in self.transitionsToStates: 
             self.transitionsToStates[transition].add(state)
         else:

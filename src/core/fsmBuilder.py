@@ -5,7 +5,7 @@ from antlrFiles.PythonicLexer import PythonicLexer
 from antlrFiles.pythonicvisitor import PythonicVisitor
 from src import customtypes
 from src.core.fsm import FSM
-from src.core.transition import Transition, PredicateTransition
+from src.core.transition import Transition, PredicateTransition, Lambda
 from src.core.state import State
 from src.core.exceptions.illegaltypeexception import IllegalTypeException
 from src.core.exceptions.illegalvalueexception import IllegalValueException
@@ -66,28 +66,18 @@ class FsmBuilder(PythonicVisitor):
                 self.visitSend(ctx, startState, endState)
             case "loop":
                 self.visitLoop(ctx, startState, endState)
+            case "repeat":
+                self.visitRepeat(ctx, startState)
 
     # Builds the fsm sequence part, checks for repeat and end of sequence. Visits the expression that
     # is at each part in the sequence.
     def visitSequence(self, ctx:PythonicParser.SequenceContext, startState: State, endState: State) -> None:
-        repeat: bool = False
         expressionCount: int = ctx.getChildCount() - 2
-
-        # check whether last child is a repeat expression
-        lastChild: str = ctx.getChild(expressionCount).getChild(0)
-        if lastChild.getChild(0).getText() == "repeat":
-            repeat = True
-            expressionCount -= 1    
-
-        currentState: State = startState     
         expressionIndices: range = range(1, expressionCount + 1)
+        currentState: State = startState     
         for index in expressionIndices:
             if index == expressionCount:
-                if repeat:
-                    loopTag: str = lastChild.getChild(1).getText() 
-                    nextState: State =  self.loop_dictionary[loopTag]
-                else:
-                    nextState: State = endState
+                nextState: State = endState
             else:
                 nextState: State = State()
             expression: str = ctx.getChild(index).getChild(0)
@@ -127,6 +117,13 @@ class FsmBuilder(PythonicVisitor):
         self.loop_dictionary[tag] = startState
         expression: str = ctx.getChild(2).getChild(1).getChild(0)
         self.visitExpression(expression, startState, endState)
+
+    # Builds a lambda transition from the given startState to the state 
+    # corresponding with the loop tag in the repeat statement.
+    def visitRepeat(self, ctx:PythonicParser.RepeatContext, startState: State):
+        loopTag: str = ctx.getChild(1).getText()
+        endState: State =  self.loop_dictionary[loopTag]
+        startState.addTransitionToState(Lambda(), endState)
 
     # Builds a transition from the given SendContext and adds it to the FSM.
     def visitSend(self, ctx: PythonicParser.SendContext, startState: State, endState: State) -> None:

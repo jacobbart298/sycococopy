@@ -88,3 +88,14 @@ class PredicateTransition(Transition):
     
     def __str__(self) -> str:
         return "send " + str(self.type) + "(" + str(self.comparator) + str(self.value) + ") from " + str(self.sender) + " to " + str(self.receiver)
+
+'''
+Lambda embodies a lambda transition between two states in a finite state machine.
+'''
+class Lambda():
+
+    def __eq__(self, other: any) -> bool:
+        return type(self) == type(other)
+    
+    def __hash__(self) -> int:
+        return hash(type(self))
