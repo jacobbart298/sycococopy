@@ -12,13 +12,16 @@ class FSM:
         
     def makeTransition(self, transition: Transition, item: any) -> bool:
         newStates: set[State] = set()
+        visitedStates: set[State] = set()
         while(len(self.states) != 0):
             state: State = self.states.pop()
-            for stateTransition in state.getTransitions():
-                if isinstance(stateTransition, EpsilonTransition):
-                    self.states.update(state.getNextStates(EpsilonTransition()))
-                elif stateTransition.satisfies(transition, item):
-                    newStates.update(state.getNextStates(stateTransition))
+            if not state in visitedStates:
+                for stateTransition in state.getTransitions():
+                    if isinstance(stateTransition, EpsilonTransition):
+                        self.states.update(state.getNextStates(EpsilonTransition()))
+                    elif stateTransition.satisfies(transition, item):
+                        newStates.update(state.getNextStates(stateTransition))
+                visitedStates.add(state)
         self.states = newStates
         return len(self.states) != 0
         
