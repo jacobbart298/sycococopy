@@ -11,7 +11,7 @@ class FSM:
         self.states: set(State) = {State()}
         
     def makeTransition(self, transition: Transition, item: any) -> bool:
-        newStates = set()
+        newStates: set[State] = set()
         while(len(self.states) != 0):
             state: State = self.states.pop()
             for stateTransition in state.getTransitions():
@@ -26,7 +26,7 @@ class FSM:
         return list(self.states)
     
     # Checks if at least one of the current states has no transitions and is hence in an end state
-    def inFinalState(self) -> bool:        
+    def isInFinalState(self) -> bool:        
         for state in self.states:
             if not state.getTransitions():
                 return True
