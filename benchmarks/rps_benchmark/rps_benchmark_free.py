@@ -1,16 +1,15 @@
 import pyperf
 import time
 import src.core.instrumentation as asyncio
-from src.core.monitor import Monitor
 from rps_item import Item
 
 '''
 Macro benchmark for Rock-Paper-Scissors that uses a delay instead of picking a random item to ensure
-each round is the same. Basline benchmark without monitor
+each round is the same. Basline benchmark without monitor.
 '''
 
 PLAYER_COUNT = 3
-DELAY = 200
+DELAY = 1.45
 
 def findLosers(playerItems: dict[int: Item]) -> list[int]:
     losers = []

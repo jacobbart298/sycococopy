@@ -1,9 +1,9 @@
 import builtins
 import antlrFiles
+from customs import customs
 from antlr4 import FileStream, CommonTokenStream
 from antlrFiles.PythonicLexer import PythonicLexer
 from antlrFiles.pythonicvisitor import PythonicVisitor
-from src import customtypes
 from src.core.fsm import FSM
 from src.core.transition import Transition, PredicateTransition, Lambda
 from src.core.state import State
@@ -208,9 +208,9 @@ class FsmBuilder(PythonicVisitor):
 
     # Transforms a string to a primitive value based on the given type.
     def convert_string_to_value(self, type_obj: type, value_string: str) -> any:
-        if hasattr(customtypes, type_obj.__name__):
+        if hasattr(customs, type_obj.__name__):
             try:
-                return eval(value_string, {}, customtypes.__dict__)
+                return eval(value_string, {}, customs.__dict__)
             except TypeError:
                 raise IllegalValueException(value_string, type_obj.__name__)           
         elif type_obj == str:
@@ -230,8 +230,8 @@ class FsmBuilder(PythonicVisitor):
         if type_string in ['int','str','float','bool']:
             return getattr(builtins, type_string)
         # check if the given type is a user-defined type
-        elif hasattr(customtypes, type_string):
-            return getattr(customtypes, type_string)
+        elif hasattr(customs, type_string):
+            return getattr(customs, type_string)
         # type not found: raise exception
         else:
             raise IllegalTypeException(type_string)

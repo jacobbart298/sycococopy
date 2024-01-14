@@ -1,4 +1,4 @@
-from src.pet import Dog, Cat
+from examples.pet import Dog, Cat
 from src.core.instrumentation import Channel
 import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor

@@ -4,5 +4,5 @@
 # from [user-module] import *
 # from [user-module] import X, Y, Z
 
-from src.pet import *
-from src.plant import *
+from examples.pet import *
+from benchmarks.rps_benchmark.rps_item import *

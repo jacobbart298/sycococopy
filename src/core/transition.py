@@ -73,7 +73,7 @@ class PredicateTransition(Transition):
             case '==':
                 verdict = value.__eq__(self.value)
             case '!=':
-                verdict = not value.__eq__(self.value)
+                verdict = value.__ne__(self.value)
         if verdict == NotImplemented:
             raise ComparatorNotImplementedException(self.comparator, type(value))
         else:
