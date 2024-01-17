@@ -1,0 +1,6 @@
+roles:
+	A
+	B
+
+protocol:
+	send Plant from A to B

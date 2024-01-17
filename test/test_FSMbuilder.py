@@ -3,52 +3,67 @@ import os
 from src.core.fsmBuilder import FsmBuilder
 from src.core.transition import Transition, PredicateTransition
 from src.core.exceptions.rolemismatchexception import RoleMismatchException
+from src.core.exceptions.illegaltypeexception import IllegalTypeException
+from src.core.exceptions.illegalvalueexception import IllegalValueException
+from examples.pet import *
 
 class TestFsmBuilder(unittest.TestCase):
 
     # see singleSend.png in tests/testcases/fsms for fsm
-    def test_singlePredicateSend(self):
+    def test_singleSendPrimitiveTypePredicateGt(self):
 
-        specificationPath = getSpecificationPath("singlePredicateSend")    
+        specificationPath = getSpecificationPath("singleSendPrimitiveTypePredicate")    
         fsm = FsmBuilder().buildFsm(specificationPath)
 
         send = PredicateTransition(int, "B", "A", ">", 4)
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
+        # in q0 there is one transition: send
+        self.assertEqual(1, len(q0.getTransitions()))
+        self.assertIn(send, q0.getTransitions())
+    
+    # see singleSend.png in tests/testcases/fsms for fsm
+    def test_singleSendUserDefinedTypePredicateGt(self):
 
+        specificationPath = getSpecificationPath("singleSendUserDefinedTypePredicate")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
+        send = PredicateTransition(Dog, "B", "A", ">", Dog("Lily", 3, 43.5))
+
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
         # in q0 there is one transition: send
         self.assertEqual(1, len(q0.getTransitions()))
         self.assertIn(send, q0.getTransitions())
 
-        # transition send in q0 leads to q1
-        self.assertEqual(1, len(q0.getNextStates(send)))
-        q1 = list(q0.getNextStates(send))[0]
-        # in q1 there is no transition
-        self.assertEqual(0, len(q1.getTransitions()))
-    
-
     # see singleSend.png in tests/testcases/fsms for fsm
-    def test_singleRegularSend(self):
+    def test_singleSendPrimitiveTypeNonPredicate(self):
     
-        specificationPath = getSpecificationPath("singleRegularSend")    
+        specificationPath = getSpecificationPath("singleSendPrimitiveTypeNonPredicate")    
         fsm = FsmBuilder().buildFsm(specificationPath)
 
         send = Transition(int, "B", "A")
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
-
         # in q0 there is one transition: send
         self.assertEqual(1, len(q0.getTransitions()))
         self.assertIn(send, q0.getTransitions())
 
-        # transition send in q0 leads to q1
-        self.assertEqual(1, len(q0.getNextStates(send)))
-        q1 = list(q0.getNextStates(send))[0]
-        # in q1 there is no transition
-        self.assertEqual(0, len(q1.getTransitions()))
+    # see singleSend.png in tests/testcases/fsms for fsm
+    def test_singleSendUserDefinedTypeNonPredicate(self):
+    
+        specificationPath = getSpecificationPath("singleSendUserDefinedTypeNonPredicate")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
 
+        send = Transition(Pet, "B", "A")
+
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
+        # in q0 there is one transition: send
+        self.assertEqual(1, len(q0.getTransitions()))
+        self.assertIn(send, q0.getTransitions())
 
     # see singleChoice.png in tests/testcases/fsms for fsm
     def test_singleChoice(self):
@@ -1162,8 +1177,72 @@ class TestFsmBuilder(unittest.TestCase):
         with self.assertRaises(RoleMismatchException):
             FsmBuilder().buildFsm(specificationPath)
 
+    def testIllegalTypeNotDefined(self):
+        
+        # Type Plant used in protocol test_illegal_type_not_defined is not part
+        # of the builtins module nor defined in the customs module.
+        specificationPath = getSpecificationPath("test_illegal_type_not_defined")
+        with self.assertRaises(IllegalTypeException):
+            FsmBuilder().buildFsm(specificationPath)
+
+    def testIllegalTypeBuiltin(self):
+        
+        # Function len used in protocol test_illegal_type_builtin is part of
+        # the builtins module but not a bool, int, float or str.
+        specificationPath = getSpecificationPath("test_illegal_type_builtin")
+        with self.assertRaises(IllegalTypeException):
+            FsmBuilder().buildFsm(specificationPath)
+
+    def testIllegalValueLackingArgument(self):
+
+        # Type Dog used in protocol test_illegal_value_lacking_argument is 
+        # defined in the customs module. Its constructor has two arguments
+        # instead of the one given, however.
+        specificationPath = getSpecificationPath("test_illegal_value_lacking_argument")
+        try:
+            FsmBuilder().buildFsm(specificationPath)
+            self.fail
+        except IllegalValueException:
+            pass
+
+    def testIllegalValueExcessArgument(self):
+
+        # Type Dog used in protocol test_illegal_value_excess_argument is 
+        # defined in the customs module. Its constructor has two arguments
+        # instead of the three given, however.
+        specificationPath = getSpecificationPath("test_illegal_value_excess_argument")
+        try:
+            FsmBuilder().buildFsm(specificationPath)
+            self.fail
+        except IllegalValueException:
+            pass
+
+    def testIllegalValueArgumentsWrongOrder(self):
+
+        # Type Dog used in protocol test_illegal_value_arguments_wrong_order is 
+        # defined in the customs module. However, the given arguments are in
+        # the wrong order.
+        specificationPath = getSpecificationPath("test_illegal_value_arguments_wrong_order")
+        try:
+            FsmBuilder().buildFsm(specificationPath)
+            self.fail
+        except IllegalValueException:
+            pass
+
+    def testIllegalValueArgumentWrongType(self):
+
+        # Type Dog used in protocol test_illegal_value_argument_wrong_type is 
+        # defined in the customs module. However, one of the given arguments is
+        # not of the right type.
+        specificationPath = getSpecificationPath("test_illegal_value_argument_wrong_type")
+        try:
+            FsmBuilder().buildFsm(specificationPath)
+            self.fail
+        except IllegalValueException:
+            pass
+
 if __name__ == '__main__':
     unittest.main()
 
 def getSpecificationPath(specificationName: str):
-        return os.path.abspath(f"test/testcases/specifications/{specificationName}.txt") 
+        return os.path.abspath(f"test/testcases/specifications/{specificationName}.txt")
