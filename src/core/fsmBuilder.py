@@ -93,14 +93,14 @@ class FsmBuilder(PythonicVisitor):
             counter: int = 0
             currentState: State = startState
             for index in indicesPermutation:
-                counter += 1
-                if counter == expressionCount:
+                if counter == expressionCount - 1:
                     nextState: State = endState
                 else:
                     nextState: State = State()
                 expression: str = ctx.getChild(index).getChild(0)
                 self.visitExpression(expression, currentState, nextState)
                 currentState = nextState
+                counter += 1
 
     # Builds a choice part of an FSM, where one of multiple options is allowed.
     def visitChoice(self, ctx:PythonicParser.ChoiceContext, startState: State, endState: State) -> None:
