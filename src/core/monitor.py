@@ -30,7 +30,7 @@ class Monitor():
     # received or if the FSM is not in a final state.
     def __del__(self):
         if not self.halted:
-            fsmInFinalState: bool = self.fsm.inFinalState()
+            fsmInFinalState: bool = self.fsm.isInFinalState()
             lostMessages: list[Transition] = []
             if self.checkLostMessages:
                 for uncheckedReceives in self.uncheckedReceives.values():
