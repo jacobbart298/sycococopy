@@ -1,0 +1,6 @@
+roles:
+	A
+	B
+
+protocol:
+	send bool(True) from B to A

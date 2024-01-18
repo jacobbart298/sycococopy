@@ -1,0 +1,6 @@
+roles:
+	A
+	B
+
+protocol:
+	send str(!="hello world!") from B to A

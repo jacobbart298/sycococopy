@@ -1,0 +1,6 @@
+roles:
+	A
+	B
+
+protocol:
+	send float(<-4.5) from B to A
