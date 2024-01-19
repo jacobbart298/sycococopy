@@ -24,7 +24,7 @@ class Monitor():
         self.checkLostMessages = checkLostMessages
         self.setExceptionHook()
         self.transitionHistory: deque[tuple[int, Transition, any]] = deque(maxlen=10)
-        self.messageCount: int = 1
+        self.messageCount: int = 0
         self.uncheckedReceives: dict[str, Transition] = {}
         self.fsm = FsmBuilder().buildFsm(filePath)
 
@@ -46,7 +46,7 @@ class Monitor():
     def verifySend(self, transition: Transition, item: any) -> None:
         if self.halted:
             raise HaltedException()     
-        self.addToMessageHistory((self.messageCount, transition, item))
+        self.addToMessageHistory(transition, item)
         # sending is not allowed if the sender is waiting for any messages and enforceCausality is True
         if self.enforceCausality and transition.getSender() in self.uncheckedReceives and self.uncheckedReceives[transition.getSender()]:
             self.halted = True
@@ -76,9 +76,9 @@ class Monitor():
         else:
             self.uncheckedReceives[transition.getReceiver()] = [transition]
     
-    def addToMessageHistory(self, message: tuple[int, Transition, any]) -> None:
-        self.transitionHistory.append(message)
+    def addToMessageHistory(self, transition: Transition, item: any) -> None:
         self.messageCount += 1
+        self.transitionHistory.append((self.messageCount, transition, item))
     
     # Method that builds the errorMessage in case the program terminates prematurely.
     def buildErrorMessage(self, lostMessages, hasTerminated):
