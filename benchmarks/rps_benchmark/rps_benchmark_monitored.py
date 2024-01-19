@@ -62,7 +62,7 @@ async def player(number: int, incoming_queues: dict[int:asyncio.Queue], outgoing
                 incoming_queues.pop(loser)
                 outgoing_queues.pop(loser)
         round += 1
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(0)
 
 async def main():
     random.seed(362)

@@ -11,7 +11,6 @@ each round is the same. Basline benchmark without monitor
 '''
 
 PLAYER_COUNT = 3
-DELAY = 200
 
 def findLosers(playerItems: dict[int: Item]) -> list[int]:
     losers = []
@@ -62,7 +61,7 @@ async def player(number: int, incoming_queues: dict[int:asyncio.Queue], outgoing
                 incoming_queues.pop(loser)
                 outgoing_queues.pop(loser)
         round += 1
-        await asyncio.sleep(0.5)
+        await asyncio.sleep(0)
     
 async def main():
     random.seed(362)
@@ -85,6 +84,5 @@ async def main():
             tg.create_task(player(number, incoming_queues, outgoing_queues))
 
 if __name__ == '__main__':
-    asyncio.run(main())
-    # runner = pyperf.Runner()
-    # runner.bench_async_func(f"Rock Paper Scissors {DELAY} microsec", main)
+    runner = pyperf.Runner()
+    runner.bench_async_func(f"Rock Paper Scissors", main)
