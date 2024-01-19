@@ -1,4 +1,5 @@
 import sys
+from collections import deque
 from src.core.fsmBuilder import FsmBuilder
 from src.core.transition import Transition
 from src.core.exceptions.illegaltransitionexception import IllegalTransitionException
@@ -22,7 +23,8 @@ class Monitor():
         self.enforceCausality = enforceCausality
         self.checkLostMessages = checkLostMessages
         self.setExceptionHook()
-        self.transitionHistory: list[tuple[Transition, any]] = []
+        self.transitionHistory: deque[tuple[Transition, any]] = deque(maxlen=10)
+        self.messageCount: int = 1
         self.uncheckedReceives: dict[str, Transition] = {}
         self.fsm = FsmBuilder().buildFsm(filePath)
 
@@ -44,7 +46,7 @@ class Monitor():
     def verifySend(self, transition: Transition, item: any) -> None:
         if self.halted:
             raise HaltedException()     
-        self.transitionHistory.append((transition, item))
+        self.addToMessageHistory((self.messageCount, transition, item))
         # sending is not allowed if the sender is waiting for any messages and enforceCausality is True
         if self.enforceCausality and transition.getSender() in self.uncheckedReceives and self.uncheckedReceives[transition.getSender()]:
             self.halted = True
@@ -74,19 +76,23 @@ class Monitor():
         else:
             self.uncheckedReceives[transition.getReceiver()] = [transition]
     
+    def addToMessageHistory(self, message: tuple[int, Transition, any]) -> None:
+        self.transitionHistory.append(message)
+        self.messageCount += 1
+    
     # Method that builds the errorMessage in case the program terminates prematurely.
     def buildErrorMessage(self, lostMessages, hasTerminated):
         message: str = "\nUNEXPECTED TERMINATION:" 
         if not hasTerminated:
             message += "\nProgram failed to reach end of protocol!\n"
-            count: int = 1
-            for transition, item in self.transitionHistory:
-                message += f"{str(count)}: send {str(transition.getType().__name__)}({str(item)}) from {str(transition.getSender())} to {str(transition.getReceiver())}\n"
-                count += 1
+            if len(self.transitionHistory):
+                message += f"This is an overview of the last messages that were sent:\n"
+            for count, transition, item in self.transitionHistory:
+                message += f"\t{str(count)}: send {str(transition.getType().__name__)}({str(item)}) from {str(transition.getSender())} to {str(transition.getReceiver())}\n"
         if len(lostMessages) > 0:
             message += "\nThe following messages were lost:\n"
             for transition in lostMessages:
-                message += f"{str(transition.getReceiver())} is waiting for a message of type {str(transition.getType().__name__)} from {str(transition.getSender())}\n"
+                message += f"\t{str(transition.getReceiver())} is waiting for a message of type {str(transition.getType().__name__)} from {str(transition.getSender())}\n"
         return message
 
     # method that changes the standard excepthook to a sycococopy version.   
