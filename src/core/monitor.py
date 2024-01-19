@@ -23,7 +23,7 @@ class Monitor():
         self.enforceCausality = enforceCausality
         self.checkLostMessages = checkLostMessages
         self.setExceptionHook()
-        self.transitionHistory: deque[tuple[Transition, any]] = deque(maxlen=10)
+        self.transitionHistory: deque[tuple[int, Transition, any]] = deque(maxlen=10)
         self.messageCount: int = 1
         self.uncheckedReceives: dict[str, Transition] = {}
         self.fsm = FsmBuilder().buildFsm(filePath)
