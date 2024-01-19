@@ -1,5 +1,6 @@
 import pyperf
 import time
+import random
 import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor
 from rps_item import Item
@@ -25,11 +26,11 @@ def findLosers(playerItems: dict[int: Item]) -> list[int]:
             losers.append(player)
     return losers
 
-async def player(number: int, incoming_queues: dict[int:asyncio.Queue], outgoing_queues: dict[int:asyncio.Queue], item_list: list[Item]):
+async def player(number: int, incoming_queues: dict[int:asyncio.Queue], outgoing_queues: dict[int:asyncio.Queue]):
+    round = 1
     is_participating = True
     while is_participating:
-        time.sleep(DELAY/1000000) # simulates random choice
-        item = item_list.pop()
+        item = Item.random()
         print(f"Player {number} has chosen {item}")
         for queue in outgoing_queues.values():
             await queue.put(item)
@@ -45,7 +46,8 @@ async def player(number: int, incoming_queues: dict[int:asyncio.Queue], outgoing
             lose = lose or opponent_item.beats(item)
             tie = tie or item == opponent_item
         if win and not lose and not tie:
-            print(f"Player{number} has won!")
+            if round >=7:
+                print(f"Player{number} has won in round {round}!")
             is_participating = False
 
         elif lose and not win:
@@ -59,13 +61,12 @@ async def player(number: int, incoming_queues: dict[int:asyncio.Queue], outgoing
             for loser in losers:
                 incoming_queues.pop(loser)
                 outgoing_queues.pop(loser)
+        round += 1
+        await asyncio.sleep(0.5)
     
 async def main():
+    random.seed(362)
     queueMap = {}
-    item_list_p1 = [Item.ROCK, Item.SCISSORS, Item.PAPER, Item.ROCK, Item.PAPER, Item.SCISSORS, Item.PAPER, Item.ROCK]
-    item_list_p2 = [Item.SCISSORS, Item.SCISSORS, Item.PAPER, Item.ROCK, Item.PAPER, Item.ROCK, Item.SCISSORS, Item.PAPER]
-    item_list_p3 = [Item.ROCK, Item.PAPER, Item.ROCK, Item.SCISSORS]
-    item_lists = [item_list_p3, item_list_p2, item_list_p1]
     for p1 in range(PLAYER_COUNT):
         for p2 in range(PLAYER_COUNT):
             if (p1 != p2):
@@ -81,8 +82,9 @@ async def main():
                     incoming_queues[p1] = queueMap[(p1, p2)]
                 if p1 == number:
                     outgoing_queues[p2] = queueMap[(p1, p2)]
-            tg.create_task(player(number, incoming_queues, outgoing_queues, item_lists.pop()))
+            tg.create_task(player(number, incoming_queues, outgoing_queues))
 
 if __name__ == '__main__':
-    runner = pyperf.Runner()
-    runner.bench_async_func(f"Rock Paper Scissors {DELAY} microsec", main)
+    asyncio.run(main())
+    # runner = pyperf.Runner()
+    # runner.bench_async_func(f"Rock Paper Scissors {DELAY} microsec", main)

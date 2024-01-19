@@ -6,3 +6,5 @@
 
 from src.pet import *
 from src.plant import *
+# from benchmarks.rps_benchmark.rps_item import Item
+from rps_item import Item
