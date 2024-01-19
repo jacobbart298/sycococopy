@@ -5,10 +5,10 @@ IllegalValueException is raised when the provided value cannot be parsed to the 
 '''
 class IllegalValueException(SycococopyException):
         
-    def __init__(self, illegalValue: str, requiredType: str):
-        self.illegalValue = illegalValue
-        self.specifiedType = requiredType
+    def __init__(self, value: str, type: type):
+        self.value: str = value
+        self.type: str = type.__name__
         
     def __str__(self) -> str:
-        return f"\nILLEGAL VALUE PROVIDED: '{self.illegalValue}' is not an object of type '{self.specifiedType}'!\n"        
+        return f"\nILLEGAL EXPRESSION: unable to construct an object of type '{self.type}' from expression '{self.value}'!\n"        
         

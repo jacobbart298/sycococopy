@@ -9,6 +9,7 @@ from src.core.transition import Transition, PredicateTransition
 from src.core.state import State
 from src.core.exceptions.illegaltypeexception import IllegalTypeException
 from src.core.exceptions.illegalvalueexception import IllegalValueException
+from src.core.exceptions.inheritanceexception import InheritanceException
 from src.core.exceptions.rolemismatchexception import RoleMismatchException
 from itertools import permutations
 
@@ -215,12 +216,12 @@ class FsmBuilder(PythonicVisitor):
             try:
                 custom_object = eval(value_string, {}, {constructor.__name__: constructor})
             except TypeError:
-                raise IllegalValueException(value_string, constructor.__name__)           
+                raise IllegalValueException(value_string, constructor)           
             if not isinstance(custom_object, object_type):
-                raise IllegalValueException(value_string, object_type.__name__)      
+                raise InheritanceException(object_type, constructor)      
             return custom_object
         else:
-            raise IllegalValueException(value_string, object_type.__name__)
+            raise IllegalValueException(value_string, object_type)
         
     # Transforms the given string to a primitive object of the given type 
     def convert_string_to_primitive_object(self, object_type: type, value_string: str) -> any:        
@@ -233,7 +234,7 @@ class FsmBuilder(PythonicVisitor):
         if object_type == float:
             return float(value_string)
         else:
-            raise IllegalValueException(value_string, object_type.__name__)    
+            raise IllegalValueException(value_string, object_type)    
     
     # Transforms the given string to the corresponding type. If the string does not match with the string 
     # representation of either a built-in type or a user-defined type, an IllegalTypeException is raised.
