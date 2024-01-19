@@ -1,6 +1,7 @@
 import sys
 from collections import deque
 from src.core.fsmBuilder import FsmBuilder
+from src.core.fsm import FSM
 from src.core.transition import Transition
 from src.core.exceptions.illegaltransitionexception import IllegalTransitionException
 from src.core.exceptions.haltedexception import HaltedException
@@ -18,15 +19,15 @@ class Monitor():
     # set enforceCausality to False if senders are allowed to send while there are still messages incoming
     # set checkLostMessages to False if the program is allowed to terminate while there are still messages that
     # haven't been received.
-    def __init__(self, filePath: str, enforceCausality = True, checkLostMessages = True):
+    def __init__(self, filePath: str, enforceCausality: bool = True, checkLostMessages: bool = True):
         self.halted: bool = False
-        self.enforceCausality = enforceCausality
-        self.checkLostMessages = checkLostMessages
+        self.enforceCausality: bool = enforceCausality
+        self.checkLostMessages: bool = checkLostMessages
         self.setExceptionHook()
         self.transitionHistory: deque[tuple[int, Transition, any]] = deque(maxlen=10)
         self.messageCount: int = 0
         self.uncheckedReceives: dict[str, Transition] = {}
-        self.fsm = FsmBuilder().buildFsm(filePath)
+        self.fsm: FSM = FsmBuilder().buildFsm(filePath)
 
     # Destructor method. Prints error message to console if there are still messages that haven't been
     # received or if the FSM is not in a final state.
@@ -81,15 +82,15 @@ class Monitor():
         self.transitionHistory.append((self.messageCount, transition, item))
     
     # Method that builds the errorMessage in case the program terminates prematurely.
-    def buildErrorMessage(self, lostMessages, hasTerminated):
+    def buildErrorMessage(self, lostMessages: list[Transition], hasTerminated: bool):
         message: str = "\nUNEXPECTED TERMINATION:" 
         if not hasTerminated:
             message += "\nProgram failed to reach end of protocol!\n"
-            if len(self.transitionHistory):
+            if self.transitionHistory:
                 message += f"This is an overview of the last messages that were sent:\n"
-            for count, transition, item in self.transitionHistory:
-                message += f"\t{str(count)}: send {str(transition.getType().__name__)}({str(item)}) from {str(transition.getSender())} to {str(transition.getReceiver())}\n"
-        if len(lostMessages) > 0:
+                for count, transition, item in self.transitionHistory:
+                    message += f"\t{str(count)}: send {str(transition.getType().__name__)}({str(item)}) from {str(transition.getSender())} to {str(transition.getReceiver())}\n"
+        if lostMessages:
             message += "\nThe following messages were lost:\n"
             for transition in lostMessages:
                 message += f"\t{str(transition.getReceiver())} is waiting for a message of type {str(transition.getType().__name__)} from {str(transition.getSender())}\n"
