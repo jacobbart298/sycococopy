@@ -136,11 +136,11 @@ class FsmBuilder(PythonicVisitor):
             if self.containsCustomType:
                 transition = self.buildCustomTypeNonEqualPredicateTransition(ctx)
             else:
-                transition = self.buildNonCustomTypeNonEqualPredicateTransition(ctx)
+                transition = self.buildPrimitiveTypeNonEqualPredicateTransition(ctx)
         elif self.containsCustomType(ctx):
             transition = self.buildCustomTypeEqualPredicateTransition(ctx)
         else:
-            transition = self.buildNonCustomTypeEqualPredicateTransition(ctx)
+            transition = self.buildPrimitiveTypeEqualPredicateTransition(ctx)
 
         startState.addTransitionToState(transition, endState)
         self.used_roles.add(transition.getSender())
@@ -160,72 +160,81 @@ class FsmBuilder(PythonicVisitor):
 
     # Builds a non-predicate transition from the given SendContext.
     def buildNonPredicateTransition(self, ctx: PythonicParser.SendContext) -> Transition:
-        type: any = self.convert_string_to_type(ctx.getChild(1).getText())
+        object_type: any = self.convert_string_to_type(ctx.getChild(1).getText())
         sender: str = ctx.getChild(3).getText()
         receiver: str = ctx.getChild(5).getText()
-        return Transition(type, sender, receiver)
+        return Transition(object_type, sender, receiver)
 
     # Builds a predicate transition with a custom type and a non-equal comparator from the given SendContext.
     def buildCustomTypeNonEqualPredicateTransition(self, ctx: PythonicParser.SendContext) -> PredicateTransition:
-        type: any = self.convert_string_to_type(ctx.getChild(1).getText())
+        object_type: any = self.convert_string_to_type(ctx.getChild(1).getText())
+        constructor: any = self.convert_string_to_type(ctx.getChild(4).getText())
         comparator: str = ctx.getChild(3).getText()
-        valueString: str = ""
-        for i in range(4, ctx.getChildCount() - 6):
-            valueString += ctx.getChild(i).getText()
         sender: str = ctx.getChild(ctx.getChildCount() - 4).getText()
         receiver: str = ctx.getChild(ctx.getChildCount() - 2).getText()
-        value: any = self.convert_string_to_value(type, valueString)
-        return PredicateTransition(type, sender, receiver, comparator, value)
-    
-    # Builds a predicate transition with a non-custom type and a non-equal comparator from the given SendContext.
-    def buildNonCustomTypeNonEqualPredicateTransition(self, ctx: PythonicParser.SendContext) -> PredicateTransition:
-        type: any = self.convert_string_to_type(ctx.getChild(1).getText())
-        comparator: str = ctx.getChild(3).getText()
-        value: str = ctx.getChild(4).getText()
-        sender: str = ctx.getChild(7).getText()
-        receiver: str = ctx.getChild(9).getText()
-        value: any = self.convert_string_to_value(type, value)
-        return PredicateTransition(type, sender, receiver, comparator, value)  
+        value_string: str = ""
+        for i in range(4, ctx.getChildCount() - 6):
+            value_string += ctx.getChild(i).getText()
+        value: any = self.convert_string_to_custom_object(object_type, constructor, value_string)
+        return PredicateTransition(object_type, sender, receiver, comparator, value)
     
     # Builds a predicate transition with a custom type and the "==" comparator from the given SendContext.
     def buildCustomTypeEqualPredicateTransition(self, ctx: PythonicParser.SendContext) -> PredicateTransition:
-        type: any = self.convert_string_to_type(ctx.getChild(1).getText())
-        comparator: str = "=="
-        valueString: str = ""
-        for i in range(3, ctx.getChildCount() - 6):
-            valueString += ctx.getChild(i).getText()
+        object_type: any = self.convert_string_to_type(ctx.getChild(1).getText())
+        constructor: any = self.convert_string_to_type(ctx.getChild(3).getText())
         sender: str = ctx.getChild(ctx.getChildCount() - 4).getText()
         receiver: str = ctx.getChild(ctx.getChildCount() - 2).getText()
-        value: any = self.convert_string_to_value(type, valueString)
-        return PredicateTransition(type, sender, receiver, comparator, value)
+        value_string: str = ""
+        for i in range(3, ctx.getChildCount() - 6):
+            value_string += ctx.getChild(i).getText()
+        value: any = self.convert_string_to_custom_object(object_type, constructor, value_string)
+        return PredicateTransition(object_type, sender, receiver, "==", value)
+    
+    # Builds a predicate transition with a non-custom type and a non-equal comparator from the given SendContext.
+    def buildPrimitiveTypeNonEqualPredicateTransition(self, ctx: PythonicParser.SendContext) -> PredicateTransition:
+        object_type: any = self.convert_string_to_type(ctx.getChild(1).getText())
+        comparator: str = ctx.getChild(3).getText()
+        sender: str = ctx.getChild(7).getText()
+        receiver: str = ctx.getChild(9).getText()
+        value_string: str = ctx.getChild(4).getText()
+        value: any = self.convert_string_to_primitive_object(object_type, value_string)
+        return PredicateTransition(object_type, sender, receiver, comparator, value)
     
     # Builds a predicate transition with a non-custom type and the "==" comparator from the given SendContext.
-    def buildNonCustomTypeEqualPredicateTransition(self, ctx: PythonicParser.SendContext) -> PredicateTransition:
-        type: any = self.convert_string_to_type(ctx.getChild(1).getText())
-        comparator: str = "=="
-        valueString: str = ctx.getChild(3).getText()
+    def buildPrimitiveTypeEqualPredicateTransition(self, ctx: PythonicParser.SendContext) -> PredicateTransition:
+        object_type: any = self.convert_string_to_type(ctx.getChild(1).getText())
         sender: str = ctx.getChild(6).getText()
         receiver: str = ctx.getChild(8).getText()
-        value: any = self.convert_string_to_value(type, valueString)
-        return PredicateTransition(type, sender, receiver, comparator, value)
+        value_string: str = ctx.getChild(3).getText()
+        value: any = self.convert_string_to_primitive_object(object_type, value_string)
+        return PredicateTransition(object_type, sender, receiver, "==", value)
 
-    # Transforms a string to a primitive value based on the given type.
-    def convert_string_to_value(self, type_obj: type, value_string: str) -> any:
-        if hasattr(customs, type_obj.__name__):
+    # Transforms the given string to a custom object of the given type.
+    def convert_string_to_custom_object(self, object_type: type, constructor: type, value_string: str) -> any:
+        if hasattr(customs, object_type.__name__):
             try:
-                return eval(value_string, {}, customs.__dict__)
+                custom_object = eval(value_string, {}, {constructor.__name__: constructor})
             except TypeError:
-                raise IllegalValueException(value_string, type_obj.__name__)           
-        elif type_obj == str:
-            # remove the additional first and last quotes
-            return value_string[1:len(value_string)-1]
-        elif type_obj == bool:
-            return value_string == "True"
-        elif type_obj in [int, float]:
-            return type_obj(value_string)
+                raise IllegalValueException(value_string, constructor.__name__)           
+            if not isinstance(custom_object, object_type):
+                raise IllegalValueException(value_string, object_type.__name__)      
+            return custom_object
         else:
-            raise IllegalValueException(value_string, type_obj.__name__)    
-
+            raise IllegalValueException(value_string, object_type.__name__)
+        
+    # Transforms the given string to a primitive object of the given type 
+    def convert_string_to_primitive_object(self, object_type: type, value_string: str) -> any:        
+        if object_type == str:
+            return value_string[1:len(value_string)-1]
+        if object_type == bool:
+            return value_string == "True"
+        if object_type == int:
+            return int(value_string)
+        if object_type == float:
+            return float(value_string)
+        else:
+            raise IllegalValueException(value_string, object_type.__name__)    
+    
     # Transforms the given string to the corresponding type. If the string does not match with the string 
     # representation of either a built-in type or a user-defined type, an IllegalTypeException is raised.
     def convert_string_to_type(self, type_string) -> type:
@@ -235,7 +244,7 @@ class FsmBuilder(PythonicVisitor):
         # check if the given type is a user-defined type
         elif hasattr(customs, type_string):
             return getattr(customs, type_string)
-        # type not found: raise exception
+        # type not found
         else:
             raise IllegalTypeException(type_string)
         

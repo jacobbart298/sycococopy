@@ -5,7 +5,7 @@ roles:
 
 protocol:
 	sequence:
-		send Cat(Cat("Kitty", 2)) from buyer1 to seller
+		send Pet(Cat("Kitty", 2)) from buyer1 to seller
 		send Dog(>Dog("Lily", 4, 41)) from buyer1 to seller
 		shuffle:
 			send int from seller to buyer1
