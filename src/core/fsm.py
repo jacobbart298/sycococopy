@@ -28,7 +28,7 @@ class FSM:
     # FSM is in a final state and this method returns True; otherwise, False.
     def isInFinalState(self) -> bool:        
         for state in self.states:
-            if not state.getTransitions():
+            if state.isFinalState():
                 return True
         return False
 

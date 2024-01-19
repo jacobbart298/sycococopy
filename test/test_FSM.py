@@ -1,5 +1,4 @@
 import unittest
-import builtins
 from src.core.fsm import FSM
 from src.core.state import State
 from src.core.transition import Transition, PredicateTransition
@@ -441,7 +440,7 @@ class TestFSM(unittest.TestCase):
 
         bool_A_B = Transition(bool, "A", "B")
         p_bool_A_B = PredicateTransition(bool, "A", "B", "==", True)
-
+        
         q0.addTransitionToState(p_bool_A_B, q1)
 
         transitionMade = fsm.makeTransition(bool_A_B, False)
@@ -451,6 +450,82 @@ class TestFSM(unittest.TestCase):
         transitionMade = fsm.makeTransition(bool_A_B, True)
         self.assertFalse(transitionMade)
         self.assertEqual(0, len(fsm.getStates()))
+
+
+    def testIsInFinalStateOneStateFinalState(self):
+        
+        fsm = FSM()
+
+        q0 = fsm.getStates()[0]     # not final state
+        q1 = State()                # final state
+        
+        bool_A_B = Transition(bool, "A", "B")
+        p_bool_A_B = PredicateTransition(bool, "A", "B", "==", True)
+
+        q0.addTransitionToState(p_bool_A_B, q1)
+
+        # fsm is not in a final state
+        self.assertFalse(fsm.isInFinalState())
+
+        transitionMade = fsm.makeTransition(bool_A_B, True)
+        self.assertTrue(transitionMade)
+        self.assertEqual(1, len(fsm.getStates()))
+        self.assertIn(q1, fsm.getStates())
+
+        # fsm is in a final state
+        self.assertTrue(fsm.isInFinalState())
+
+
+    def testIsInFinalStateMultipleStatesAllFinalStates(self):
+        
+        fsm = FSM()
+
+        q0 = fsm.getStates()[0]     # not final state
+        q1 = State()                # final state
+        q2 = State()                # final state
+        
+        bool_A_B = Transition(bool, "A", "B")
+
+        q0.addTransitionToState(bool_A_B, q1)
+        q0.addTransitionToState(bool_A_B, q2)
+
+        # fsm is not in a final state
+        self.assertFalse(fsm.isInFinalState())
+
+        transitionMade = fsm.makeTransition(bool_A_B, False)
+        self.assertTrue(transitionMade)
+        self.assertEqual(2, len(fsm.getStates()))
+        self.assertIn(q1, fsm.getStates())
+        self.assertIn(q2, fsm.getStates())
+
+        # fsm is in a final state
+        self.assertTrue(fsm.isInFinalState())
+
+
+    def testIsInFinalStateMultipleStatesSomeFinalStates(self):
+
+        fsm = FSM()
+
+        q0 = fsm.getStates()[0]     # not final state
+        q1 = State()                # final state
+        
+        str_B_C = Transition(str, "B", "C")
+        p_str_B_C = PredicateTransition(str, "B", "C", "==", "hello world!")
+
+        q0.addTransitionToState(p_str_B_C, q0)
+        q0.addTransitionToState(p_str_B_C, q1)
+
+        # fsm is not in a final state
+        self.assertFalse(fsm.isInFinalState())
+
+        transitionMade = fsm.makeTransition(str_B_C, "hello world!")
+        self.assertTrue(transitionMade)
+        self.assertEqual(2, len(fsm.getStates()))
+        self.assertIn(q1, fsm.getStates())
+        self.assertIn(q0, fsm.getStates())
+
+        # fsm is in a final state
+        self.assertTrue(fsm.isInFinalState())
 
 
 if __name__ == '__main__':

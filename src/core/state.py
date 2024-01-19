@@ -27,3 +27,7 @@ class State:
     # Returns a set of possible Transitions in this State.
     def getTransitions(self) -> set[Transition]:
         return set(self.transitionsToStates.keys())
+
+    # Returns True if the state is a final state, False otherwise
+    def isFinalState(self) -> bool:
+        return len(self.transitionsToStates) == 0

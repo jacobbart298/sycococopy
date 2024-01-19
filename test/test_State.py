@@ -148,6 +148,31 @@ class TestState(unittest.TestCase):
         self.assertTrue(1, len(q0.getNextStates(p_int_A_D)))
         self.assertIn(q3, q0.getNextStates(p_int_A_D))
 
+    def testIsFinalState(self):
+
+        q0 = State()
+        q1 = State()
+        q2 = State()
+
+        p_int_A_D = PredicateTransition(int, "A", "D", ">", 42)
+        p_bool_D_B_True = PredicateTransition(bool, "D", "B", "==", True)
+        p_bool_D_A_False = PredicateTransition(bool, "D", "A", "==", False)
+
+        # add one transition to q0
+        q0.addTransitionToState(p_int_A_D, q1)
+        # add two transitions to q1
+        q1.addTransitionToState(p_bool_D_A_False, q0)
+        q1.addTransitionToState(p_bool_D_B_True, q2)
+
+        # state with one transition is not a final state
+        self.assertFalse(q0.isFinalState())
+
+        # state with multiple transitions is not a final state
+        self.assertFalse(q1.isFinalState())
+
+        # state with no transitions is a final state
+        self.assertTrue(q2.isFinalState())
+
 
 if __name__ == '__main__':
     unittest.main()
