@@ -5,7 +5,8 @@ from src.core.transition import Transition, PredicateTransition
 from src.core.exceptions.rolemismatchexception import RoleMismatchException
 from src.core.exceptions.illegaltypeexception import IllegalTypeException
 from src.core.exceptions.illegalvalueexception import IllegalValueException
-from examples.pet import *
+from src.core.exceptions.inheritanceexception import InheritanceException
+from customs.customs import *
 
 class TestFsmBuilder(unittest.TestCase):
 
@@ -198,34 +199,6 @@ class TestFsmBuilder(unittest.TestCase):
         fsm = FsmBuilder().buildFsm(specificationPath)
 
         send = PredicateTransition(Dog, "B", "A", "==", Dog("Lily", 3, 43.5))
-
-        self.assertEqual(1, len(fsm.getStates()))
-        q0 = fsm.getStates()[0]
-        # in q0 there is one transition: send
-        self.assertEqual(1, len(q0.getTransitions()))
-        self.assertIn(send, q0.getTransitions())
-
-    # see singleSend.png in tests/testcases/fsms for fsm
-    def test_inheritanceTypeSubClassValueSuperClass(self):
-
-        specificationPath = getSpecificationPath("inheritanceTypeSubClassValueSuperClass")    
-        fsm = FsmBuilder().buildFsm(specificationPath)
-
-        send = PredicateTransition(Cat, "B", "A", "==", Pet("Mies", 4))
-
-        self.assertEqual(1, len(fsm.getStates()))
-        q0 = fsm.getStates()[0]
-        # in q0 there is one transition: send
-        self.assertEqual(1, len(q0.getTransitions()))
-        self.assertIn(send, q0.getTransitions())
-
-    # see singleSend.png in tests/testcases/fsms for fsm
-    def test_inheritanceTypeSuperClassValueSubClass(self):
-
-        specificationPath = getSpecificationPath("inheritanceTypeSuperClassValueSubClass")    
-        fsm = FsmBuilder().buildFsm(specificationPath)
-
-        send = PredicateTransition(Pet, "B", "A", "==", Cat("Mies", 4))
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
@@ -1206,7 +1179,7 @@ class TestFsmBuilder(unittest.TestCase):
             q2 = list(q0.getNextStates(t1_A_B))[0]
         else:
             # neither state features transition t1_A_C
-            self.fail
+            self.fail()
         # in q1 there is one transition: t1_A_C
         self.assertEqual(1, len(q1.getTransitions()))
         self.assertIn(t1_A_C, q1.getTransitions())
@@ -1325,7 +1298,7 @@ class TestFsmBuilder(unittest.TestCase):
         try:
             FsmBuilder().buildFsm(specificationPath)   
         except RoleMismatchException:
-            self.fail
+            self.fail()
 
     def testRoleNotUsed(self):        
 
@@ -1347,7 +1320,7 @@ class TestFsmBuilder(unittest.TestCase):
 
     def testIllegalTypeNotDefined(self):
         
-        # Type Plant used in protocol test_illegal_type_not_defined is not part
+        # Type Sdfhfsdlkfh used in protocol test_illegal_type_not_defined is not part
         # of the builtins module nor defined in the customs module.
         specificationPath = getSpecificationPath("test_illegal_type_not_defined")
         with self.assertRaises(IllegalTypeException):
@@ -1367,11 +1340,8 @@ class TestFsmBuilder(unittest.TestCase):
         # defined in the customs module. Its constructor has two arguments
         # instead of the one given, however.
         specificationPath = getSpecificationPath("test_illegal_value_lacking_argument")
-        try:
+        with self.assertRaises(TypeError):
             FsmBuilder().buildFsm(specificationPath)
-            self.fail
-        except IllegalValueException:
-            pass
 
     def testIllegalValueExcessArgument(self):
 
@@ -1379,35 +1349,44 @@ class TestFsmBuilder(unittest.TestCase):
         # defined in the customs module. Its constructor has two arguments
         # instead of the three given, however.
         specificationPath = getSpecificationPath("test_illegal_value_excess_argument")
-        try:
+        with self.assertRaises(TypeError):
             FsmBuilder().buildFsm(specificationPath)
-            self.fail
-        except IllegalValueException:
-            pass
+   
+    def test_inheritanceSpecifiedTypeSubClassValueTypeSuperClass(self):
 
-    def testIllegalValueArgumentsWrongOrder(self):
-
-        # Type Dog used in protocol test_illegal_value_arguments_wrong_order is 
-        # defined in the customs module. However, the given arguments are in
-        # the wrong order.
-        specificationPath = getSpecificationPath("test_illegal_value_arguments_wrong_order")
-        try:
+        # The specified type is Cat (subclass) while the specified value
+        # is of type Pet (superclass).
+        specificationPath = getSpecificationPath("inheritanceTypeSubClassValueSuperClass")
+        with self.assertRaises(InheritanceException):
             FsmBuilder().buildFsm(specificationPath)
-            self.fail
-        except IllegalValueException:
-            pass
 
-    def testIllegalValueArgumentWrongType(self):
+    # see singleSend.png in tests/testcases/fsms for fsm
+    def test_inheritanceTypeSuperClassValueSubClass(self):
 
-        # Type Dog used in protocol test_illegal_value_argument_wrong_type is 
-        # defined in the customs module. However, one of the given arguments is
-        # not of the right type.
-        specificationPath = getSpecificationPath("test_illegal_value_argument_wrong_type")
-        try:
-            FsmBuilder().buildFsm(specificationPath)
-            self.fail
-        except IllegalValueException:
-            pass
+        specificationPath = getSpecificationPath("inheritanceTypeSuperClassValueSubClass")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
+        send = PredicateTransition(Pet, "B", "A", "==", Cat("Mies", 4))
+
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
+        # in q0 there is one transition: send
+        self.assertEqual(1, len(q0.getTransitions()))
+        self.assertIn(send, q0.getTransitions())
+
+    # see singleSend.png in tests/testcases/fsms for fsm
+    def test_inheritanceSpecifiedTypeEqualsValueType(self):
+
+        specificationPath = getSpecificationPath("inheritanceSpecifiedTypeEqualsValueType")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
+        send = PredicateTransition(Cat, "B", "A", "==", Cat("Mies", 4))
+
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
+        # in q0 there is one transition: send
+        self.assertEqual(1, len(q0.getTransitions()))
+        self.assertIn(send, q0.getTransitions())
 
 if __name__ == '__main__':
     unittest.main()

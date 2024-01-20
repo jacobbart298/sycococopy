@@ -134,7 +134,7 @@ class FsmBuilder(PythonicVisitor):
         if self.isNonPredicateSend(ctx):
             transition = self.buildNonPredicateTransition(ctx)
         elif self.containsNonEqualPredicate(ctx):
-            if self.containsCustomType:
+            if self.containsCustomType(ctx):
                 transition = self.buildCustomTypeNonEqualPredicateTransition(ctx)
             else:
                 transition = self.buildPrimitiveTypeNonEqualPredicateTransition(ctx)
@@ -153,7 +153,7 @@ class FsmBuilder(PythonicVisitor):
 
     # Checks whether the given SendContext contains a custom type.
     def containsCustomType(self, ctx: PythonicParser.SendContext) -> bool:
-        return ctx.getChild(ctx.getChildCount() - 6).getText() == ")" and ctx.getChild(ctx.getChildCount() - 7).getText() == ")"
+        return (ctx.getChild(ctx.getChildCount() - 6).getText() == ")" and ctx.getChild(ctx.getChildCount() - 7).getText() == ")")
     
     # Checks whether the given SendContext contains a non-equal predicate.
     def containsNonEqualPredicate(self, ctx: PythonicParser.SendContext) -> bool:
@@ -213,10 +213,7 @@ class FsmBuilder(PythonicVisitor):
     # Transforms the given string to a custom object of the given type.
     def convert_string_to_custom_object(self, object_type: type, constructor: type, value_string: str) -> any:
         if hasattr(customs, object_type.__name__):
-            try:
-                custom_object = eval(value_string, {}, {constructor.__name__: constructor})
-            except TypeError:
-                raise IllegalValueException(value_string, constructor)           
+            custom_object = eval(value_string, {}, {constructor.__name__: constructor})     
             if not isinstance(custom_object, object_type):
                 raise InheritanceException(object_type, constructor)      
             return custom_object

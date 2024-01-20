@@ -1,6 +1,6 @@
+import unittest
 from src.core.state import State
 from src.core.transition import Transition, PredicateTransition
-import unittest
 
 class TestState(unittest.TestCase):
     

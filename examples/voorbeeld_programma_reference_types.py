@@ -17,8 +17,8 @@ selltobuy1 = Channel(seller, buyer1, monitor)
 selltobuy2 = Channel(seller, buyer2, monitor)
  
 async def buyer1():
-    await buy1tosell.send(Cat('Kitty', 2))
-    await buy1tosell.send(Dog('Hector', 6, 60.2))
+    await buy1tosell.send(Dog('Luna', 2, 42.1))
+    await buy1tosell.send(Dog('Hector', 6, 65.8))
     quote = await selltobuy1.receive()
     await buy1tobuy2.send(quote//2)
     buys_book = await buy2tobuy1.receive()
