@@ -1,5 +1,4 @@
 import pyperf
-import time
 import random
 import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor
@@ -12,7 +11,7 @@ each round is the same. Benchmark with monitor including full parsing
 
 PLAYER_COUNT = 3
 specification_path = "protocol_RPS.txt"
-monitor = Monitor(specification_path, enforceCausality=False)
+
 
 def findLosers(playerItems: dict[int: Item]) -> list[int]:
     losers = []
@@ -65,6 +64,7 @@ async def player(number: int, incoming_queues: dict[int:asyncio.Queue], outgoing
         await asyncio.sleep(0)
 
 async def main():
+    monitor.fsm.states = {initialState}
     random.seed(362)
     queueMap = {}
     for p1 in range(PLAYER_COUNT):
@@ -86,5 +86,7 @@ async def main():
             tg.create_task(player(number, incoming_queues, outgoing_queues))
 
 if __name__ == '__main__':
+    monitor = Monitor(specification_path, enforceCausality=False)
+    initialState = list(monitor.fsm.states)[0]
     runner = pyperf.Runner()
     runner.bench_async_func(f"Rock Paper Scissors", main)
