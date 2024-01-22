@@ -23,5 +23,5 @@ class ComparatorNotImplementedException(SycococopyException):
                 method = "__eq__"
             case '!=':
                 method = "__ne__"
-        return f"\nCOMPARATOR NOT IMPLEMENTED: class '{self.type}' does not implement method '{method}'!\n"  
+        return f"\nCOMPARATOR NOT IMPLEMENTED\nClass '{self.type}' does not implement method '{method}'!\n"  
         

@@ -10,5 +10,5 @@ class IllegalValueException(SycococopyException):
         self.type: str = type.__name__
         
     def __str__(self) -> str:
-        return f"\nILLEGAL EXPRESSION: unable to construct an object of type '{self.type}' from expression '{self.value}'!\n"        
+        return f"\nILLEGAL EXPRESSION\nUnable to construct an object of class '{self.type}' from expression '{self.value}'!\n"        
         

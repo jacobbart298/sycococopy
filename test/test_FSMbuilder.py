@@ -5,7 +5,7 @@ from src.core.transition import Transition, PredicateTransition
 from src.core.exceptions.rolemismatchexception import RoleMismatchException
 from src.core.exceptions.illegaltypeexception import IllegalTypeException
 from src.core.exceptions.illegalvalueexception import IllegalValueException
-from src.core.exceptions.inheritanceexception import InheritanceException
+from src.core.exceptions.subtypingexception import SubtypingException
 from customs.customs import *
 
 class TestFsmBuilder(unittest.TestCase):
@@ -1357,7 +1357,7 @@ class TestFsmBuilder(unittest.TestCase):
         # The specified type is Cat (subclass) while the specified value
         # is of type Pet (superclass).
         specificationPath = getSpecificationPath("inheritanceTypeSubClassValueSuperClass")
-        with self.assertRaises(InheritanceException):
+        with self.assertRaises(SubtypingException):
             FsmBuilder().buildFsm(specificationPath)
 
     # see singleSend.png in tests/testcases/fsms for fsm

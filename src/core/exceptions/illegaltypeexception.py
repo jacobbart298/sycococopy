@@ -9,5 +9,5 @@ class IllegalTypeException(SycococopyException):
         self.type: str = type
         
     def __str__(self) -> str:
-        return f"\nILLEGAL TYPE: failed to recognise type '{self.type}'!\n"
+        return f"\nTYPE NOT RECOGNISED\nPlease import class '{self.type}' in the customs module!\n"
         

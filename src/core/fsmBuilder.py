@@ -9,7 +9,7 @@ from src.core.transition import Transition, PredicateTransition
 from src.core.state import State
 from src.core.exceptions.illegaltypeexception import IllegalTypeException
 from src.core.exceptions.illegalvalueexception import IllegalValueException
-from src.core.exceptions.inheritanceexception import InheritanceException
+from src.core.exceptions.subtypingexception import SubtypingException
 from src.core.exceptions.rolemismatchexception import RoleMismatchException
 from itertools import permutations
 
@@ -213,12 +213,15 @@ class FsmBuilder(PythonicVisitor):
     # Transforms the given string to a custom object of the given type.
     def convert_string_to_custom_object(self, object_type: type, constructor: type, value_string: str) -> any:
         if hasattr(customs, object_type.__name__):
-            custom_object = eval(value_string, {}, {constructor.__name__: constructor})     
+            try:
+                custom_object = eval(value_string, {}, {constructor.__name__: constructor})   
+            except TypeError:
+                raise IllegalValueException(value_string, object_type)
             if not isinstance(custom_object, object_type):
-                raise InheritanceException(object_type, constructor)      
+                raise SubtypingException(object_type, constructor)      
             return custom_object
         else:
-            raise IllegalValueException(value_string, object_type)
+            raise IllegalTypeException(object_type.__name__)
         
     # Transforms the given string to a primitive object of the given type 
     def convert_string_to_primitive_object(self, object_type: type, value_string: str) -> any:        
@@ -231,7 +234,7 @@ class FsmBuilder(PythonicVisitor):
         if object_type == float:
             return float(value_string)
         else:
-            raise IllegalValueException(value_string, object_type)    
+            raise IllegalTypeException(object_type.__name__)   
     
     # Transforms the given string to the corresponding type. If the string does not match with the string 
     # representation of either a built-in type or a user-defined type, an IllegalTypeException is raised.
