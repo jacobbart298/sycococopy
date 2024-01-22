@@ -1340,7 +1340,7 @@ class TestFsmBuilder(unittest.TestCase):
         # defined in the customs module. Its constructor has two arguments
         # instead of the one given, however.
         specificationPath = getSpecificationPath("test_illegal_value_lacking_argument")
-        with self.assertRaises(TypeError):
+        with self.assertRaises(IllegalValueException):
             FsmBuilder().buildFsm(specificationPath)
 
     def testIllegalValueExcessArgument(self):
@@ -1349,7 +1349,7 @@ class TestFsmBuilder(unittest.TestCase):
         # defined in the customs module. Its constructor has two arguments
         # instead of the three given, however.
         specificationPath = getSpecificationPath("test_illegal_value_excess_argument")
-        with self.assertRaises(TypeError):
+        with self.assertRaises(IllegalValueException):
             FsmBuilder().buildFsm(specificationPath)
    
     def test_inheritanceSpecifiedTypeSubClassValueTypeSuperClass(self):
