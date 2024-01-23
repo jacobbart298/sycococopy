@@ -523,8 +523,8 @@ class TestMonitor(unittest.TestCase):
         # The program terminates before all messages were received.
         monitor.__del__()
         # Check console for an error message stating there is a lost message,
-        # namely, bool from B to A. 
-        # It should NOT declare a failure to reach the end of the protocol.
+        # namely, bool from B to A. It should NOT declare a failure to reach
+        # the end of the protocol.
 
 
     def testPrematureTerminationEndOfProtocolNotReachedAndLostMessage(self):
@@ -565,4 +565,4 @@ class TestMonitor(unittest.TestCase):
 
 
 def getSpecificationPath(specificationName: str):
-    return os.path.abspath(f"test/testcases/specifications/{specificationName}.txt")   
+    return os.path.abspath(f"test/testcases/specifications/{specificationName}.txt")
