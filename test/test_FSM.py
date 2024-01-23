@@ -526,7 +526,3 @@ class TestFSM(unittest.TestCase):
 
         # fsm is in a final state
         self.assertTrue(fsm.isInFinalState())
-
-
-if __name__ == '__main__':
-    unittest.main()

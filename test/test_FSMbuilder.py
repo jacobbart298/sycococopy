@@ -1295,10 +1295,7 @@ class TestFsmBuilder(unittest.TestCase):
 
     def testCorrectRoles(self):     
         specificationPath = getSpecificationPath("travelAgency")    
-        try:
-            FsmBuilder().buildFsm(specificationPath)   
-        except RoleMismatchException:
-            self.fail()
+        FsmBuilder().buildFsm(specificationPath)   
 
     def testRoleNotUsed(self):        
 
@@ -1388,8 +1385,6 @@ class TestFsmBuilder(unittest.TestCase):
         self.assertEqual(1, len(q0.getTransitions()))
         self.assertIn(send, q0.getTransitions())
 
-if __name__ == '__main__':
-    unittest.main()
 
 def getSpecificationPath(specificationName: str):
         return os.path.abspath(f"test/testcases/specifications/{specificationName}.txt")

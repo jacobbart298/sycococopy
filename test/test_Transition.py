@@ -323,7 +323,3 @@ class TestTransition(unittest.TestCase):
         item = Plant('Areca', 32)
         with self.assertRaises(ComparatorNotImplementedException):
             transition2.satisfies(transition1, item)
-
-
-if __name__ == '__main__':
-    unittest.main()

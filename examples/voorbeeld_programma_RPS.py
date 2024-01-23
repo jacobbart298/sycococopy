@@ -3,7 +3,7 @@ from src.core.monitor import Monitor
 from examples.rps_item import Item
 
 specification_path = r".\protocol_RPS.txt"
-monitor = Monitor(specification_path, enforceCausality=False)
+monitor = Monitor(specification_path, checkCausality=False)
 
 def findLosers(playerItems: dict[int: Item]) -> list[int]:
     losers = []

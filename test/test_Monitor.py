@@ -157,22 +157,91 @@ class TestMonitor(unittest.TestCase):
         self.assertTrue(monitor.halted)
 
 
-    def testNoTransitionsLegalOnceHalted(self):
+    def testNoReceiveLegalOnceHaltedAfterIllegalSend(self):
+        specificationPath = getSpecificationPath("test_monitor")
+        monitor = Monitor(specificationPath)
+        
+        bool_A_B = Transition(bool, "A", "B")
+        str_A_B = Transition(str, "A", "B")
+        message_str = "hello world"
+        message_bool = True
+
+        monitor.verifySend(str_A_B, message_str)
+        self.assertFalse(monitor.halted)
+        # A is not allowed to send a bool to B at this point
+        with self.assertRaises(IllegalTransitionException):
+            monitor.verifySend(bool_A_B, message_bool)
+        self.assertTrue(monitor.halted)
+
+        # once halted, further receives are illegal      
+        with self.assertRaises(HaltedException):
+            monitor.verifyReceive(str_A_B)
+
+
+    def testNoReceiveLegalOnceHaltedAfterIllegalReceive(self):
         specificationPath = getSpecificationPath("test_monitor")
         monitor = Monitor(specificationPath)
         
         str_A_B = Transition(str, "A", "B")
+        int_B_A = Transition(int, "B", "A")
         message_str = "hello world"
 
-        # A is not allowed to receive any messages that have not been sent
+        monitor.verifySend(str_A_B, message_str)
         self.assertFalse(monitor.halted)
+        # A should not receive a message as none were sent to A
         with self.assertRaises(IllegalTransitionException):
-            monitor.verifyReceive(str_A_B)   
+            monitor.verifyReceive(int_B_A)
         self.assertTrue(monitor.halted)
 
-        # once halted, further transitions are illegal      
+        # once halted, further receives are illegal      
         with self.assertRaises(HaltedException):
-            monitor.verifySend(str_A_B, message_str)
+            monitor.verifyReceive(str_A_B)
+
+
+    def testNoSendLegalOnceHaltedAfterIllegalSend(self):
+        specificationPath = getSpecificationPath("test_monitor")
+        monitor = Monitor(specificationPath)
+       
+        bool_A_B = Transition(bool, "A", "B")
+        str_A_B = Transition(str, "A", "B")
+        int_B_A = Transition(int, "B", "A")
+        message_str = "hello world"
+        message_bool = True
+        message_int = -1
+
+        monitor.verifySend(str_A_B, message_str)
+        monitor.verifyReceive(str_A_B)
+        self.assertFalse(monitor.halted)
+        # A is not allowed to send a bool to B at this point
+        with self.assertRaises(IllegalTransitionException):
+            monitor.verifySend(bool_A_B, message_bool)
+        self.assertTrue(monitor.halted)
+
+        # once halted, further sends are illegal      
+        with self.assertRaises(HaltedException):
+            monitor.verifySend(int_B_A, message_int)
+
+
+    def testNoSendLegalOnceHaltedAfterIllegalReceive(self):
+        specificationPath = getSpecificationPath("test_monitor")
+        monitor = Monitor(specificationPath)
+        
+        str_A_B = Transition(str, "A", "B")
+        int_B_A = Transition(int, "B", "A")
+        message_str = "hello world"
+        message_int = -1
+
+        monitor.verifySend(str_A_B, message_str)
+        monitor.verifyReceive(str_A_B)
+        self.assertFalse(monitor.halted)
+        # A should not receive a message from B as it was not sent yet
+        with self.assertRaises(IllegalTransitionException):
+            monitor.verifyReceive(int_B_A)
+        self.assertTrue(monitor.halted)
+
+        # once halted, further sends are illegal      
+        with self.assertRaises(HaltedException):
+            monitor.verifySend(int_B_A, message_int)
 
 
     def testNoSendsAddedToTransitionHistoryOnceHalted(self):
@@ -217,13 +286,10 @@ class TestMonitor(unittest.TestCase):
         message_str = "hello world"
         message_int = 42
 
-        try:
-            monitor.verifySend(str_A_B, message_str)
-            monitor.verifyReceive(str_A_B)
-            monitor.verifySend(int_B_A, message_int)
-            monitor.verifyReceive(int_B_A)
-        except IllegalTransitionException:
-            self.fail()
+        monitor.verifySend(str_A_B, message_str)
+        monitor.verifyReceive(str_A_B)
+        monitor.verifySend(int_B_A, message_int)
+        monitor.verifyReceive(int_B_A)
 
 
     def testFirstSendsThenReveicesInOrder(self):
@@ -234,13 +300,10 @@ class TestMonitor(unittest.TestCase):
         bool_B_C = Transition(bool, "B", "C")
         message_bool = False
 
-        try:
-            monitor.verifySend(bool_A_C, message_bool)
-            monitor.verifySend(bool_B_C, message_bool)
-            monitor.verifyReceive(bool_A_C)
-            monitor.verifyReceive(bool_B_C)
-        except IllegalTransitionException:
-            self.fail()
+        monitor.verifySend(bool_A_C, message_bool)
+        monitor.verifySend(bool_B_C, message_bool)
+        monitor.verifyReceive(bool_A_C)
+        monitor.verifyReceive(bool_B_C)
 
 
     def testFirstSendsThenReveicesNotInOrder(self):
@@ -251,13 +314,10 @@ class TestMonitor(unittest.TestCase):
         bool_B_C = Transition(bool, "B", "C")
         message_bool = False
 
-        try:
-            monitor.verifySend(bool_A_C, message_bool)
-            monitor.verifySend(bool_B_C, message_bool)
-            monitor.verifyReceive(bool_B_C)
-            monitor.verifyReceive(bool_A_C)
-        except IllegalTransitionException:
-            self.fail()
+        monitor.verifySend(bool_A_C, message_bool)
+        monitor.verifySend(bool_B_C, message_bool)
+        monitor.verifyReceive(bool_B_C)
+        monitor.verifyReceive(bool_A_C)
 
 
     def testIllegalSendUncheckedReceivesEmpty(self):
@@ -293,16 +353,13 @@ class TestMonitor(unittest.TestCase):
         # B is not waiting for any messages, and sending an
         # int from B to A is allowed at this point
         self.assertEqual(0, len(monitor.uncheckedReceives["B"]))
-        try:
-            monitor.verifySend(int_B_A, message_int)
-            monitor.verifyReceive(int_B_A)
-        except IllegalTransitionException:
-            self.fail()
+        monitor.verifySend(int_B_A, message_int)
+        monitor.verifyReceive(int_B_A)
     
 
     def testSendUncheckedReceivesNotEmptyWithCausalityCheck(self):    
         specificationPath = getSpecificationPath("test_monitor")
-        monitor = Monitor(specificationPath, enforceCausality = True)
+        monitor = Monitor(specificationPath, checkCausality = True)
 
         str_A_B = Transition(str, "A", "B")
         int_B_A = Transition(int, "B", "A")
@@ -320,7 +377,7 @@ class TestMonitor(unittest.TestCase):
 
     def testSendUncheckedReceivesNotEmptyWithoutCausalityCheck(self):    
         specificationPath = getSpecificationPath("test_monitor")
-        monitor = Monitor(specificationPath, enforceCausality = False)
+        monitor = Monitor(specificationPath, checkCausality = False)
 
         str_A_B = Transition(str, "A", "B")
         int_B_A = Transition(int, "B", "A")
@@ -332,13 +389,10 @@ class TestMonitor(unittest.TestCase):
         # B is waiting for a str from A. B is allowed to 
         # send, for the monitor does not check causality.
         self.assertEqual(1, len(monitor.uncheckedReceives["B"]))
-        try:
-            monitor.verifySend(int_B_A, message_int)
-        except PendingMessagesException:
-            self.fail()
-        
+        monitor.verifySend(int_B_A, message_int)  
         monitor.verifyReceive(int_B_A)
         monitor.verifyReceive(str_A_B)
+
 
     def testLegalReceiveUncheckedReceivesNotEmpty(self):
         specificationPath = getSpecificationPath("test_monitor")
@@ -355,10 +409,7 @@ class TestMonitor(unittest.TestCase):
 
         # A is waiting for an int from B
         self.assertEqual(1, len(monitor.uncheckedReceives["A"]))
-        try:
-            monitor.verifyReceive(int_B_A)
-        except IllegalTransitionException:
-            self.fail()
+        monitor.verifyReceive(int_B_A)
 
 
     def testIllegalReceiveUncheckedReceivesNotEmpty(self):
@@ -393,7 +444,7 @@ class TestMonitor(unittest.TestCase):
 
 
     def testSendNonDeterminism(self):
-        specificationPath = getSpecificationPath("test_monitor_non_determinism")
+        specificationPath = getSpecificationPath("test_monitor_three")
         monitor = Monitor(specificationPath)
         
         str_A_B = Transition(str, "A", "B")
@@ -423,7 +474,7 @@ class TestMonitor(unittest.TestCase):
 
     def testIllegalSendUncheckedReceivesNotEmpty(self):
         specificationPath = getSpecificationPath("test_double_send")
-        monitor = Monitor(specificationPath, enforceCausality = True)
+        monitor = Monitor(specificationPath, checkCausality = True)
 
         int_A_B = Transition(int, "A", "B")
         bool_B_A = Transition(bool, "B", "A")
@@ -434,6 +485,83 @@ class TestMonitor(unittest.TestCase):
         with self.assertRaises(PendingMessagesException):
             monitor.verifySend(bool_B_A, True)
         
+
+    def testPrematureTerminationEndOfProtocolNotReached(self):
+        specificationPath = getSpecificationPath("test_monitor_four")
+        monitor = Monitor(specificationPath)
+
+        str_A_B = Transition(str, "A", "B")
+        bool_B_A = Transition(bool, "B", "A")
+        message_str = "hello world"
+        message_bool = True
+
+        monitor.verifySend(str_A_B, message_str)
+        monitor.verifyReceive(str_A_B)
+        monitor.verifySend(bool_B_A, message_bool)
+        monitor.verifyReceive(bool_B_A)
+
+        # The program terminates before the end of the protocol was reached.
+        monitor.__del__()
+        # Check console for an error message stating that the program failed
+        # to reach the end of the protocol. It should NOT state that there
+        # are any lost messages.
+
+
+    def testPrematureTerminationLostMessage(self):
+        specificationPath = getSpecificationPath("test_monitor_four")
+        monitor = Monitor(specificationPath)
+
+        str_A_B = Transition(str, "A", "B")
+        bool_B_A = Transition(bool, "B", "A")
+        message_str = "hello world"
+        message_bool = False
+
+        monitor.verifySend(str_A_B, message_str)
+        monitor.verifyReceive(str_A_B)
+        monitor.verifySend(bool_B_A, message_bool)
+
+        # The program terminates before all messages were received.
+        monitor.__del__()
+        # Check console for an error message stating there is a lost message,
+        # namely, bool from B to A. 
+        # It should NOT declare a failure to reach the end of the protocol.
+
+
+    def testPrematureTerminationEndOfProtocolNotReachedAndLostMessage(self):
+        specificationPath = getSpecificationPath("test_monitor_four")
+        monitor = Monitor(specificationPath)
+
+        str_A_B = Transition(str, "A", "B")
+        bool_B_A = Transition(bool, "B", "A")
+        message_str = "hello world"
+        message_bool = True
+
+        monitor.verifySend(str_A_B, message_str)
+        monitor.verifyReceive(str_A_B)
+        monitor.verifySend(bool_B_A, message_bool)
+
+        # The program terminates before the end of the protocol was reached;
+        # also, there are still messages pending reception.
+        monitor.__del__()
+        # Check console for an error message stating that the program failed
+        # to reach the end of the protocol AND that there is a lost message,
+        # namely bool from B to A.
+
+
+    def testPrematureTerminationAfterHalted(self):
+        specificationPath = getSpecificationPath("test_monitor_four")
+        monitor = Monitor(specificationPath)
+
+        bool_B_A = Transition(bool, "B", "A")
+        message_bool = True
+
+        with self.assertRaises(IllegalTransitionException):
+            # this is an illegal send which will halt the monitor
+            monitor.verifySend(bool_B_A, message_bool)
+
+        # The program terminates prematurely due to the illegal send.
+        monitor.__del__()
+        # Check console that NO error message is shown.
 
 
 def getSpecificationPath(specificationName: str):

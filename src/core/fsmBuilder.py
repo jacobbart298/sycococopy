@@ -12,11 +12,7 @@ from src.core.exceptions.illegalvalueexception import IllegalValueException
 from src.core.exceptions.subtypingexception import SubtypingException
 from src.core.exceptions.rolemismatchexception import RoleMismatchException
 from itertools import permutations
-
-if "." in __name__:
-     from antlrFiles.PythonicParser import PythonicParser
-else:
-     from antlrFiles.PythonicParser import PythonicParser
+from antlrFiles.PythonicParser import PythonicParser
 
 '''
 The FsmBuilder class is responsible for building the FSM, via the buildFSM method from the given specification. 

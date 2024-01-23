@@ -14,12 +14,12 @@ The specification must be passed to the monitor as a txt file on creation.
 '''
 class Monitor():
 
-    # set enforceCausality to False if senders are allowed to send while there are still messages incoming
-    # set checkLostMessages to False if the program is allowed to terminate while there are still messages that
+    # Set checkCausality to False if senders are allowed to send while there are still messages incoming.
+    # Set checkLostMessages to False if the program is allowed to terminate while there are still messages that
     # haven't been received.
-    def __init__(self, filePath: str, enforceCausality = True, checkLostMessages = True):
+    def __init__(self, filePath: str, checkCausality = True, checkLostMessages = True):
         self.halted: bool = False
-        self.enforceCausality = enforceCausality
+        self.checkCausality = checkCausality
         self.checkLostMessages = checkLostMessages
         self.setExceptionHook()
         self.transitionHistory: list[tuple[Transition, any]] = []
@@ -46,7 +46,7 @@ class Monitor():
             raise HaltedException()     
         self.transitionHistory.append((transition, item))
         # sending is not allowed if the sender is waiting for any messages and enforceCausality is True
-        if self.enforceCausality and transition.getSender() in self.uncheckedReceives and self.uncheckedReceives[transition.getSender()]:
+        if self.checkCausality and transition.getSender() in self.uncheckedReceives and self.uncheckedReceives[transition.getSender()]:
             self.halted = True
             raise PendingMessagesException(self.transitionHistory, self.uncheckedReceives[transition.getSender()])        
         transitionMade = self.fsm.makeTransition(transition, item)

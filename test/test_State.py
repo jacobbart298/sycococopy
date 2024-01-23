@@ -172,7 +172,3 @@ class TestState(unittest.TestCase):
 
         # state with no transitions is a final state
         self.assertTrue(q2.isFinalState())
-
-
-if __name__ == '__main__':
-    unittest.main()
