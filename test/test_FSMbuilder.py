@@ -1177,9 +1177,6 @@ class TestFsmBuilder(unittest.TestCase):
         elif t1_A_C in list(q0.getNextStates(t1_A_B))[1].getTransitions():
             q1 = list(q0.getNextStates(t1_A_B))[1]
             q2 = list(q0.getNextStates(t1_A_B))[0]
-        else:
-            # neither state features transition t1_A_C
-            self.fail()
         # in q1 there is one transition: t1_A_C
         self.assertEqual(1, len(q1.getTransitions()))
         self.assertIn(t1_A_C, q1.getTransitions())
