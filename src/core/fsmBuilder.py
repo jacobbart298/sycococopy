@@ -206,20 +206,20 @@ class FsmBuilder(PythonicVisitor):
         value: any = self.convert_string_to_primitive_object(object_type, value_string)
         return PredicateTransition(object_type, sender, receiver, "==", value)
 
-    # Transforms the given string to a custom object of the given type.
+    # Transforms the given string to a custom object with help of the given 
+    # constructor. In case the given string cannot be evaluated to an object,
+    # an IllegalValueException is raised. In case the evaluated object is not 
+    # an instance of the given type, an SubtypingException is raised.
     def convert_string_to_custom_object(self, object_type: type, constructor: type, value_string: str) -> any:
-        if hasattr(customs, object_type.__name__):
-            try:
-                custom_object = eval(value_string, {}, {constructor.__name__: constructor})   
-            except TypeError:
-                raise IllegalValueException(value_string, object_type)
-            if not isinstance(custom_object, object_type):
-                raise SubtypingException(object_type, constructor)      
-            return custom_object
-        else:
-            raise IllegalTypeException(object_type.__name__)
+        try:
+            custom_object = eval(value_string, {}, {constructor.__name__: constructor})   
+        except TypeError:
+            raise IllegalValueException(value_string, object_type)
+        if not isinstance(custom_object, object_type):
+            raise SubtypingException(object_type, constructor)      
+        return custom_object
         
-    # Transforms the given string to a primitive object of the given type 
+    # Transforms the given string to a primitive object of the given type. 
     def convert_string_to_primitive_object(self, object_type: type, value_string: str) -> any:        
         if object_type == str:
             return value_string[1:len(value_string)-1]
@@ -228,9 +228,7 @@ class FsmBuilder(PythonicVisitor):
         if object_type == int:
             return int(value_string)
         if object_type == float:
-            return float(value_string)
-        else:
-            raise IllegalTypeException(object_type.__name__)   
+            return float(value_string) 
     
     # Transforms the given string to the corresponding type. If the string does not match with the string 
     # representation of either a built-in type or a user-defined type, an IllegalTypeException is raised.
