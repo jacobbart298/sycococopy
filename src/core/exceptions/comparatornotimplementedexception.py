@@ -5,9 +5,9 @@ ComparatorNotImplementedException is raised when a comparator is used with an ob
 '''
 class ComparatorNotImplementedException(SycococopyException):
         
-    def __init__(self, comparator: str, type: any):
-        self.type = type
-        self.comparator = comparator
+    def __init__(self, comparator: str, type: type):
+        self.type: str = type.__name__
+        self.comparator: str = comparator
         
     def __str__(self) -> str:
         match self.comparator:
@@ -23,5 +23,5 @@ class ComparatorNotImplementedException(SycococopyException):
                 method = "__eq__"
             case '!=':
                 method = "__ne__"
-        return f"\nCOMPARATOR NOT IMPLEMENTED: class {self.type.__name__} does not implement method {method}!\n"  
+        return f"\nCOMPARATOR NOT IMPLEMENTED\nClass '{self.type}' does not implement method '{method}'!\n"  
         

@@ -83,7 +83,7 @@ class Channel():
         self.receiver = receiver
         self.monitor = monitor
     
-    # Method that checks if send is allowed by the monitor and, if so, adds item to the queue.
+    # Checks if send is allowed by the monitor and, if so, adds item to the queue.
     async def send(self, item: any) -> None:
         transition: Transition = Transition(type(item), self.sender, self.receiver)
         try:
@@ -92,7 +92,7 @@ class Channel():
         except HaltedException:
             pass
     
-    # Method that checks if receive is allowed by the monitor and, if so, returns the item from the queue.
+    # Checks if receive is allowed by the monitor and, if so, returns the item from the queue.
     async def receive(self) -> any:
         item: any = await self.queue.get()
         transition: Transition = Transition(type(item), self.sender, self.receiver)
@@ -101,3 +101,15 @@ class Channel():
             return item
         except HaltedException:
             pass
+
+    # Checks whether the channel is empty. Returns True if it is, otherwise False.   
+    def empty(self) -> bool:
+        return self.queue.empty()
+    
+    # Checks whether the channel is full. Returns True if it is, otherwise False.   
+    def full(self) -> bool:
+        return self.queue.full()
+    
+    # Returns the number of items in the channel
+    def size(self) -> int:
+        return self.queue.qsize()

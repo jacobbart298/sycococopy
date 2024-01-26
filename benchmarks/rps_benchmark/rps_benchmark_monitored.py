@@ -12,7 +12,7 @@ each round is the same. Benchmark with monitor including full parsing.
 PLAYER_COUNT = 3
 DELAY = 1.45
 specification_path = "protocol_RPS.txt"
-monitor = Monitor(specification_path, enforceCausality=False)
+monitor = Monitor(specification_path, checkCausality=False)
 
 def findLosers(playerItems: dict[int: Item]) -> list[int]:
     losers = []

@@ -2,14 +2,19 @@ from src.core.state import State
 from src.core.transition import Transition, EpsilonTransition
 
 '''
-The FSM class holds a set of State objects that reflect the current possible states of the FSM.
+The FSM class holds a set of State objects that reflect the states that the FSM
+is currently in. An FSM is able to perform transitions and determine whether or
+not it is in a final state.
 '''
 
 class FSM:
 
     def __init__(self):
         self.states: set(State) = {State()}
-        
+  
+    # Performs all transitions that satisfy the given transition and item,
+    # updating its set of states accordingly. In case no transitions are 
+    # satisfactory, this method returns False; otherwise, it returns True.
     def makeTransition(self, transition: Transition, item: any) -> bool:
         newStates: set[State] = set()
         visitedStates: set[State] = set()
@@ -24,13 +29,15 @@ class FSM:
                 visitedStates.add(state)
         self.states = newStates
         return len(self.states) != 0
-        
-    def getStates(self) -> list[State]:
-        return list(self.states)
-    
-    # Checks if at least one of the current states has no transitions and is hence in an end state
+            
+    # Checks if any of the FSM's current states has no transitions. If so, the 
+    # FSM is in a final state and this method returns True; otherwise, False.
     def isInFinalState(self) -> bool:        
         for state in self.states:
-            if not state.getTransitions():
+            if state.isFinalState():
                 return True
         return False
+
+    # Returns the collection of states that the FSM is currently in as a list.
+    def getStates(self) -> list[State]:
+        return list(self.states)
