@@ -5,23 +5,23 @@ Welcome to the codebase of our Bachelor thesis project at the Open University in
 With this project we provide a Python framework that can be used to monitor the communication between coroutines at runtime.
 
 ## Description
-The SyCoCoCoPy framework can be used as a debugging tool to verify if the communication betweeen coroutines in a concurrent Python program runs as described in a given specification. The specification can be written in a Python-like syntax, which is described below. 
+The SyCoCoCoPy framework can be used as a debugging tool to verify if the communication between coroutines in a concurrent Python program runs as described in a given specification. The specification can be written in a Python-like syntax, which is described below. 
 
-If a communication occurs outside of the specification, the library will end the asyncio Event loop with an IllegalTransitionException and the executed communication messages plus the violating message will be printed for further evaluation.
+If a communication occurs outside of the specification, the framework will end the asyncio Event loop with an IllegalTransitionException and the executed communication messages plus the violating message will be printed to the console for further evaluation.
 
 At this stage, the error should be corrected by revising either the implementation, or the provided specification.
 
 ## Installation
-Before running the program, please install the library with the following command:
+Before running the program, please install the framework with the following command:
 
 ```
 py -m pip install -e .
 ```
 
-This will ensure that the packages are correctly recognized.
+This ensures that the packages are correctly recognized.
 
 ## Usage as drop-in library for asyncio
-The library requires a specification that defines the roles and describes the allowed order of communication between those roles. Create a specification (as described below) and save it as a .txt file.
+The framework requires a specification that defines the roles and describes the allowed order of communication between those roles. Create a specification (as described below) and save it as a .txt file.
 
 The library can be used as a drop-in replacement for the asyncio library within existing Python programs. 
 Instead of importing asyncio, simply import the instrumentation as asyncio. The required imports are then:
@@ -33,12 +33,12 @@ To ensure that the instrumentation sends all relevant communication to the run-t
 * Create a monitor with a link to the specification path: `monitor = Monitor(specification_path)`
 * Create queues for inter-coroutine communication: `sender_to_receiver = asyncio.Queue()`
 * Link the queues that are used for inter-coroutine communication to the monitor: `asyncio.link(sender_to_receiver, sender, receiver, monitor)`
-Use the queues in the program for all inter-coroutine communication and run the program. The library will check if the communication adheres to the specification and provide an alert if a communication occurs that is not according to the protocol.
+Use the queues in the program for all inter-coroutine communication and run the program. The library will check if the communication adheres to the specification and provides an alert if a communication occurs that is not according to the protocol.
 
 ## Usage with Channels for inter-coroutine communication
 The library provides an alternative and possibly more intuitive way of communication via the Channel class. 
 To use the Channel class proceed as follows:
-* Import the Monitor and Channel classes as well as the asyncio library:
+* Import the Monitor and Channel classes as well as the native asyncio library:
 ```
 import asyncio
 from src.core.instrumentation import Channel
@@ -56,7 +56,7 @@ The SyCoCoCoPy library contains the following modules:
 * transition.py provides the Transition and PredicateTransition classes, that represent a message with a given type (and value constraint for a PredicateTransition) from a sender to a receiver
 * FSMbuilder.py parses a given specification to an FSM (item 1) with a start state and creates all the possible states and transitions
 * instrumentation.py can be used as a drop-in replacement for the asyncio library, or as a supplier of the Channel class for communication between coroutines. The instrumentation ensures that messages between coroutines in a given program are forwarded to the monitor so they can be checked against the protocol
-* monitor.py is used to verify send and receive operations adhere to the protocol
+* monitor.py provides the Monitor class that is used to verify send and receive operations adhere to the protocol
 
 ## Exceptions
 The following exceptions can be raised by the framework:
@@ -95,7 +95,7 @@ shuffle:
     protocol1
     protocol2
 
-#choice
+#alternativeness
 choice:
     protocol1
     protocol2
@@ -103,8 +103,9 @@ choice:
 #recursion/looping
 loop <identifier>:
     protocol
-        send type from sender to receiver
-        repeat <identifier> # the repeat keyword MUST follow a send action
+        sequence:
+            send type from sender to receiver
+            repeat <identifier> # the repeat keyword MUST be the last item in a sequence
 ``` 
 
 ## Value constraints
@@ -115,7 +116,7 @@ An example constraint for a bool: `send bool(False) from p to q`
 Or for an int: `send int(>=9) from p to q`
 
 ## Use of custom types
-The framework supports the use of custom types in addition to the primitive types from Python. The custom types must be imported in the customs.py module which is located in the customs folder. Inheritance is fully supported, when a subtype is provided at runtime and the specification requires the superclass, it is accepted.
+The framework supports the use of custom types in addition to Python's primitive types. The custom types must be imported in the customs.py module which is located in the customs folder. Inheritance is fully supported, when a subtype is provided at runtime and the specification requires the superclass, it is accepted.
 
 When a constraint on a custom type is given in a specification, the associated comparison method must be implemented. Specify the:
 * \_\_eq\_\_ method for == and != comparison
@@ -133,6 +134,11 @@ To enable the use of this library in a production environment, the codebase will
 * The compound operators `sequence`, `choice`, and `shuffle` should have at least two children, but no warning is produced if the protocol has zero or one child for a compound operator.
 * If a specification does not adhere to the syntax the parser does not stop, but tries to parse as good as possible. We recommend that an incorrect syntax should halt the parsing and provide a warning to show where the specification is wrong.
 
+### Available branches
+
+Initially, the framework did not support the loop and repeat operations. When we decided to add them, we felt it made sense to require that the repeat operation must be the final operation in a sequence and must be preceded by another operation --- the rationale being that the preceding operation brings us back to the loop state. During the validation of the framework, we came to realise that this requirement may lead to unpleasantly verbose specifications. Dropping the requirement and allowing the repeat operation to be placed within a choice turned out to be the solution. The most intuitive way of making the required changes in the builder was to employ epsilon transitions, which actually resulted in less complex builder methods with better defined responsibilities. The 'lambda' branch offers the refactored code that allows epsilon transitions.  
+
+The framework maintains the full history of transitions and prints this history to the console as part of some of the error messages. However, the full history might become too long for effective troubleshooting and we suspect that the performance may benefit if the size of the history is limited. The '144-limit-number-of-messages-in-transition-history' branch offers a fix that limit the history to 10 messages.
 
 ## Authors and acknowledgment
 This project was created by Teun Schoutens and Jacob Bart as part of their Bachelor thesis project at the Open University in The Netherlands.
@@ -147,4 +153,4 @@ The above copyright notice and this permission notice shall be included in all c
 THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ## Project status
-The project is still being worked, expected delivery is January 2024.
+Work on the project has ceased in January 2024.
