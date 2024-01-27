@@ -1,0 +1,26 @@
+roles:
+	customer
+	agency
+	service
+
+protocol:
+	loop inquiry:
+		sequence:
+			send str from customer to agency
+			send int(>=0) from agency to customer
+			choice:
+				sequence:
+					send str from agency to service
+					repeat inquiry 
+				sequence:
+					send str from agency to service
+					choice:
+						sequence:
+							send bool(True) from customer to agency
+							shuffle:
+								send bool(True) from agency to service
+								send str from customer to service
+							send str from service to customer
+						sequence:
+							send bool(False) from customer to agency
+							send bool(False) from agency to service

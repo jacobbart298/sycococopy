@@ -1,14 +1,27 @@
 from src.core.exceptions.sycococopyexception import SycococopyException
 
 '''
-The ComparatorNotImplementedException is raised when a comparison is used but the type does not implement its use.
+ComparatorNotImplementedException is raised when a comparator is used with an object that does not implement it.
 '''
 class ComparatorNotImplementedException(SycococopyException):
         
-    def __init__(self, comparator: str, type: any):
-        self.type = type
-        self.comparator = comparator
+    def __init__(self, comparator: str, type: type):
+        self.type: str = type.__name__
+        self.comparator: str = comparator
         
     def __str__(self) -> str:
-        return f"\nCOMPARATOR NOT IMPLEMENTED: \n{self.type.__name__} does not support {self.comparator} comparison\n"        
+        match self.comparator:
+            case '<':
+                method = "__lt__"
+            case '<=':
+                method = "__le__"
+            case '>':
+                method = "__gt__"
+            case '>=':
+                method = "__ge__"
+            case '==':
+                method = "__eq__"
+            case '!=':
+                method = "__ne__"
+        return f"\nCOMPARATOR NOT IMPLEMENTED\nClass '{self.type}' does not implement method '{method}'!\n"  
         
