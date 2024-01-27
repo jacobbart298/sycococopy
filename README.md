@@ -124,7 +124,7 @@ When a constraint on a custom type is given in a specification, the associated c
 * \_\_ne\_\_ method for != comparison
 * \_\_lt\_\_ method for $\lt$ comparison
 * \_\_le\_\_ method for $\leq$ comparison
-* \_\_gt\_\_ method for $\lt$ comparison
+* \_\_gt\_\_ method for $\gt$ comparison
 * \_\_ge\_\_ method for $\geq$ comparison
 
 ## Roadmap
