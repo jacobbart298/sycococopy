@@ -1,8 +1,8 @@
 import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor
-from examples.rps_item import Item
+from examples.rockpaperscissors.rps_item import Item
 
-specification_path = r".\protocol_RPS.txt"
+specification_path = r".\rock_paper_scissors_protocol.txt"
 monitor = Monitor(specification_path, checkCausality=False)
 
 def findLosers(playerItems: dict[int: Item]) -> list[int]:
@@ -17,7 +17,6 @@ def findLosers(playerItems: dict[int: Item]) -> list[int]:
         if lose and not win:
             losers.append(player)
     return losers
-
 
 async def player(number: int, incoming_queues: dict[int:asyncio.Queue], outgoing_queues: dict[int:asyncio.Queue]):
     is_participating = True
