@@ -4,7 +4,7 @@ from benchmarks.benchmarkmethods import buildParseTree
 from benchmarks.benchmark_monitor import BenchmarkMonitor
 import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor
-from rps_item import Item
+from examples.rockpaperscissors.rps_item import Item
 
 '''
 Macro benchmark for Rock-Paper-Scissors that uses a delay instead of picking a random item to ensure
@@ -66,7 +66,7 @@ async def player(number: int, incoming_queues: dict[int:asyncio.Queue], outgoing
         await asyncio.sleep(0)
 
 async def main():
-    monitor = BenchmarkMonitor(parseTree, enforceCausality=False)
+    monitor = BenchmarkMonitor(parseTree, checkCausality=False)
     random.seed(362)
     queueMap = {}
     for p1 in range(PLAYER_COUNT):

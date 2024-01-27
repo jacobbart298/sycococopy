@@ -2,7 +2,7 @@ import pyperf
 import random
 import src.core.instrumentation as asyncio
 from src.core.monitor import Monitor
-from rps_item import Item
+from examples.rockpaperscissors.rps_item import Item
 
 '''
 Macro benchmark for Rock-Paper-Scissors that uses a delay instead of picking a random item to ensure
@@ -86,7 +86,7 @@ async def main():
             tg.create_task(player(number, incoming_queues, outgoing_queues))
 
 if __name__ == '__main__':
-    monitor = Monitor(specification_path, enforceCausality=False)
+    monitor = Monitor(specification_path, checkCausality=False)
     initialState = list(monitor.fsm.states)[0]
     runner = pyperf.Runner()
     runner.bench_async_func(f"Rock Paper Scissors", main)

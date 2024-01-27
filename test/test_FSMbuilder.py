@@ -3,52 +3,208 @@ import os
 from src.core.fsmBuilder import FsmBuilder
 from src.core.transition import Transition, PredicateTransition
 from src.core.exceptions.rolemismatchexception import RoleMismatchException
+from src.core.exceptions.illegaltypeexception import IllegalTypeException
+from src.core.exceptions.illegalvalueexception import IllegalValueException
+from src.core.exceptions.subtypingexception import SubtypingException
+from customs.customs import *
 
 class TestFsmBuilder(unittest.TestCase):
 
     # see singleSend.png in tests/testcases/fsms for fsm
-    def test_singlePredicateSend(self):
-
-        specificationPath = getSpecificationPath("singlePredicateSend")    
-        fsm = FsmBuilder().buildFsm(specificationPath)
-
-        send = PredicateTransition(int, "B", "A", ">", 4)
-
-        self.assertEqual(1, len(fsm.getStates()))
-        q0 = fsm.getStates()[0]
-
-        # in q0 there is one transition: send
-        self.assertEqual(1, len(q0.getTransitions()))
-        self.assertIn(send, q0.getTransitions())
-
-        # transition send in q0 leads to q1
-        self.assertEqual(1, len(q0.getNextStates(send)))
-        q1 = list(q0.getNextStates(send))[0]
-        # in q1 there is no transition
-        self.assertEqual(0, len(q1.getTransitions()))
+    def test_singleSendPrimitiveTypeNonPredicate(self):
     
-
-    # see singleSend.png in tests/testcases/fsms for fsm
-    def test_singleRegularSend(self):
-    
-        specificationPath = getSpecificationPath("singleRegularSend")    
+        specificationPath = getSpecificationPath("singleSendPrimitiveTypeNonPredicate")    
         fsm = FsmBuilder().buildFsm(specificationPath)
 
         send = Transition(int, "B", "A")
 
         self.assertEqual(1, len(fsm.getStates()))
         q0 = fsm.getStates()[0]
-
         # in q0 there is one transition: send
         self.assertEqual(1, len(q0.getTransitions()))
         self.assertIn(send, q0.getTransitions())
 
-        # transition send in q0 leads to q1
-        self.assertEqual(1, len(q0.getNextStates(send)))
-        q1 = list(q0.getNextStates(send))[0]
-        # in q1 there is no transition
-        self.assertEqual(0, len(q1.getTransitions()))
+    # see singleSend.png in tests/testcases/fsms for fsm
+    def test_singleSendPrimitiveTypePredicateGt(self):
 
+        specificationPath = getSpecificationPath("singleSendPrimitiveTypePredicateGt")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
+        send = PredicateTransition(int, "B", "A", ">", -4)
+
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
+        # in q0 there is one transition: send
+        self.assertEqual(1, len(q0.getTransitions()))
+        self.assertIn(send, q0.getTransitions())
+
+    # see singleSend.png in tests/testcases/fsms for fsm
+    def test_singleSendPrimitiveTypePredicateLt(self):
+
+        specificationPath = getSpecificationPath("singleSendPrimitiveTypePredicateLt")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
+        send = PredicateTransition(float, "B", "A", "<", -4.5)
+
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
+        # in q0 there is one transition: send
+        self.assertEqual(1, len(q0.getTransitions()))
+        self.assertIn(send, q0.getTransitions())
+
+    # see singleSend.png in tests/testcases/fsms for fsm
+    def test_singleSendPrimitiveTypePredicateGe(self):
+
+        specificationPath = getSpecificationPath("singleSendPrimitiveTypePredicateGe")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
+        send = PredicateTransition(int, "B", "A", ">=", 4)
+
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
+        # in q0 there is one transition: send
+        self.assertEqual(1, len(q0.getTransitions()))
+        self.assertIn(send, q0.getTransitions())
+
+    # see singleSend.png in tests/testcases/fsms for fsm
+    def test_singleSendPrimitiveTypePredicateLe(self):
+
+        specificationPath = getSpecificationPath("singleSendPrimitiveTypePredicateLe")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
+        send = PredicateTransition(float, "B", "A", "<=", 0.0)
+
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
+        # in q0 there is one transition: send
+        self.assertEqual(1, len(q0.getTransitions()))
+        self.assertIn(send, q0.getTransitions())
+
+    # see singleSend.png in tests/testcases/fsms for fsm
+    def test_singleSendPrimitiveTypePredicateNe(self):
+
+        specificationPath = getSpecificationPath("singleSendPrimitiveTypePredicateNe")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
+        send = PredicateTransition(str, "B", "A", "!=", "hello world!")
+
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
+        # in q0 there is one transition: send
+        self.assertEqual(1, len(q0.getTransitions()))
+        self.assertIn(send, q0.getTransitions())
+
+    # see singleSend.png in tests/testcases/fsms for fsm
+    def test_singleSendPrimitiveTypePredicateEq(self):
+
+        specificationPath = getSpecificationPath("singleSendPrimitiveTypePredicateEq")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
+        send = PredicateTransition(bool, "B", "A", "==", True)
+
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
+        # in q0 there is one transition: send
+        self.assertEqual(1, len(q0.getTransitions()))
+        self.assertIn(send, q0.getTransitions())
+    
+    # see singleSend.png in tests/testcases/fsms for fsm
+    def test_singleSendUserDefinedTypeNonPredicate(self):
+    
+        specificationPath = getSpecificationPath("singleSendUserDefinedTypeNonPredicate")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
+        send = Transition(Pet, "B", "A")
+
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
+        # in q0 there is one transition: send
+        self.assertEqual(1, len(q0.getTransitions()))
+        self.assertIn(send, q0.getTransitions())
+
+    # see singleSend.png in tests/testcases/fsms for fsm
+    def test_singleSendUserDefinedTypePredicateGt(self):
+
+        specificationPath = getSpecificationPath("singleSendUserDefinedTypePredicateGt")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
+        send = PredicateTransition(Dog, "B", "A", ">", Dog("Lily", 3, 43.5))
+
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
+        # in q0 there is one transition: send
+        self.assertEqual(1, len(q0.getTransitions()))
+        self.assertIn(send, q0.getTransitions())
+
+    # see singleSend.png in tests/testcases/fsms for fsm
+    def test_singleSendUserDefinedTypePredicateLt(self):
+
+        specificationPath = getSpecificationPath("singleSendUserDefinedTypePredicateLt")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
+        send = PredicateTransition(Dog, "B", "A", "<", Dog("Lily", 3, 43.5))
+
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
+        # in q0 there is one transition: send
+        self.assertEqual(1, len(q0.getTransitions()))
+        self.assertIn(send, q0.getTransitions())
+
+    # see singleSend.png in tests/testcases/fsms for fsm
+    def test_singleSendUserDefinedTypePredicateGe(self):
+
+        specificationPath = getSpecificationPath("singleSendUserDefinedTypePredicateGe")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
+        send = PredicateTransition(Dog, "B", "A", ">=", Dog("Lily", 3, 43.5))
+
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
+        # in q0 there is one transition: send
+        self.assertEqual(1, len(q0.getTransitions()))
+        self.assertIn(send, q0.getTransitions())
+
+    # see singleSend.png in tests/testcases/fsms for fsm
+    def test_singleSendUserDefinedTypePredicateLe(self):
+
+        specificationPath = getSpecificationPath("singleSendUserDefinedTypePredicateLe")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
+        send = PredicateTransition(Dog, "B", "A", "<=", Dog("Lily", 3, 43.5))
+
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
+        # in q0 there is one transition: send
+        self.assertEqual(1, len(q0.getTransitions()))
+        self.assertIn(send, q0.getTransitions())
+
+    # see singleSend.png in tests/testcases/fsms for fsm
+    def test_singleSendUserDefinedTypePredicateNe(self):
+
+        specificationPath = getSpecificationPath("singleSendUserDefinedTypePredicateNe")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
+        send = PredicateTransition(Dog, "B", "A", "!=", Dog("Lily", 3, 43.5))
+
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
+        # in q0 there is one transition: send
+        self.assertEqual(1, len(q0.getTransitions()))
+        self.assertIn(send, q0.getTransitions())
+
+    # see singleSend.png in tests/testcases/fsms for fsm
+    def test_singleSendUserDefinedTypePredicateEq(self):
+
+        specificationPath = getSpecificationPath("singleSendUserDefinedTypePredicateEq")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
+        send = PredicateTransition(Dog, "B", "A", "==", Dog("Lily", 3, 43.5))
+
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
+        # in q0 there is one transition: send
+        self.assertEqual(1, len(q0.getTransitions()))
+        self.assertIn(send, q0.getTransitions())
 
     # see singleChoice.png in tests/testcases/fsms for fsm
     def test_singleChoice(self):
@@ -944,7 +1100,7 @@ class TestFsmBuilder(unittest.TestCase):
         self.assertEqual(0, len(q5.getTransitions()))
 
     # see one_loop_multiple_repeats.png in tests/testcases/fsms for fsm
-    def one_loop_multiple_repeats(self):
+    def test_one_loop_multiple_repeats(self):
                 
         specificationPath = getSpecificationPath("one_loop_multiple_repeats")    
         fsm = FsmBuilder().buildFsm(specificationPath)
@@ -1021,9 +1177,6 @@ class TestFsmBuilder(unittest.TestCase):
         elif t1_A_C in list(q0.getNextStates(t1_A_B))[1].getTransitions():
             q1 = list(q0.getNextStates(t1_A_B))[1]
             q2 = list(q0.getNextStates(t1_A_B))[0]
-        else:
-            # neither state features transition t1_A_C
-            self.fail
         # in q1 there is one transition: t1_A_C
         self.assertEqual(1, len(q1.getTransitions()))
         self.assertIn(t1_A_C, q1.getTransitions())
@@ -1139,10 +1292,7 @@ class TestFsmBuilder(unittest.TestCase):
 
     def testCorrectRoles(self):     
         specificationPath = getSpecificationPath("travelAgency")    
-        try:
-            FsmBuilder().buildFsm(specificationPath)   
-        except RoleMismatchException:
-            self.fail
+        FsmBuilder().buildFsm(specificationPath)   
 
     def testRoleNotUsed(self):        
 
@@ -1162,8 +1312,76 @@ class TestFsmBuilder(unittest.TestCase):
         with self.assertRaises(RoleMismatchException):
             FsmBuilder().buildFsm(specificationPath)
 
-if __name__ == '__main__':
-    unittest.main()
+    def testIllegalTypeNotDefined(self):
+        
+        # Type Sdfhfsdlkfh used in protocol test_illegal_type_not_defined is not part
+        # of the builtins module nor defined in the customs module.
+        specificationPath = getSpecificationPath("test_illegal_type_not_defined")
+        with self.assertRaises(IllegalTypeException):
+            FsmBuilder().buildFsm(specificationPath)
+
+    def testIllegalTypeBuiltin(self):
+        
+        # Function len used in protocol test_illegal_type_builtin is part of
+        # the builtins module but not a bool, int, float or str.
+        specificationPath = getSpecificationPath("test_illegal_type_builtin")
+        with self.assertRaises(IllegalTypeException):
+            FsmBuilder().buildFsm(specificationPath)
+
+    def testIllegalValueLackingArgument(self):
+
+        # Type Dog used in protocol test_illegal_value_lacking_argument is 
+        # defined in the customs module. Its constructor has two arguments
+        # instead of the one given, however.
+        specificationPath = getSpecificationPath("test_illegal_value_lacking_argument")
+        with self.assertRaises(IllegalValueException):
+            FsmBuilder().buildFsm(specificationPath)
+
+    def testIllegalValueExcessArgument(self):
+
+        # Type Dog used in protocol test_illegal_value_excess_argument is 
+        # defined in the customs module. Its constructor has two arguments
+        # instead of the three given, however.
+        specificationPath = getSpecificationPath("test_illegal_value_excess_argument")
+        with self.assertRaises(IllegalValueException):
+            FsmBuilder().buildFsm(specificationPath)
+   
+    def test_inheritanceSpecifiedTypeSubClassValueTypeSuperClass(self):
+
+        # The specified type is Cat (subclass) while the specified value
+        # is of type Pet (superclass).
+        specificationPath = getSpecificationPath("inheritanceTypeSubClassValueSuperClass")
+        with self.assertRaises(SubtypingException):
+            FsmBuilder().buildFsm(specificationPath)
+
+    # see singleSend.png in tests/testcases/fsms for fsm
+    def test_inheritanceTypeSuperClassValueSubClass(self):
+
+        specificationPath = getSpecificationPath("inheritanceTypeSuperClassValueSubClass")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
+        send = PredicateTransition(Pet, "B", "A", "==", Cat("Mies", 4))
+
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
+        # in q0 there is one transition: send
+        self.assertEqual(1, len(q0.getTransitions()))
+        self.assertIn(send, q0.getTransitions())
+
+    # see singleSend.png in tests/testcases/fsms for fsm
+    def test_inheritanceSpecifiedTypeEqualsValueType(self):
+
+        specificationPath = getSpecificationPath("inheritanceSpecifiedTypeEqualsValueType")    
+        fsm = FsmBuilder().buildFsm(specificationPath)
+
+        send = PredicateTransition(Cat, "B", "A", "==", Cat("Mies", 4))
+
+        self.assertEqual(1, len(fsm.getStates()))
+        q0 = fsm.getStates()[0]
+        # in q0 there is one transition: send
+        self.assertEqual(1, len(q0.getTransitions()))
+        self.assertIn(send, q0.getTransitions())
+
 
 def getSpecificationPath(specificationName: str):
-        return os.path.abspath(f"test/testcases/specifications/{specificationName}.txt") 
+        return os.path.abspath(f"test/testcases/specifications/{specificationName}.txt")

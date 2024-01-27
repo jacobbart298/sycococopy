@@ -24,6 +24,10 @@ class State:
            return self.transitionsToStates[transition]
         return set()
     
-    # Returns a list of possible Transitions in this State.
-    def getTransitions(self) -> list[Transition]:
-        return list(self.transitionsToStates.keys())
+    # Returns a set of possible Transitions in this State.
+    def getTransitions(self) -> set[Transition]:
+        return set(self.transitionsToStates.keys())
+
+    # Returns True if the state is a final state, False otherwise
+    def isFinalState(self) -> bool:
+        return len(self.transitionsToStates) == 0

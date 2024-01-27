@@ -1,0 +1,6 @@
+roles:
+	A
+	B
+
+protocol:
+	send Pet(Cat("Mies", 4)) from B to A
