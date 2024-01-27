@@ -17,10 +17,9 @@ class Monitor():
     # Set checkCausality to False if senders are allowed to send while there are still messages incoming.
     # Set checkLostMessages to False if the program is allowed to terminate while there are still messages that
     # haven't been received.
-    def __init__(self, filePath: str, checkCausality = True, checkLostMessages = True):
+    def __init__(self, filePath: str, checkCausality = True):
         self.halted: bool = False
         self.checkCausality = checkCausality
-        self.checkLostMessages = checkLostMessages
         self.setExceptionHook()
         self.transitionHistory: list[tuple[Transition, any]] = []
         self.uncheckedReceives: dict[str, Transition] = {}
@@ -32,9 +31,8 @@ class Monitor():
         if not self.halted:
             fsmInFinalState: bool = self.fsm.isInFinalState()
             lostMessages: list[Transition] = []
-            if self.checkLostMessages:
-                for uncheckedReceives in self.uncheckedReceives.values():
-                    lostMessages.extend(uncheckedReceives) 
+            for uncheckedReceives in self.uncheckedReceives.values():
+                lostMessages.extend(uncheckedReceives) 
             if lostMessages or not fsmInFinalState:
                 print(self.buildErrorMessage(lostMessages, fsmInFinalState))
 
