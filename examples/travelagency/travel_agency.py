@@ -5,7 +5,7 @@ from src.core.monitor import Monitor
 customer = "customer"
 agency = "agency"
 service = "service"
-specification_path = r".\travelAgency.txt"
+specification_path = r".\travel_agency_protocol.txt"
 monitor = Monitor(specification_path)
 
 customer_to_agency = asyncio.Queue()

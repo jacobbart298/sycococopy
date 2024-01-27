@@ -5,7 +5,7 @@ from src.core.monitor import Monitor
 buyer1 = "buyer1"
 buyer2 = "buyer2"
 seller = "seller"
-specification_path = "protocol_voorbeeld_programma.txt"
+specification_path = "two_buyer_protocol.txt"
 monitor = Monitor(specification_path)
 
 buy1tobuy2 = Channel(buyer1, buyer2, monitor)
