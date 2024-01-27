@@ -28,51 +28,48 @@ async def customer():
     counter = 0
     while not going and counter < 6:
         destination = random.choice(destinations)
-        print(f"Customer wilt naar {destination}")
+        print(f"Customer inquires about {destination}")
         await customer_to_agency.put(destination)
         price = await agency_to_customer.get()
         counter += 1
         if price <= 500:
-            print(f"{str(price)} is een mooie prijs")
+            print(f"{str(price)} is a good price")
             going = True
             await customer_to_agency.put(True)
             await customer_to_service.put("Adres")
             date = await service_to_customer.get()
             print(f"Ticket dispatch date is {date}")
     if not going:
-        print(f"Deze agency heeft geen goede prijzen!")
+        print("This agency's prices are insane!")
         await customer_to_agency.put(False)
 
 async def agency():
-    loop_guard = True
     destination = await customer_to_agency.get()
-    while loop_guard:
+    while True:
         price = prices.get(destination)
         await agency_to_customer.put(price)
         await agency_to_service.put(destination)
-        bool_or_str = await customer_to_agency.get()
-        if type(bool_or_str) == bool:
-            loop_guard = False
-            if bool_or_str:
+        response = await customer_to_agency.get()
+        if type(response) == bool:
+            if response:
                 await agency_to_service.put(True)
             else:
                 await agency_to_service.put(False)
+            return
         else:
-            destination = bool_or_str
+            destination = response
   
-
 async def service():
-    loop_guard = True
     destination = await agency_to_service.get()
-    while loop_guard:
-        bool_or_string = await agency_to_service.get()
-        if type(bool_or_string) == bool:
-            loop_guard = False
-            if bool_or_string:
-                adres = await customer_to_service.get()            
-                await service_to_customer.put("1 april")
+    while True:
+        response = await agency_to_service.get()
+        if type(response) == bool:
+            if response:
+                address = await customer_to_service.get()            
+                await service_to_customer.put("1 April")
+            return
         else:
-            destination = bool_or_string
+            destination = response
 
 async def main():
     async with asyncio.TaskGroup() as task_group:

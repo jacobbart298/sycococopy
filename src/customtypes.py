@@ -4,9 +4,9 @@
 # from [user-module] import *
 # from [user-module] import X, Y, Z
 
-# The following imports are used for testing and benchmarking
 from examples.pet import *
 from examples.plant import *
-from examples.rockpaperscissors.rps_item import *
+# from examples.rockpaperscissors.rps_item import *
+from benchmarks.rps_benchmark.without_parsing_or_building.rps_item import Item
 
-# Please enter you own imports under this comment
+

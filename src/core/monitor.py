@@ -1,6 +1,7 @@
 import sys
 from src.core.fsmBuilder import FsmBuilder
 from src.core.transition import Transition
+from src.core.fsm import FSM
 from src.core.exceptions.illegaltransitionexception import IllegalTransitionException
 from src.core.exceptions.haltedexception import HaltedException
 from src.core.exceptions.sycococopyexception import SycococopyException
@@ -17,14 +18,13 @@ class Monitor():
     # Set checkCausality to False if senders are allowed to send while there are still messages incoming.
     # Set checkLostMessages to False if the program is allowed to terminate while there are still messages that
     # haven't been received.
-    def __init__(self, filePath: str, checkCausality = True, checkLostMessages = True):
+    def __init__(self, filePath: str, checkCausality = True):
         self.halted: bool = False
-        self.checkCausality = checkCausality
-        self.checkLostMessages = checkLostMessages
+        self.checkCausality: bool = checkCausality
         self.setExceptionHook()
         self.transitionHistory: list[tuple[Transition, any]] = []
         self.uncheckedReceives: dict[str, Transition] = {}
-        self.fsm = FsmBuilder().buildFsm(filePath)
+        self.fsm: FSM = FsmBuilder().buildFsm(filePath)
 
     # Destructor method. Prints error message to console if there are still messages that haven't been
     # received or if the FSM is not in a final state.
@@ -32,9 +32,8 @@ class Monitor():
         if not self.halted:
             fsmInFinalState: bool = self.fsm.isInFinalState()
             lostMessages: list[Transition] = []
-            if self.checkLostMessages:
-                for uncheckedReceives in self.uncheckedReceives.values():
-                    lostMessages.extend(uncheckedReceives) 
+            for uncheckedReceives in self.uncheckedReceives.values():
+                lostMessages.extend(uncheckedReceives) 
             if lostMessages or not fsmInFinalState:
                 print(self.buildErrorMessage(lostMessages, fsmInFinalState))
 
@@ -45,7 +44,7 @@ class Monitor():
         if self.halted:
             raise HaltedException()     
         self.transitionHistory.append((transition, item))
-        # sending is not allowed if the sender is waiting for any messages and enforceCausality is True
+        # sending is not allowed if the sender is waiting for any messages and checkCausality is True
         if self.checkCausality and transition.getSender() in self.uncheckedReceives and self.uncheckedReceives[transition.getSender()]:
             self.halted = True
             raise PendingMessagesException(self.transitionHistory, self.uncheckedReceives[transition.getSender()])        
@@ -75,15 +74,15 @@ class Monitor():
             self.uncheckedReceives[transition.getReceiver()] = [transition]
     
     # Method that builds the errorMessage in case the program terminates prematurely.
-    def buildErrorMessage(self, lostMessages, hasTerminated):
+    def buildErrorMessage(self, lostMessages: list[Transition], hasTerminated: bool):
         message: str = "\nUNEXPECTED TERMINATION!\n" 
-        if not hasTerminated:
+        if not hasTerminated and self.transitionHistory:
             message += "The program failed to reach the end of the protocol. Only the following messages were sent:\n"
             count: int = 1
             for transition, item in self.transitionHistory:
                 message += f"\t{count}: send {transition.getType().__name__}({item}) from {transition.getSender()} to {transition.getReceiver()}\n"
                 count += 1
-        if len(lostMessages) > 0:
+        if lostMessages:
             message += "The following messages were lost:\n"
             for transition in lostMessages:
                 message += f"\t{transition.getType().__name__} from {transition.getSender()} to {transition.getReceiver()}\n"

@@ -1,7 +1,7 @@
 from src.core.exceptions.sycococopyexception import SycococopyException
 
 '''
-SubtypingException is raised when the provided value cannot be parsed to the given type.
+SubtypingException is raised when the provided object is not an instance of the specified type.
 '''
 class SubtypingException(SycococopyException):
         
