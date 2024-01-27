@@ -7,6 +7,6 @@
 # The following imports are used for testing and benchmarking
 from examples.pet import *
 from examples.plant import *
-from benchmarks.rps_benchmark.rps_item import *
+from examples.rockpaperscissors.rps_item import *
 
 # Please enter you own imports under this comment

@@ -17,15 +17,8 @@ benchmarks/ring_benchmarks/__init__.py
 customs/__init__.py
 customs/customs.py
 examples/__init__.py
-examples/auto.py
 examples/pet.py
 examples/plant.py
-examples/rps_item.py
-examples/voorbeeld_programma.py
-examples/voorbeeld_programma_RPS.py
-examples/voorbeeld_programma_predicates.py
-examples/voorbeeld_programma_reference_types.py
-examples/voorbeeld_programma_travel_agency.py
 src/__init__.py
 src/core/__init__.py
 src/core/fsm.py
@@ -41,6 +34,7 @@ sycococopy.egg-info/top_level.txt
 test/__init__.py
 test/test_FSM.py
 test/test_FSMbuilder.py
+test/test_Instrumentation.py
 test/test_Monitor.py
 test/test_State.py
 test/test_Transition.py
