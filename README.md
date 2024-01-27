@@ -2,26 +2,26 @@
 ### Synchronisation and Communication between Coroutines in Concurrent Python
 
 Welcome to the codebase of our Bachelor thesis project at the Open University in the Netherlands. 
-With this project we provide a Python framework that can be used to monitor the communication between coroutines at runtime.
+With this project we provide a run-time framework based on the theory of multiparty session types that can be used to verify message passing between coroutines.
 
 ## Description
-The SyCoCoCoPy framework can be used as a debugging tool to verify if the communication between coroutines in a concurrent Python program runs as described in a given specification. The specification can be written in a Python-like syntax, which is described below. 
+The SyCoCoCoPy framework can be used as a debugging tool to verify whether the communication between coroutines in a concurrent Python program adheres to a given specification. The specification can be written in a Python-like syntax, which is described below. 
 
-If a communication occurs outside of the specification, the framework will end the asyncio Event loop with an IllegalTransitionException and the executed communication messages plus the violating message will be printed to the console for further evaluation.
+If a communication operation occurs outside of the specification, the framework will end the asyncio event loop with an IllegalTransitionException and the communication history plus the violating message will be printed to the console for further evaluation.
 
-At this stage, the error should be corrected by revising either the implementation, or the provided specification.
+At this stage, the error should be corrected by revising either the implementation or the provided specification.
 
 ## Installation
-Before running the program, please install the framework with the following command:
+Before running the program, please install the framework with the following command from the sycococopy folder:
 
 ```
 py -m pip install -e .
 ```
 
-This ensures that the packages are correctly recognized.
+This ensures that the packages are correctly recognised.
 
 ## Usage as drop-in library for asyncio
-The framework requires a specification that defines the roles and describes the allowed order of communication between those roles. Create a specification (as described below) and save it as a .txt file.
+The framework requires a specification that defines the roles and the communication protocol between those roles. Create a specification (as described below) and save it as a .txt file.
 
 The library can be used as a drop-in replacement for the asyncio library within existing Python programs. 
 Instead of importing asyncio, simply import the instrumentation as asyncio. The required imports are then:
@@ -33,7 +33,7 @@ To ensure that the instrumentation sends all relevant communication to the run-t
 * Create a monitor with a link to the specification path: `monitor = Monitor(specification_path)`
 * Create queues for inter-coroutine communication: `sender_to_receiver = asyncio.Queue()`
 * Link the queues that are used for inter-coroutine communication to the monitor: `asyncio.link(sender_to_receiver, sender, receiver, monitor)`
-Use the queues in the program for all inter-coroutine communication and run the program. The library will check if the communication adheres to the specification and provides an alert if a communication occurs that is not according to the protocol.
+Use the queues in the program for all inter-coroutine communication and run the program. The library checks if the communication adheres to the specification and provides a warning if a communication occurs that is in violation of the protocol.
 
 ## Usage with Channels for inter-coroutine communication
 The library provides an alternative and possibly more intuitive way of communication via the Channel class. 
@@ -51,22 +51,23 @@ from src.core.monitor import Monitor
 
 ## Architecture
 The SyCoCoCoPy library contains the following modules:
-* fsm.py provides the FSM class, which represents a non-deterministic finite state machine. The non-determinism is handled by allowing the fsm to contain more than one state at a given time
-* state.py provides the State class, which links transitions from its own state to one or more next state(s)
-* transition.py provides the Transition and PredicateTransition classes, that represent a message with a given type (and value constraint for a PredicateTransition) from a sender to a receiver
-* FSMbuilder.py parses a given specification to an FSM (item 1) with a start state and creates all the possible states and transitions
-* instrumentation.py can be used as a drop-in replacement for the asyncio library, or as a supplier of the Channel class for communication between coroutines. The instrumentation ensures that messages between coroutines in a given program are forwarded to the monitor so they can be checked against the protocol
-* monitor.py provides the Monitor class that is used to verify send and receive operations adhere to the protocol
+* fsm.py provides the FSM class, which represents a finite state machine. Non-determinism is handled by allowing the fsm to contain more than one state at a time
+* state.py provides the State class, which links transitions from its own state to one or more next states
+* transition.py provides the Transition and PredicateTransition classes, which represent a message with a given type (and value constraint for a PredicateTransition) from a sender to a receiver
+* fsmBuilder.py constructs an FSM from a given specification
+* instrumentation.py can be used as a drop-in replacement for the asyncio library, or as a supplier of the Channel class for communication between coroutines. The instrumentation ensures that messages between coroutines in a given program are forwarded to the monitor
+* monitor.py provides the Monitor class that is used to verify that send and receive operations adhere to the protocol
 
 ## Exceptions
 The following exceptions can be raised by the framework:
 * An IllegalTransitionException is raised when a transition occurs in the implementation that is not allowed by the specification
 * A HaltedException is raised when a transition occurs, while the operation was already halted by an IllegalTransitionException. This is required because the asyncio event loop can continue its operation briefly when a coroutine raises an IllegalTransitionException
 * A RoleMismatchException is raised when there were roles defined, but never used in the specification or when a role is used in a protocol, but never defined in a specification
-* A PendingMessagesException is raised when a coroutine wants to send a message, but there are still incoming messages to that coroutine. Note that this check can be disabled by specifying the enforceCausality attribute for the monitor as False
-* A ComparatorNotImplementedException is raised when a constraint is placed on a value, but the given comparator (greater than, less than, etc.) is not implemented for the value type
-* An IllegalTypeException is raised when a type in the specification is not found in either the Python builtin types or the customs module
-* An IllegalValueException is raised when the constructor as given for a value constraint in the specification cannot be used to create an instance of the associated type in the specification 
+* A PendingMessagesException is raised when a coroutine wants to send a message, but there are still incoming messages to that coroutine. Note that this check can be disabled by specifying the checkCausality attribute for the monitor as False
+* A ComparatorNotImplementedException is raised when a comparator is used with a type that does not implement it.
+* An IllegalTypeException is raised when the given type cannot be found in the customs module
+* An IllegalValueException is raised when the provided value cannot be parsed to the given type.
+* A SubtypingException is raised when the provided object is not an instance of the specified type.
 
 When one of the SyCoCoCoPy exceptions is raised, a dedicated message is printed to the terminal providing clues about the cause of the error. The standard Python stack trace with the exception callers is not printed for clarity.
 
@@ -104,7 +105,7 @@ choice:
 loop <identifier>:
     protocol
         sequence:
-            send type from sender to receiver
+            send type[(constraint)] from sender to receiver
             repeat <identifier> # the repeat keyword MUST be the last item in a sequence
 ``` 
 
@@ -116,29 +117,29 @@ An example constraint for a bool: `send bool(False) from p to q`
 Or for an int: `send int(>=9) from p to q`
 
 ## Use of custom types
-The framework supports the use of custom types in addition to Python's primitive types. The custom types must be imported in the customs.py module which is located in the customs folder. Inheritance is fully supported, when a subtype is provided at runtime and the specification requires the superclass, it is accepted.
+The framework supports the use of custom types in addition to Python's primitive types. Custom types must be imported in the customs.py module which is located in the customs folder. Subtyping is fully supported: when the object provided at runtime is an instance of the required type, it is accepted.
 
 When a constraint on a custom type is given in a specification, the associated comparison method must be implemented. Specify the:
-* \_\_eq\_\_ method for == and != comparison
+* \_\_eq\_\_ method for == comparison
+* \_\_ne\_\_ method for != comparison
 * \_\_lt\_\_ method for $\lt$ comparison
 * \_\_le\_\_ method for $\leq$ comparison
 * \_\_gt\_\_ method for $\lt$ comparison
 * \_\_ge\_\_ method for $\geq$ comparison
 
-
 ## Roadmap
-The current product is a demonstrator to showcase the possibilities of monitoring of communications between coroutines at runtime in Python. To ensure that the codebase is easily readable and concepts can be extracted without undue difficulty, we have chosen not to harden the code against wrong usage. E.g. a given specification is not checked for correct syntax (other than the regular checks provided by antlr4) or semantics like checking for more than one provided option in a sequence, shuffle or choice. 
+The current product is a demonstrator to showcase the possibilities of monitoring communications between coroutines at runtime in Python. To ensure that the codebase is easily readable and concepts can be extracted without undue difficulty, we have chosen not to harden the code against wrong usage. For instance, a given specification is not checked for correct syntax (other than the regular checks provided by antlr4) or semantics like checking for more than one provided option in a sequence, shuffle or choice. 
 
 To enable the use of this library in a production environment, the codebase will need to be hardened to provide correct error messages when the provided specification is incorrect. The following is a non-exhaustive list with known issues of the specification language that need further development:
-* The `repeat` statement should only be added at the end of a compound `sequence` operator and must follow a `send`. Adding a `repeat` in a `choice` or `shuffle` operator or at an intermediate position in a `sequence` does not provide a warning, but will not work.
+* The `repeat` statement should only be added at the end of a compound `sequence` operator. Adding a `repeat` in a `choice` or `shuffle` operator or at an intermediate position in a `sequence` does not provide a warning, but will not work.
 * The compound operators `sequence`, `choice`, and `shuffle` should have at least two children, but no warning is produced if the protocol has zero or one child for a compound operator.
-* If a specification does not adhere to the syntax the parser does not stop, but tries to parse as good as possible. We recommend that an incorrect syntax should halt the parsing and provide a warning to show where the specification is wrong.
+* If a specification does not adhere to the syntax the parser does not stop, but tries to parse as good as possible. We recommend that an incorrect syntax should halt the parsing and provide a warning to show any errors in the specification.
 
-### Available branches
+### Additional branches
 
-Initially, the framework did not support the loop and repeat operations. When we decided to add them, we felt it made sense to require that the repeat operation must be the final operation in a sequence and must be preceded by another operation --- the rationale being that the preceding operation brings us back to the loop state. During the validation of the framework, we came to realise that this requirement may lead to unpleasantly verbose specifications. Dropping the requirement and allowing the repeat operation to be placed within a choice turned out to be the solution. The most intuitive way of making the required changes in the builder was to employ epsilon transitions, which actually resulted in less complex builder methods with better defined responsibilities. The 'lambda' branch offers the refactored code that allows epsilon transitions.  
+Initially, the framework did not support the loop and repeat operations. When we decided to add them, we felt it made sense to require that the repeat operation must be the final operation in a sequence and must be preceded by another operation, the rationale being that the preceding operation brings us back to the loop state. During the validation of the framework, we came to realise that this requirement may lead to unpleasantly verbose specifications. Dropping the requirement and allowing the repeat operation to be placed within a choice turned out to be the solution. The most intuitive way of making the required changes in the builder was to employ epsilon transitions, which actually resulted in less complex builder methods with better defined responsibilities. Branch 'refactor-loop-and-repeat' offers the refactored code.  
 
-The framework maintains the full history of transitions and prints this history to the console as part of some of the error messages. However, the full history might become too long for effective troubleshooting and we suspect that the performance may benefit if the size of the history is limited. The '144-limit-number-of-messages-in-transition-history' branch offers a fix that limit the history to 10 messages.
+The framework maintains the full history of transitions and prints this history to the console as part of some of the error messages. However, the full history might become too long for effective troubleshooting and we suspect that the performance may benefit if the size of the history is limited. Branch '144-limit-number-of-messages-in-transition-history' offers a fix that limits the history to 10 messages.
 
 ## Authors and acknowledgment
 This project was created by Teun Schoutens and Jacob Bart as part of their Bachelor thesis project at the Open University in The Netherlands.
