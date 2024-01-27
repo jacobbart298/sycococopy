@@ -5,10 +5,10 @@ from src.core.fsm import FSM
 
 class BenchmarkMonitor(Monitor):
     
-    def __init__(self, tree, enforceCausality = True):
+    def __init__(self, tree, checkCausality = True):
         self.halted: bool = False
         self.setExceptionHook()
-        self.enforceCausality = enforceCausality
+        self.checkCausality = checkCausality
         self.transitionHistory: list[tuple[Transition, any]] = []
         self.uncheckedReceives: dict[str, Transition] = {}
         self.fsm: FSM = BenchmarkFsmBuilder().buildFsm(tree)

@@ -44,7 +44,7 @@ class Monitor():
         if self.halted:
             raise HaltedException()     
         self.transitionHistory.append((transition, item))
-        # sending is not allowed if the sender is waiting for any messages and enforceCausality is True
+        # sending is not allowed if the sender is waiting for any messages and checkCausality is True
         if self.checkCausality and transition.getSender() in self.uncheckedReceives and self.uncheckedReceives[transition.getSender()]:
             self.halted = True
             raise PendingMessagesException(self.transitionHistory, self.uncheckedReceives[transition.getSender()])        
