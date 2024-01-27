@@ -1,0 +1,6 @@
+roles:
+	A
+	B
+
+protocol:
+	send Dog(Dog("Lily", 4, 35.4, True)) from A to B

@@ -1,0 +1,6 @@
+roles:
+	A
+	B
+
+protocol:
+	send len from A to B
